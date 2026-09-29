@@ -241,7 +241,7 @@ footer {
 
 <section class="menu">
 
-<div class="card" onclick="alert('Worldsクリック成功')">
+<div class="card" onclick="showWorlds()">
   <div class="icon">🌙</div>
   <h2>Worlds</h2>
   <p>世界・舞台・設定をまとめる場所</p>
@@ -336,19 +336,9 @@ const supabase = window.supabase.createClient(
   SUPABASE_PUBLISHABLE_KEY
 );
 
-async function loadWorlds() {
-  const { data, error } = await supabase
-    .from("worlds")
-    .select("*")
-    .order("created_at", { ascending: true });
-
-  const list = document.getElementById("worlds-list");
-
-  if (error) {
-    console.error("Worlds取得エラー:", error);
-    list.textContent = "Worldsを読み込めませんでした。";
-    return;
-  }
+function showWorlds() {
+  alert("showWorldsは動いています！");
+}
 
   list.innerHTML = data.map(world => `
     <div class="world-item">
