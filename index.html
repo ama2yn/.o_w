@@ -302,7 +302,6 @@ footer {
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-
 const words = [
   "星",
   "雪",
@@ -327,17 +326,30 @@ function gacha() {
 }
 
 const SUPABASE_URL = "https://scdtamllafamkacrpmvr.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_vnHtHHhIW5L6M2wA_LRGgA_nzIrjBM6";
+const SUPABASE_PUBLISHABLE_KEY = "あなたがコピーしたPublishable Key";
 
 const supabase = window.supabase.createClient(
   SUPABASE_URL,
   SUPABASE_PUBLISHABLE_KEY
 );
 
-function showWorlds() {
-  alert("Supabaseの関数まで到達！");
-}
+async function showWorlds() {
+  const { data, error } = await supabase
+    .from("worlds")
+    .select("name, description")
+    .order("created_at", { ascending: true });
 
+  if (error) {
+    alert("Worldsを読み込めませんでした");
+    return;
+  }
+
+  alert(
+    data.map(world =>
+      world.name + "\n" + world.description
+    ).join("\n\n")
+  );
+}
 </script>
   
 </body>
