@@ -299,6 +299,8 @@ footer {
 
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
 
 const words = [
@@ -317,7 +319,6 @@ const words = [
 ];
 
 function gacha() {
-
   const result =
     words[Math.floor(Math.random() * words.length)];
 
@@ -325,30 +326,13 @@ function gacha() {
     "✦ " + result + " ✦";
 }
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<script>
-const SUPABASE_URL = "https://scdtamllafamkacrpmvr.supabase.co/rest/v1/";
+const SUPABASE_URL = "https://scdtamllafamkacrpmvr.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_vnHtHHhIW5L6M2wA_LRGgA_nzIrjBM6";
 
 const supabase = window.supabase.createClient(
   SUPABASE_URL,
   SUPABASE_PUBLISHABLE_KEY
 );
-
-function showWorlds() {
-  alert("showWorldsは動いています！");
-}
-
-  list.innerHTML = data.map(world => `
-    <div class="world-item">
-      <h3>${world.name}</h3>
-      <p>${world.description}</p>
-    </div>
-  `).join("");
-}
-
-loadWorlds();
 
 async function showWorlds() {
   const { data, error } = await supabase
@@ -357,7 +341,7 @@ async function showWorlds() {
     .order("created_at", { ascending: true });
 
   if (error) {
-    console.error(error);
+    console.error("Worlds取得エラー:", error);
     alert("Worldsを読み込めませんでした。");
     return;
   }
@@ -368,7 +352,7 @@ async function showWorlds() {
     ).join("\n\n")
   );
 }
-  
+
 </script>
   
 </body>
