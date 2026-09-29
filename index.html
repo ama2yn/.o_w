@@ -328,7 +328,7 @@ const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_vnHtHHhIW5L6M2wA_LRGgA_nzIrjBM6
 
 async function showWorlds() {
   const response = await fetch(
-    SUPABASE_URL + "/rest/v1/worlds?select=name,description&order=created_at.asc",
+    SUPABASE_URL + "/rest/v1/worlds?select=name,discription&order=created_at.asc",
     {
       headers: {
         "apikey": SUPABASE_PUBLISHABLE_KEY,
@@ -351,11 +351,11 @@ async function showWorlds() {
 
   const data = await response.json();
 
-  alert(
-    data.map(world =>
-      world.name + "\n" + world.description
-    ).join("\n\n")
-  );
+alert(
+  data.map(world =>
+    world.name + "\n" + world.discription
+  ).join("\n\n")
+);
 }
 </script>
   
