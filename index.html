@@ -299,8 +299,6 @@ footer {
 
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script>
 const words = [
   "星",
@@ -326,23 +324,25 @@ function gacha() {
 }
 
 const SUPABASE_URL = "https://scdtamllafamkacrpmvr.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_vnHtHHhIW5L6M2wA_LRGgA_nzIrjBM6";
-
-const supabase = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_PUBLISHABLE_KEY
-);
+const SUPABASE_PUBLISHABLE_KEY = "あなたの実際のPublishable Key";
 
 async function showWorlds() {
-  const { data, error } = await supabase
-    .from("worlds")
-    .select("name, description")
-    .order("created_at", { ascending: true });
+  const response = await fetch(
+    SUPABASE_URL + "/rest/v1/worlds?select=name,description&order=created_at.asc",
+    {
+      headers: {
+        "apikey": SUPABASE_PUBLISHABLE_KEY,
+        "Authorization": "Bearer " + SUPABASE_PUBLISHABLE_KEY
+      }
+    }
+  );
 
-  if (error) {
-    alert("Worldsを読み込めませんでした");
+  if (!response.ok) {
+    alert("Worldsを読み込めませんでした。");
     return;
   }
+
+  const data = await response.json();
 
   alert(
     data.map(world =>
