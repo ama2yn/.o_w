@@ -338,9 +338,16 @@ async function showWorlds() {
   );
 
   if (!response.ok) {
-    alert("Worldsを読み込めませんでした。");
-    return;
-  }
+  const errorText = await response.text();
+
+  alert(
+    "Supabaseエラー\n" +
+    "Status: " + response.status + "\n\n" +
+    errorText
+  );
+
+  return;
+}
 
   const data = await response.json();
 
