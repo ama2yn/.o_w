@@ -334,23 +334,8 @@ const supabase = window.supabase.createClient(
   SUPABASE_PUBLISHABLE_KEY
 );
 
-async function showWorlds() {
-  const { data, error } = await supabase
-    .from("worlds")
-    .select("*")
-    .order("created_at", { ascending: true });
-
-  if (error) {
-    console.error("Worlds取得エラー:", error);
-    alert("Worldsを読み込めませんでした。");
-    return;
-  }
-
-  alert(
-    data.map(world =>
-      `${world.name}\n${world.description}`
-    ).join("\n\n")
-  );
+function showWorlds() {
+  alert("Supabaseの関数まで到達！");
 }
 
 </script>
