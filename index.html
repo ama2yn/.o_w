@@ -339,7 +339,34 @@ function gacha() {
     "✦ " + result + " ✦";
 }
 
-</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+<script>
+const SUPABASE_URL = "https://scdtamllafamkacrpmvr.supabase.co/rest/v1/";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_vnHtHHhIW5L6M2wA_LRGgA_nzIrjBM6";
+
+const supabase = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY
+);
+
+async function loadWorlds() {
+  const { data, error } = await supabase
+    .from("worlds")
+    .select("*")
+    .order("created_at", { ascending: true });
+
+  if (error) {
+    console.error("Worlds取得エラー:", error);
+    return;
+  }
+
+  console.log("Worlds取得成功:", data);
+}
+
+loadWorlds();
+  
+</script>
+  
 </body>
 </html>
