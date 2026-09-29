@@ -359,6 +359,25 @@ async function loadWorlds() {
 }
 
 loadWorlds();
+
+async function showWorlds() {
+  const { data, error } = await supabase
+    .from("worlds")
+    .select("*")
+    .order("created_at", { ascending: true });
+
+  if (error) {
+    console.error(error);
+    alert("Worldsを読み込めませんでした。");
+    return;
+  }
+
+  alert(
+    data.map(world =>
+      `${world.name}\n${world.description}`
+    ).join("\n\n")
+  );
+}
   
 </script>
   
