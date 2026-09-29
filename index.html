@@ -353,12 +353,20 @@ async function loadWorlds() {
     .select("*")
     .order("created_at", { ascending: true });
 
+  const list = document.getElementById("worlds-list");
+
   if (error) {
     console.error("Worlds取得エラー:", error);
+    list.textContent = "Worldsを読み込めませんでした。";
     return;
   }
 
-  console.log("Worlds取得成功:", data);
+  list.innerHTML = data.map(world => `
+    <div class="world-item">
+      <h3>${world.name}</h3>
+      <p>${world.description}</p>
+    </div>
+  `).join("");
 }
 
 loadWorlds();
