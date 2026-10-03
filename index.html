@@ -958,61 +958,127 @@ Array.from(characterPage.parentElement.children).forEach(
     return;
   }
 
-  const character = data[0];
+const character = data[0];
 
-  content.innerHTML =
-    `
-    ${
-      character.main_image
-        ? `
-          <img
-            src="${escapeHtml(character.main_image)}"
-            style="
-              width:100%;
-              max-height:400px;
-              object-fit:cover;
-              border-radius:20px;
-              margin-bottom:20px;
-            "
-          >
-        `
-        : ""
-    }
+content.innerHTML =
+  `
+  ${
+    character.main_image
+      ? `
+        <img
+          src="${escapeHtml(character.main_image)}"
+          style="
+            width:100%;
+            max-height:400px;
+            object-fit:cover;
+            border-radius:20px;
+            margin-bottom:20px;
+          "
+        >
+      `
+      : ""
+  }
 
-    <h2 style="margin:0 0 10px;">
-      🪽 ${escapeHtml(character.name)}
-    </h2>
+  <h2 style="margin:0 0 10px;">
+    🪽 ${escapeHtml(character.name)}
+  </h2>
 
-    ${
-      character.reading
-        ? `
-          <p>
-            読み：${escapeHtml(character.reading)}
+  ${
+    character.reading
+      ? `<p>読み：${escapeHtml(character.reading)}</p>`
+      : ""
+  }
+
+  ${
+    character.gender
+      ? `<p>性別：${escapeHtml(character.gender)}</p>`
+      : ""
+  }
+
+  ${
+    character.age
+      ? `<p>年齢：${escapeHtml(character.age)}</p>`
+      : ""
+  }
+
+  ${
+    character.birthday
+      ? `<p>誕生日：${escapeHtml(character.birthday)}</p>`
+      : ""
+  }
+
+  ${
+    character.height
+      ? `<p>身長：${escapeHtml(character.height)}</p>`
+      : ""
+  }
+
+  ${
+    character.weight
+      ? `<p>体重：${escapeHtml(character.weight)}</p>`
+      : ""
+  }
+
+  ${
+    character.species
+      ? `<p>種族：${escapeHtml(character.species)}</p>`
+      : ""
+  }
+
+  ${
+    character.affiliation
+      ? `<p>所属：${escapeHtml(character.affiliation)}</p>`
+      : ""
+  }
+
+  ${
+    character.personality
+      ? `<p>性格：${escapeHtml(character.personality)}</p>`
+      : ""
+  }
+
+  ${
+    character["first-person"]
+      ? `<p>一人称：${escapeHtml(character["first-person"])}</p>`
+      : ""
+  }
+
+  ${
+    character["second-person"]
+      ? `<p>二人称：${escapeHtml(character["second-person"])}</p>`
+      : ""
+  }
+
+  ${
+    character.likes
+      ? `<p>好き：${escapeHtml(character.likes)}</p>`
+      : ""
+  }
+
+  ${
+    character.dislikes
+      ? `<p>嫌い：${escapeHtml(character.dislikes)}</p>`
+      : ""
+  }
+
+  ${
+    character.description
+      ? `
+        <div style="
+          margin-top:20px;
+          padding:18px;
+          border-radius:18px;
+          background:rgba(255,255,255,.08);
+        ">
+          <h3>PROFILE</h3>
+          <p style="white-space:pre-wrap;">
+            ${escapeHtml(character.description)}
           </p>
-        `
-        : ""
-    }
-
-    ${
-      character.gender
-        ? `
-          <p>
-            性別：${escapeHtml(character.gender)}
-          </p>
-        `
-        : ""
-    }
-
-    ${
-      character.age
-        ? `
-          <p>
-            年齢：${escapeHtml(character.age)}
-          </p>
-        `
-        : ""
-    }
-    `;
+        </div>
+      `
+      : ""
+  }
+  `;
 
 }
 
