@@ -614,11 +614,15 @@ async function createCharacter() {
       },
 
       body: JSON.stringify({
-        name: name,
-        reading: reading || null,
-        gender: gender || null,
-        age: age || null
-      })
+  user_id:
+    localStorage.getItem("secretBaseUserId")
+    || crypto.randomUUID(),
+
+  name: name,
+  reading: reading || null,
+  gender: gender || null,
+  age: age || null
+})
     }
   );
 
