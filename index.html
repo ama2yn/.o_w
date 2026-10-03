@@ -201,6 +201,27 @@ button {
   box-shadow: 0 5px 20px rgba(255,170,235,.25);
 }
 
+.profile-field {
+  box-sizing: border-box;
+  width: 100%;
+  margin-top: 8px;
+  margin-bottom: 15px;
+  padding: 12px 14px;
+  border: none;
+  border-radius: 14px;
+  font: inherit;
+  font-size: 15px;
+  line-height: 1.6;
+  background: rgba(255,255,255,0.92);
+  color: #2b173d;
+  resize: none;
+  overflow: hidden;
+}
+
+.profile-field:focus {
+  outline: 2px solid rgba(120, 80, 160, 0.25);
+}
+
 footer {
   text-align: center;
   padding: 45px 10px 60px;
@@ -221,28 +242,6 @@ footer {
     align-items: flex-start;
     flex-direction: column;
   }
-
-  .profile-field {
-  box-sizing: border-box;
-  width: 100%;
-  margin-top: 8px;
-  margin-bottom: 15px;
-  padding: 12px 14px;
-  border: none;
-  border-radius: 14px;
-  font: inherit;
-  font-size: 15px;
-  line-height: 1.6;
-  background: rgba(255,255,255,0.92);
-  color: #2b173d;
-  resize: none;
-  overflow: hidden;
-}
-
-.profile-field:focus {
-  outline: 2px solid rgba(120, 80, 160, 0.25);
-}
-  
 }
 </style>
 </head>
@@ -268,7 +267,6 @@ footer {
   <h2>Worlds</h2>
   <p>世界・舞台・設定をまとめる場所</p>
 </div>
-  
 
 <div class="card" onclick="showCharacters()">
   <div class="icon">🪽</div>
@@ -276,31 +274,32 @@ footer {
   <p>オリジナルキャラクターたち</p>
 </div>
 
-  <div class="card">
-    <div class="icon">🎀</div>
-    <h2>Albums</h2>
-    <p>イラスト・AI・創作ログ</p>
-  </div>
+<div class="card">
+  <div class="icon">🎀</div>
+  <h2>Albums</h2>
+  <p>イラスト・AI・創作ログ</p>
+</div>
 
-  <div class="card">
-    <div class="icon">💎</div>
-    <h2>Relationships</h2>
-    <p>キャラクター同士の関係図</p>
-  </div>
+<div class="card">
+  <div class="icon">💎</div>
+  <h2>Relationships</h2>
+  <p>キャラクター同士の関係図</p>
+</div>
 
-  <div class="card">
-    <div class="icon">🎲</div>
-    <h2>Word Gacha</h2>
-    <p>登録した言葉をランダム召喚</p>
-  </div>
+<div class="card">
+  <div class="icon">🎲</div>
+  <h2>Word Gacha</h2>
+  <p>登録した言葉をランダム召喚</p>
+</div>
 
-  <div class="card">
-    <div class="icon">🎧</div>
-    <h2>Music</h2>
-    <p>世界・キャラクターのイメージ音楽</p>
-  </div>
+<div class="card">
+  <div class="icon">🎧</div>
+  <h2>Music</h2>
+  <p>世界・キャラクターのイメージ音楽</p>
+</div>
 
 </section>
+
 
 <section class="world" id="characterSection" style="display:none;">
 
@@ -313,8 +312,6 @@ footer {
     <p>Characterを読み込んでいます……</p>
   </div>
 
-  
-
   <div style="margin-top:25px; text-align:center;">
     <button onclick="showCreateCharacter()">
       ＋ NEW CHARACTER
@@ -322,12 +319,13 @@ footer {
   </div>
 
   <div style="margin-top:15px; text-align:center;">
-  <button onclick="backToHome()">
-    ← BACK TO HOME
-  </button>
-</div>
+    <button onclick="backToHome()">
+      ← BACK TO HOME
+    </button>
+  </div>
 
 </section>
+
 
 <section class="world" id="createCharacterSection" style="display:none;">
 
@@ -337,157 +335,58 @@ footer {
 
   <div style="margin-top:20px;">
 
-  <label>名前</label>
+    <label>名前</label>
 
-<input
-  id="characterName"
-  type="text"
-  placeholder="例：椿"
-  style="width:100%; margin-top:8px; padding:13px; border-radius:14px; border:none;"
->
+    <input
+      id="characterName"
+      type="text"
+      placeholder="例：椿"
+      style="width:100%; margin-top:8px; padding:13px; border-radius:14px; border:none;"
+    >
 
-<label style="display:block; margin-top:18px;">
-  読み
-</label>
+    <label style="display:block; margin-top:18px;">
+      読み
+    </label>
 
-<input
-  id="characterReading"
-  type="text"
-  placeholder="例：つばき"
-  style="width:100%; margin-top:8px; padding:13px; border-radius:14px; border:none;"
->
+    <input
+      id="characterReading"
+      type="text"
+      placeholder="例：つばき"
+      style="width:100%; margin-top:8px; padding:13px; border-radius:14px; border:none;"
+    >
 
-<label style="display:block; margin-top:18px;">
-  性別
-</label>
+    <label style="display:block; margin-top:18px;">
+      性別
+    </label>
 
-<input
-  id="characterGender"
-  type="text"
-  placeholder="例：女性"
-  style="width:100%; margin-top:8px; padding:13px; border-radius:14px; border:none;"
->
+    <input
+      id="characterGender"
+      type="text"
+      placeholder="例：女性"
+      style="width:100%; margin-top:8px; padding:13px; border-radius:14px; border:none;"
+    >
 
-<label style="display:block; margin-top:18px;">
-  年齢
-</label>
+    <label style="display:block; margin-top:18px;">
+      年齢
+    </label>
 
-<input
-  id="characterAge"
-  type="text"
-  placeholder="例：17"
-  style="width:100%; margin-top:8px; padding:13px; border-radius:14px; border:none;"
->
+    <input
+      id="characterAge"
+      type="text"
+      placeholder="例：17"
+      style="width:100%; margin-top:8px; padding:13px; border-radius:14px; border:none;"
+    >
 
-<label style="display:block; margin-top:18px;">
-  誕生日
-</label>
+    <label style="display:block; margin-top:18px;">
+      アイコン画像
+    </label>
 
-<input
-  id="characterBirthday"
-  type="text"
-  placeholder="例：4月12日"
-  style="width:100%; margin-top:8px; padding:13px; border-radius:14px; border:none;"
->
-
-<label style="display:block; margin-top:18px;">
-  身長
-</label>
-
-<input
-  id="characterHeight"
-  type="text"
-  placeholder="例：165cm"
-  style="width:100%; margin-top:8px; padding:13px; border-radius:14px; border:none;"
->
-
-<label style="display:block; margin-top:18px;">
-  体重
-</label>
-
-<input
-  id="characterWeight"
-  type="text"
-  placeholder="例：52kg"
-  style="width:100%; margin-top:8px; padding:13px; border-radius:14px; border:none;"
->
-
-
-
-<label style="display:block; margin-top:18px;">
-  性格
-</label>
-
-<textarea
-  id="characterPersonality"
-  placeholder="性格を入力"
-  style="width:100%; margin-top:8px; padding:13px; border-radius:14px; border:none; min-height:100px;"
-></textarea>
-
-<label style="display:block; margin-top:18px;">
-  一人称
-</label>
-
-<input
-  id="characterFirstPerson"
-  type="text"
-  placeholder="例：私"
-  style="width:100%; margin-top:8px; padding:13px; border-radius:14px; border:none;"
->
-
-<label style="display:block; margin-top:18px;">
-  二人称
-</label>
-
-<input
-  id="characterSecondPerson"
-  type="text"
-  placeholder="例：あなた"
-  style="width:100%; margin-top:8px; padding:13px; border-radius:14px; border:none;"
->
-
-<label style="display:block; margin-top:18px;">
-  好き
-</label>
-
-<textarea
-  id="characterLikes"
-  placeholder="好きなもの・こと"
-  style="width:100%; margin-top:8px; padding:13px; border-radius:14px; border:none; min-height:80px;"
-></textarea>
-
-<label style="display:block; margin-top:18px;">
-  嫌い
-</label>
-
-<textarea
-  id="characterDislikes"
-  placeholder="嫌いなもの・こと"
-  style="width:100%; margin-top:8px; padding:13px; border-radius:14px; border:none; min-height:80px;"
-></textarea>
-
-<label style="display:block; margin-top:18px;">
-  自由記入
-</label>
-
-<textarea
-  id="characterDescription"
-  placeholder="キャラクターについて自由に記入"
-  style="width:100%; margin-top:8px; padding:13px; border-radius:14px; border:none; min-height:150px;"
-></textarea>
-
-<label style="display:block; margin-top:18px;">
-  アイコン画像
-</label>
-
-<input
-  id="characterImage"
-  type="file"
-  accept="image/*"
-  style="width:100%; margin-top:8px;"
->
-
-    
+    <input
+      id="characterImage"
+      type="file"
+      accept="image/*"
+      style="width:100%; margin-top:8px;"
+    >
 
     <div style="margin-top:20px; display:flex; gap:10px; justify-content:center;">
 
@@ -508,6 +407,7 @@ footer {
 
 </section>
 
+
 <section class="world" id="characterPage" style="display:none;">
 
   <div class="world-title">
@@ -515,10 +415,8 @@ footer {
   </div>
 
   <div id="characterPageContent">
-  <p>Characterを読み込んでいます……</p>
-</div>
-
-
+    <p>Characterを読み込んでいます……</p>
+  </div>
 
   <div style="margin-top:25px; text-align:center;">
     <button onclick="backToCharacters()">
@@ -527,7 +425,8 @@ footer {
   </div>
 
 </section>
-  
+
+
 <section class="world" id="worldSection" style="display:none;">
 
   <div class="world-title">
@@ -547,6 +446,7 @@ footer {
 
 </section>
 
+
 <section class="world" id="createWorldSection" style="display:none;">
 
   <div class="world-title">
@@ -556,6 +456,7 @@ footer {
   <div style="margin-top:20px;">
 
     <label>World名</label>
+
     <input
       id="worldName"
       type="text"
@@ -574,6 +475,7 @@ footer {
     ></textarea>
 
     <div style="margin-top:20px; display:flex; gap:10px; justify-content:center;">
+
       <button onclick="createWorld()">
         CREATE ✦
       </button>
@@ -584,13 +486,15 @@ footer {
       >
         CANCEL
       </button>
+
     </div>
 
   </div>
 
 </section>
 
-  <section class="world" id="worldPage" style="display:none;">
+
+<section class="world" id="worldPage" style="display:none;">
 
   <div class="world-title">
     <h2 id="worldPageTitle">🌙 WORLD</h2>
@@ -633,17 +537,15 @@ footer {
 
   </div>
 
-  <div style="
-    margin-top:25px;
-    text-align:center;
-  ">
+  <div style="margin-top:25px; text-align:center;">
     <button onclick="backToWorlds()">
       ← BACK TO WORLDS
     </button>
   </div>
 
 </section>
-  
+
+
 <section class="gacha">
 
   <h2>🎲 WORD GACHA</h2>
@@ -656,12 +558,14 @@ footer {
 
 </section>
 
+
 <footer>
   ✦ ama's secret base ✦<br>
   made with dreams & imagination
 </footer>
 
 </div>
+
 
 <script>
 
@@ -696,6 +600,7 @@ const SUPABASE_URL =
 const SUPABASE_PUBLISHABLE_KEY =
   "sb_publishable_UywVZUnkN4lmElV10n3WWw_HAMxw3q8";
 
+
 async function showCharacters() {
 
   const characterSection =
@@ -722,9 +627,9 @@ async function showCharacters() {
   });
 
   await loadCharacters();
-
 }
-  
+
+
 function showCreateCharacter() {
 
   const createSection =
@@ -735,91 +640,81 @@ function showCreateCharacter() {
   createSection.scrollIntoView({
     behavior: "smooth"
   });
-
 }
+
 
 function hideCreateCharacter() {
 
   document.getElementById(
     "createCharacterSection"
   ).style.display = "none";
-
 }
+
 
 async function createCharacter() {
 
-
-  
   const name =
-    document.getElementById(
-      "characterName"
-    ).value.trim();
+    document.getElementById("characterName").value.trim();
 
   const reading =
-    document.getElementById(
-      "characterReading"
-    ).value.trim();
+    document.getElementById("characterReading").value.trim();
 
   const gender =
-    document.getElementById(
-      "characterGender"
-    ).value.trim();
+    document.getElementById("characterGender").value.trim();
 
   const age =
-    document.getElementById(
-      "characterAge"
-    ).value.trim();
+    document.getElementById("characterAge").value.trim();
 
   const imageFile =
-  document.getElementById(
-    "characterImage"
-  ).files[0];
+    document.getElementById("characterImage").files[0];
 
   let imageUrl = null;
 
-if (imageFile) {
+  if (imageFile) {
 
-  const fileName =
-  crypto.randomUUID() + ".jpg";
+    const fileName =
+      crypto.randomUUID() + ".jpg";
 
-  const uploadResponse = await fetch(
-    SUPABASE_URL +
-    "/storage/v1/object/character-images/" +
-    fileName,
-    {
-      method: "POST",
-      headers: {
-        "apikey": SUPABASE_PUBLISHABLE_KEY,
-        "Authorization":
-          "Bearer " + SUPABASE_PUBLISHABLE_KEY,
-        "Content-Type":
-          imageFile.type
-      },
-      body: imageFile
-    }
-  );
-
-  if (!uploadResponse.ok) {
-
-    const errorText =
-      await uploadResponse.text();
-
-    alert(
-      "画像のアップロードに失敗しました。\n\n" +
-      errorText
+    const uploadResponse = await fetch(
+      SUPABASE_URL +
+      "/storage/v1/object/character-images/" +
+      fileName,
+      {
+        method: "POST",
+        headers: {
+          "apikey": SUPABASE_PUBLISHABLE_KEY,
+          "Authorization":
+            "Bearer " + SUPABASE_PUBLISHABLE_KEY,
+          "Content-Type":
+            imageFile.type
+        },
+        body: imageFile
+      }
     );
 
-    return;
+    if (!uploadResponse.ok) {
+
+      const errorText =
+        await uploadResponse.text();
+
+      alert(
+        "画像のアップロードに失敗しました。\n\n" +
+        errorText
+      );
+
+      return;
+    }
+
+    imageUrl =
+      SUPABASE_URL +
+      "/storage/v1/object/public/character-images/" +
+      fileName;
   }
 
-  imageUrl =
-    SUPABASE_URL +
-    "/storage/v1/object/public/character-images/" +
-    fileName;
-}
-
   if (!name) {
+
     alert("名前を入力してください。");
+
     return;
   }
 
@@ -839,12 +734,12 @@ if (imageFile) {
       },
 
       body: JSON.stringify({
-  name: name,
-  reading: reading || null,
-  gender: gender || null,
-  age: age || null,
-  main_image: imageUrl
-})
+        name: name,
+        reading: reading || null,
+        gender: gender || null,
+        age: age || null,
+        main_image: imageUrl
+      })
     }
   );
 
@@ -864,21 +759,11 @@ if (imageFile) {
     return;
   }
 
-  document.getElementById(
-    "characterName"
-  ).value = "";
-
-  document.getElementById(
-    "characterReading"
-  ).value = "";
-
-  document.getElementById(
-    "characterGender"
-  ).value = "";
-
-  document.getElementById(
-    "characterAge"
-  ).value = "";
+  document.getElementById("characterName").value = "";
+  document.getElementById("characterReading").value = "";
+  document.getElementById("characterGender").value = "";
+  document.getElementById("characterAge").value = "";
+  document.getElementById("characterImage").value = "";
 
   document.getElementById(
     "createCharacterSection"
@@ -891,10 +776,10 @@ if (imageFile) {
   ).scrollIntoView({
     behavior: "smooth"
   });
-
 }
-  
- async function loadCharacters() {
+
+
+async function loadCharacters() {
 
   const characterList =
     document.getElementById("characterList");
@@ -1015,22 +900,23 @@ if (imageFile) {
       `;
 
     }).join("");
-
 }
 
-  async function openCharacter(characterId) {
-window.currentCharacterId = characterId;
-    
-const characterPage =
-  document.getElementById("characterPage");
 
-Array.from(characterPage.parentElement.children).forEach(
-  element => {
-    element.style.display =
-      element === characterPage ? "block" : "none";
-  }
-);
-    
+async function openCharacter(characterId) {
+
+  window.currentCharacterId = characterId;
+
+  const characterPage =
+    document.getElementById("characterPage");
+
+  Array.from(characterPage.parentElement.children).forEach(
+    element => {
+      element.style.display =
+        element === characterPage ? "block" : "none";
+    }
+  );
+
   characterPage.style.display = "block";
 
   characterPage.scrollIntoView({
@@ -1085,9 +971,26 @@ Array.from(characterPage.parentElement.children).forEach(
     return;
   }
 
-const character = data[0];
+  const character = data[0];
 
-content.innerHTML =
+  let customFields = {};
+
+  try {
+    customFields =
+      typeof character.custom_fields === "string"
+        ? JSON.parse(character.custom_fields || "{}")
+        : (character.custom_fields || {});
+  } catch {
+    customFields = {};
+  }
+
+  const firstPerson =
+    customFields.first_person || "";
+
+  const secondPerson =
+    customFields.second_person || "";
+
+  content.innerHTML =
   `
   ${
     character.main_image
@@ -1147,32 +1050,20 @@ content.innerHTML =
   }
 
   ${
-    character.species
-      ? `<p>種族：${escapeHtml(character.species)}</p>`
-      : ""
-  }
-
-  ${
-    character.affiliation
-      ? `<p>所属：${escapeHtml(character.affiliation)}</p>`
-      : ""
-  }
-
-  ${
     character.personality
       ? `<p>性格：${escapeHtml(character.personality)}</p>`
       : ""
   }
 
   ${
-    character["first-person"]
-      ? `<p>一人称：${escapeHtml(character["first-person"])}</p>`
+    firstPerson
+      ? `<p>一人称：${escapeHtml(firstPerson)}</p>`
       : ""
   }
 
   ${
-    character["second-person"]
-      ? `<p>二人称：${escapeHtml(character["second-person"])}</p>`
+    secondPerson
+      ? `<p>二人称：${escapeHtml(secondPerson)}</p>`
       : ""
   }
 
@@ -1207,22 +1098,22 @@ content.innerHTML =
   }
   `;
 
-    const editButton =
-  document.createElement("div");
+  const editButton =
+    document.createElement("div");
 
-editButton.style.cssText =
-  "margin-top:25px; text-align:center;";
+  editButton.style.cssText =
+    "margin-top:25px; text-align:center;";
 
-editButton.innerHTML =
-  `
-  <button onclick="editCharacter()">
-    ✎ EDIT CHARACTER
-  </button>
-  `;
+  editButton.innerHTML =
+    `
+    <button onclick="editCharacter()">
+      ✎ EDIT CHARACTER
+    </button>
+    `;
 
-content.appendChild(editButton);
-    
+  content.appendChild(editButton);
 }
+
 
 async function editCharacter() {
 
@@ -1230,9 +1121,7 @@ async function editCharacter() {
     window.currentCharacterId;
 
   const content =
-    document.getElementById(
-      "characterPageContent"
-    );
+    document.getElementById("characterPageContent");
 
   content.innerHTML =
     "<p>編集画面を読み込んでいます……</p>";
@@ -1253,8 +1142,17 @@ async function editCharacter() {
 
   if (!response.ok) {
 
+    const errorText =
+      await response.text();
+
     content.innerHTML =
       "<p>編集画面の読み込みに失敗しました。</p>";
+
+    alert(
+      "Supabaseエラー\n" +
+      "Status: " + response.status + "\n\n" +
+      errorText
+    );
 
     return;
   }
@@ -1273,6 +1171,23 @@ async function editCharacter() {
   const character =
     data[0];
 
+  let customFields = {};
+
+  try {
+    customFields =
+      typeof character.custom_fields === "string"
+        ? JSON.parse(character.custom_fields || "{}")
+        : (character.custom_fields || {});
+  } catch {
+    customFields = {};
+  }
+
+  const firstPerson =
+    customFields.first_person || "";
+
+  const secondPerson =
+    customFields.second_person || "";
+
   content.innerHTML =
     `
     <h2 style="margin-bottom:25px;">
@@ -1280,20 +1195,23 @@ async function editCharacter() {
     </h2>
 
     <label>名前</label>
+
     <input
       id="editCharacterName"
       value="${escapeHtml(character.name || "")}"
       class="profile-field"
-     > 
+    >
 
     <label>読み</label>
+
     <input
       id="editCharacterReading"
       value="${escapeHtml(character.reading || "")}"
       class="profile-field"
-      >
+    >
 
     <label>性別</label>
+
     <input
       id="editCharacterGender"
       value="${escapeHtml(character.gender || "")}"
@@ -1301,6 +1219,7 @@ async function editCharacter() {
     >
 
     <label>年齢</label>
+
     <input
       id="editCharacterAge"
       value="${escapeHtml(character.age || "")}"
@@ -1316,6 +1235,7 @@ async function editCharacter() {
     <h3>PROFILE</h3>
 
     <label>誕生日</label>
+
     <input
       id="editCharacterBirthday"
       value="${escapeHtml(character.birthday || "")}"
@@ -1324,6 +1244,7 @@ async function editCharacter() {
     >
 
     <label>身長</label>
+
     <input
       id="editCharacterHeight"
       value="${escapeHtml(character.height || "")}"
@@ -1332,6 +1253,7 @@ async function editCharacter() {
     >
 
     <label>体重</label>
+
     <input
       id="editCharacterWeight"
       value="${escapeHtml(character.weight || "")}"
@@ -1339,41 +1261,45 @@ async function editCharacter() {
       class="profile-field"
     >
 
-    
-
     <label>性格</label>
+
     <textarea
       id="editCharacterPersonality"
       class="profile-field"
     >${escapeHtml(character.personality || "")}</textarea>
 
     <label>一人称</label>
+
     <input
       id="editCharacterFirstPerson"
-      value="${escapeHtml(character["first-person"] || "")}"
+      value="${escapeHtml(firstPerson)}"
       class="profile-field"
     >
 
     <label>二人称</label>
+
     <input
       id="editCharacterSecondPerson"
-      value="${escapeHtml(character["second-person"] || "")}"
+      value="${escapeHtml(secondPerson)}"
       class="profile-field"
     >
 
     <label>好き</label>
+
     <textarea
       id="editCharacterLikes"
       class="profile-field"
     >${escapeHtml(character.likes || "")}</textarea>
 
     <label>嫌い</label>
+
     <textarea
       id="editCharacterDislikes"
       class="profile-field"
     >${escapeHtml(character.dislikes || "")}</textarea>
 
     <label>自由記入</label>
+
     <textarea
       id="editCharacterDescription"
       class="profile-field"
@@ -1392,30 +1318,172 @@ async function editCharacter() {
     </div>
     `;
 
+  setupAutoResize();
 }
 
-  async function saveCharacterEdit() {
-  const characterId = window.currentCharacterId;
 
-  const updates = {
-    name: document.getElementById("editCharacterName").value.trim(),
-    reading: document.getElementById("editCharacterReading").value.trim() || null,
-    gender: document.getElementById("editCharacterGender").value.trim() || null,
-    age: document.getElementById("editCharacterAge").value.trim() || null,
-    birthday: document.getElementById("editCharacterBirthday").value.trim() || null,
-    height: document.getElementById("editCharacterHeight").value.trim() || null,
-    weight: document.getElementById("editCharacterWeight").value.trim() || null,
-    personality: document.getElementById("editCharacterPersonality").value.trim() || null,
-  
-    likes: documen.getElementById("editCharacterLikes").value.trim() || null,
-    dislikes: document.getElementById("editCharacterDislikes").value.trim() || null,
-    description: document.getElementById("editCharacterDescription").value.trim() || null
-  };
+function setupAutoResize() {
 
-  if (!updates.name) {
+  document.querySelectorAll("textarea.profile-field").forEach(
+    textarea => {
+
+      textarea.style.height = "auto";
+      textarea.style.height =
+        textarea.scrollHeight + "px";
+
+      textarea.addEventListener("input", () => {
+
+        textarea.style.height = "auto";
+        textarea.style.height =
+          textarea.scrollHeight + "px";
+
+      });
+
+    }
+  );
+}
+
+
+async function saveCharacterEdit() {
+
+  const characterId =
+    window.currentCharacterId;
+
+  const name =
+    document.getElementById(
+      "editCharacterName"
+    ).value.trim();
+
+  if (!name) {
+
     alert("名前を入力してください。");
+
     return;
   }
+
+  let existingCustomFields = {};
+
+  const getResponse = await fetch(
+    SUPABASE_URL +
+    "/rest/v1/characters?id=eq." +
+    characterId +
+    "&select=custom_fields",
+    {
+      headers: {
+        "apikey": SUPABASE_PUBLISHABLE_KEY,
+        "Authorization":
+          "Bearer " + SUPABASE_PUBLISHABLE_KEY
+      }
+    }
+  );
+
+  if (!getResponse.ok) {
+
+    const errorText =
+      await getResponse.text();
+
+    alert(
+      "現在のCharacter情報を取得できませんでした。\n\n" +
+      "Status: " +
+      getResponse.status +
+      "\n\n" +
+      errorText
+    );
+
+    return;
+  }
+
+  const currentData =
+    await getResponse.json();
+
+  if (currentData.length > 0) {
+
+    const stored =
+      currentData[0].custom_fields;
+
+    try {
+      existingCustomFields =
+        typeof stored === "string"
+          ? JSON.parse(stored || "{}")
+          : (stored || {});
+    } catch {
+      existingCustomFields = {};
+    }
+  }
+
+  const firstPerson =
+    document.getElementById(
+      "editCharacterFirstPerson"
+    ).value.trim();
+
+  const secondPerson =
+    document.getElementById(
+      "editCharacterSecondPerson"
+    ).value.trim();
+
+  existingCustomFields.first_person =
+    firstPerson;
+
+  existingCustomFields.second_person =
+    secondPerson;
+
+  const updates = {
+
+    name: name,
+
+    reading:
+      document.getElementById(
+        "editCharacterReading"
+      ).value.trim() || null,
+
+    gender:
+      document.getElementById(
+        "editCharacterGender"
+      ).value.trim() || null,
+
+    age:
+      document.getElementById(
+        "editCharacterAge"
+      ).value.trim() || null,
+
+    birthday:
+      document.getElementById(
+        "editCharacterBirthday"
+      ).value.trim() || null,
+
+    height:
+      document.getElementById(
+        "editCharacterHeight"
+      ).value.trim() || null,
+
+    weight:
+      document.getElementById(
+        "editCharacterWeight"
+      ).value.trim() || null,
+
+    personality:
+      document.getElementById(
+        "editCharacterPersonality"
+      ).value.trim() || null,
+
+    likes:
+      document.getElementById(
+        "editCharacterLikes"
+      ).value.trim() || null,
+
+    dislikes:
+      document.getElementById(
+        "editCharacterDislikes"
+      ).value.trim() || null,
+
+    description:
+      document.getElementById(
+        "editCharacterDescription"
+      ).value.trim() || null,
+
+    custom_fields:
+      existingCustomFields
+  };
 
   const response = await fetch(
     SUPABASE_URL +
@@ -1423,18 +1491,26 @@ async function editCharacter() {
     characterId,
     {
       method: "PATCH",
+
       headers: {
         "apikey": SUPABASE_PUBLISHABLE_KEY,
-        "Authorization": "Bearer " + SUPABASE_PUBLISHABLE_KEY,
-        "Content-Type": "application/json",
-        "Prefer": "return=minimal"
+        "Authorization":
+          "Bearer " + SUPABASE_PUBLISHABLE_KEY,
+        "Content-Type":
+          "application/json",
+        "Prefer":
+          "return=minimal"
       },
-      body: JSON.stringify(updates)
+
+      body:
+        JSON.stringify(updates)
     }
   );
 
   if (!response.ok) {
-    const errorText = await response.text();
+
+    const errorText =
+      await response.text();
 
     alert(
       "保存に失敗しました。\n\n" +
@@ -1449,8 +1525,9 @@ async function editCharacter() {
 
   alert("保存しました。");
 
-  openCharacter(characterId);
+  await openCharacter(characterId);
 }
+
 
 function backToCharacters() {
 
@@ -1474,10 +1551,9 @@ function backToCharacters() {
   });
 
   loadCharacters();
-
 }
-  
-  
+
+
 async function showWorlds() {
 
   const worldSection =
@@ -1496,6 +1572,7 @@ async function showWorlds() {
   await loadWorlds();
 }
 
+
 function backToHome() {
 
   const characterSection =
@@ -1504,24 +1581,42 @@ function backToHome() {
   const parent =
     characterSection.parentElement;
 
-  Array.from(parent.children).forEach(element => {
-    element.style.display = "";
-  });
+  Array.from(parent.children).forEach(
+    element => {
+      element.style.display = "";
+    }
+  );
 
-  document.getElementById("characterSection").style.display = "none";
-  document.getElementById("createCharacterSection").style.display = "none";
-  document.getElementById("characterPage").style.display = "none";
+  document.getElementById(
+    "characterSection"
+  ).style.display = "none";
 
-  document.getElementById("worldSection").style.display = "none";
-  document.getElementById("createWorldSection").style.display = "none";
-  document.getElementById("worldPage").style.display = "none";
+  document.getElementById(
+    "createCharacterSection"
+  ).style.display = "none";
+
+  document.getElementById(
+    "characterPage"
+  ).style.display = "none";
+
+  document.getElementById(
+    "worldSection"
+  ).style.display = "none";
+
+  document.getElementById(
+    "createWorldSection"
+  ).style.display = "none";
+
+  document.getElementById(
+    "worldPage"
+  ).style.display = "none";
 
   window.scrollTo({
     top: 0,
     behavior: "smooth"
   });
-
 }
+
 
 async function loadWorlds() {
 
@@ -1530,7 +1625,6 @@ async function loadWorlds() {
 
   worldList.innerHTML =
     "<p>Worldを読み込んでいます……</p>";
-
 
   const response = await fetch(
     SUPABASE_URL +
@@ -1544,7 +1638,6 @@ async function loadWorlds() {
     }
   );
 
-
   if (!response.ok) {
 
     const errorText =
@@ -1555,19 +1648,15 @@ async function loadWorlds() {
 
     alert(
       "Supabaseエラー\n" +
-      "Status: " +
-      response.status +
-      "\n\n" +
-      errorText
+      "Status: " + response.status +
+      "\n\n" + errorText
     );
 
     return;
   }
 
-
   const data =
     await response.json();
-
 
   if (data.length === 0) {
 
@@ -1587,7 +1676,7 @@ async function loadWorlds() {
     return;
   }
 
-worldList.innerHTML =
+  worldList.innerHTML =
     data.map(world => {
 
       return `
@@ -1629,7 +1718,6 @@ worldList.innerHTML =
       `;
 
     }).join("");
-  
 }
 
 
@@ -1667,14 +1755,12 @@ async function createWorld() {
       "worldDescription"
     ).value.trim();
 
-
   if (!name) {
 
     alert("World名を入力してください。");
 
     return;
   }
-
 
   const response = await fetch(
     SUPABASE_URL + "/rest/v1/worlds",
@@ -1702,7 +1788,6 @@ async function createWorld() {
     }
   );
 
-
   if (!response.ok) {
 
     const errorText =
@@ -1719,7 +1804,6 @@ async function createWorld() {
     return;
   }
 
-
   document.getElementById(
     "worldName"
   ).value = "";
@@ -1728,11 +1812,9 @@ async function createWorld() {
     "worldDescription"
   ).value = "";
 
-
   document.getElementById(
     "createWorldSection"
   ).style.display = "none";
-
 
   await loadWorlds();
 
@@ -1741,7 +1823,6 @@ async function createWorld() {
   ).scrollIntoView({
     behavior: "smooth"
   });
-
 }
 
 
@@ -1754,6 +1835,7 @@ function escapeHtml(value) {
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
 }
+
 
 function openWorld(worldId) {
 
@@ -1778,10 +1860,10 @@ function openWorld(worldId) {
   worldPage.scrollIntoView({
     behavior: "smooth"
   });
-
 }
 
-  async function loadWorldDetail(worldId) {
+
+async function loadWorldDetail(worldId) {
 
   const response = await fetch(
     SUPABASE_URL +
@@ -1834,10 +1916,9 @@ function openWorld(worldId) {
     "worldPageDescription"
   ).textContent =
     world.discription || "説明なし";
-
 }
-  
+
 </script>
-  
+
 </body>
 </html>
