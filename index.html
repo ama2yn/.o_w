@@ -1397,11 +1397,21 @@ async function editCharacter() {
   async function saveCharacterEdit() {
   const characterId = window.currentCharacterId;
 
-alert("編集内容を取得します");
-    
-const updates = {
-  name: document.getElementById("editCharacterName").value.trim()
-};
+  const updates = {
+    name: document.getElementById("editCharacterName").value.trim(),
+    reading: document.getElementById("editCharacterReading").value.trim() || null,
+    gender: document.getElementById("editCharacterGender").value.trim() || null,
+    age: document.getElementById("editCharacterAge").value.trim() || null,
+    birthday: document.getElementById("editCharacterBirthday").value.trim() || null,
+    height: document.getElementById("editCharacterHeight").value.trim() || null,
+    weight: document.getElementById("editCharacterWeight").value.trim() || null,
+    personality: document.getElementById("editCharacterPersonality").value.trim() || null,
+    "first-person": document.getElementById("editCharacterFirstPerson").value.trim() || null,
+    "second-person": document.getElementById("editCharacterSecondPerson").value.trim() || null,
+    likes: document.getElementById("editCharacterLikes").value.trim() || null,
+    dislikes: document.getElementById("editCharacterDislikes").value.trim() || null,
+    description: document.getElementById("editCharacterDescription").value.trim() || null
+  };
 
   if (!updates.name) {
     alert("名前を入力してください。");
@@ -1415,8 +1425,8 @@ const updates = {
     {
       method: "PATCH",
       headers: {
-        "apikey": SUPABASE_KEY,
-        "Authorization": "Bearer " + SUPABASE_KEY,
+        "apikey": SUPABASE_PUBLISHABLE_KEY,
+        "Authorization": "Bearer " + SUPABASE_PUBLISHABLE_KEY,
         "Content-Type": "application/json",
         "Prefer": "return=minimal"
       },
@@ -1426,12 +1436,20 @@ const updates = {
 
   if (!response.ok) {
     const errorText = await response.text();
-    console.error(errorText);
-    alert("保存に失敗しました。");
+
+    alert(
+      "保存に失敗しました。\n\n" +
+      "Status: " +
+      response.status +
+      "\n\n" +
+      errorText
+    );
+
     return;
   }
 
   alert("保存しました。");
+
   openCharacter(characterId);
 }
 
