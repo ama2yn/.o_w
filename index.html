@@ -725,6 +725,62 @@ function openWorld(worldId) {
   });
 
 }
+
+  async function loadWorldDetail(worldId) {
+
+  const response = await fetch(
+    SUPABASE_URL +
+    "/rest/v1/worlds?id=eq." +
+    encodeURIComponent(worldId) +
+    "&select=id,name,discription",
+    {
+      headers: {
+        "apikey": SUPABASE_PUBLISHABLE_KEY,
+        "Authorization":
+          "Bearer " + SUPABASE_PUBLISHABLE_KEY
+      }
+    }
+  );
+
+  if (!response.ok) {
+
+    const errorText =
+      await response.text();
+
+    alert(
+      "Worldの読み込みに失敗しました。\n\n" +
+      "Status: " +
+      response.status +
+      "\n\n" +
+      errorText
+    );
+
+    return;
+  }
+
+  const data =
+    await response.json();
+
+  if (data.length === 0) {
+
+    alert("Worldが見つかりませんでした。");
+
+    return;
+  }
+
+  const world = data[0];
+
+  document.getElementById(
+    "worldPageTitle"
+  ).textContent =
+    "🌙 " + world.name;
+
+  document.getElementById(
+    "worldPageDescription"
+  ).textContent =
+    world.discription || "説明なし";
+
+}
   
 </script>
   
