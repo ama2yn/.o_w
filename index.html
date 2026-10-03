@@ -1395,7 +1395,8 @@ async function editCharacter() {
 }
 
   async function saveCharacterEdit() {
-  alert("SAVEが押されました");
+  console.log("SAVE開始");
+    console.log("characterId:", characterId);
   const characterId = window.currentCharacterId;
 
   const updates = {
