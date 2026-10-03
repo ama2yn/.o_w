@@ -1397,6 +1397,8 @@ async function editCharacter() {
   async function saveCharacterEdit() {
   const characterId = window.currentCharacterId;
 
+alert("編集内容を取得します");
+    
 const updates = {
   name: document.getElementById("editCharacterName").value.trim(),
   reading: document.getElementById("editCharacterReading").value.trim() || null,
