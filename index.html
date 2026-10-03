@@ -1344,6 +1344,65 @@ async function editCharacter() {
     </div>
     `;
 
+  Object.entries(customFields).forEach(
+  ([key, field]) => {
+
+    if (
+      key === "first_person" ||
+      key === "second_person"
+    ) {
+      return;
+    }
+
+    if (
+      !field ||
+      typeof field !== "object" ||
+      !field.label
+    ) {
+      return;
+    }
+
+    const container =
+      document.getElementById(
+        "customFieldsContainer"
+      );
+
+    if (!container) {
+      return;
+    }
+
+    const customField =
+      document.createElement("div");
+
+    customField.className =
+      "custom-field";
+
+    customField.innerHTML = `
+      <input
+        type="text"
+        value="${escapeHtml(field.label)}"
+        class="custom-field-name"
+      >
+
+      <input
+        type="text"
+        value="${escapeHtml(field.value || "")}"
+        class="custom-field-value"
+      >
+
+      <button
+        type="button"
+        onclick="this.parentElement.remove()"
+      >
+        ×
+      </button>
+    `;
+
+    container.appendChild(customField);
+
+  }
+);
+
   setupAutoResize();
 }
 
