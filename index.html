@@ -570,6 +570,103 @@ function hideCreateCharacter() {
   ).style.display = "none";
 
 }
+
+async function createCharacter() {
+
+  const name =
+    document.getElementById(
+      "characterName"
+    ).value.trim();
+
+  const reading =
+    document.getElementById(
+      "characterReading"
+    ).value.trim();
+
+  const gender =
+    document.getElementById(
+      "characterGender"
+    ).value.trim();
+
+  const age =
+    document.getElementById(
+      "characterAge"
+    ).value.trim();
+
+  if (!name) {
+    alert("名前を入力してください。");
+    return;
+  }
+
+  const response = await fetch(
+    SUPABASE_URL + "/rest/v1/characters",
+    {
+      method: "POST",
+
+      headers: {
+        "apikey": SUPABASE_PUBLISHABLE_KEY,
+        "Authorization":
+          "Bearer " + SUPABASE_PUBLISHABLE_KEY,
+        "Content-Type":
+          "application/json",
+        "Prefer":
+          "return=representation"
+      },
+
+      body: JSON.stringify({
+        name: name,
+        reading: reading || null,
+        gender: gender || null,
+        age: age || null
+      })
+    }
+  );
+
+  if (!response.ok) {
+
+    const errorText =
+      await response.text();
+
+    alert(
+      "Characterの作成に失敗しました。\n\n" +
+      "Status: " +
+      response.status +
+      "\n\n" +
+      errorText
+    );
+
+    return;
+  }
+
+  document.getElementById(
+    "characterName"
+  ).value = "";
+
+  document.getElementById(
+    "characterReading"
+  ).value = "";
+
+  document.getElementById(
+    "characterGender"
+  ).value = "";
+
+  document.getElementById(
+    "characterAge"
+  ).value = "";
+
+  document.getElementById(
+    "createCharacterSection"
+  ).style.display = "none";
+
+  await loadCharacters();
+
+  document.getElementById(
+    "characterSection"
+  ).scrollIntoView({
+    behavior: "smooth"
+  });
+
+}
   
   async function loadCharacters() {
 
