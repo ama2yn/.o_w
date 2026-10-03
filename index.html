@@ -1538,65 +1538,216 @@ const profileFields = [
   </div>
 </div>
 
-    <label>体重</label>
+    <div
+  class="profile-item"
+  data-profile-key="weight"
+>
+  <label>体重</label>
 
-    <input
-      id="editCharacterWeight"
-      value="${escapeHtml(character.weight || "")}"
-      placeholder="例：52kg"
-      class="profile-field"
+  <input
+    id="editCharacterWeight"
+    value="${escapeHtml(character.weight || "")}"
+    placeholder="例：52kg"
+    class="profile-field"
+  >
+
+  <div style="margin-top:6px;">
+    <button
+      type="button"
+      onclick="moveProfileFieldByKey('weight', -1)"
     >
+      ↑
+    </button>
 
-    <label>性格</label>
-
-    <textarea
-      id="editCharacterPersonality"
-      class="profile-field"
-    >${escapeHtml(character.personality || "")}</textarea>
-
-    <label>一人称</label>
-
-    <input
-      id="editCharacterFirstPerson"
-      value="${escapeHtml(firstPerson)}"
-      class="profile-field"
+    <button
+      type="button"
+      onclick="moveProfileFieldByKey('weight', 1)"
     >
+      ↓
+    </button>
+  </div>
+</div>
 
-    <label>二人称</label>
+ <div
+  class="profile-item"
+  data-profile-key="personality"
+>
+  <label>性格</label>
 
-    <input
-      id="editCharacterSecondPerson"
-      value="${escapeHtml(secondPerson)}"
-      class="profile-field"
+  <textarea
+    id="editCharacterPersonality"
+    class="profile-field"
+  >${escapeHtml(character.personality || "")}</textarea>
+
+  <div style="margin-top:6px;">
+    <button
+      type="button"
+      onclick="moveProfileFieldByKey('personality', -1)"
     >
+      ↑
+    </button>
 
-    <label>好き</label>
+    <button
+      type="button"
+      onclick="moveProfileFieldByKey('personality', 1)"
+    >
+      ↓
+    </button>
+  </div>
+</div>
 
-    <textarea
-      id="editCharacterLikes"
-      class="profile-field"
-    >${escapeHtml(character.likes || "")}</textarea>
+<div
+  class="profile-item"
+  data-profile-key="first_person"
+>
+  <label>一人称</label>
 
-    <label>嫌い</label>
+  <input
+    id="editCharacterFirstPerson"
+    value="${escapeHtml(firstPerson)}"
+    class="profile-field"
+  >
 
-    <textarea
-      id="editCharacterDislikes"
-      class="profile-field"
-    >${escapeHtml(character.dislikes || "")}</textarea>
+  <div style="margin-top:6px;">
+    <button
+      type="button"
+      onclick="moveProfileFieldByKey('first_person', -1)"
+    >
+      ↑
+    </button>
 
-    <label>自由記入</label>
+    <button
+      type="button"
+      onclick="moveProfileFieldByKey('first_person', 1)"
+    >
+      ↓
+    </button>
+  </div>
+</div>
 
-    <textarea
-      id="editCharacterDescription"
-      class="profile-field"
-    >${escapeHtml(character.description || "")}</textarea>
+<div
+  class="profile-item"
+  data-profile-key="second_person"
+>
+  <label>二人称</label>
 
-    <div style="text-align:center; margin-top:25px;">
-   
-     <div id="customFieldsContainer"></div>
-     <button type="button" onclick="addCustomField()">
-  ＋ 項目を追加
-</button>
+  <input
+    id="editCharacterSecondPerson"
+    value="${escapeHtml(secondPerson)}"
+    class="profile-field"
+  >
+
+  <div style="margin-top:6px;">
+    <button
+      type="button"
+      onclick="moveProfileFieldByKey('second_person', -1)"
+    >
+      ↑
+    </button>
+
+    <button
+      type="button"
+      onclick="moveProfileFieldByKey('second_person', 1)"
+    >
+      ↓
+    </button>
+  </div>
+</div>
+
+<div
+  class="profile-item"
+  data-profile-key="likes"
+>
+  <label>好き</label>
+
+  <textarea
+    id="editCharacterLikes"
+    class="profile-field"
+  >${escapeHtml(character.likes || "")}</textarea>
+
+  <div style="margin-top:6px;">
+    <button
+      type="button"
+      onclick="moveProfileFieldByKey('likes', -1)"
+    >
+      ↑
+    </button>
+
+    <button
+      type="button"
+      onclick="moveProfileFieldByKey('likes', 1)"
+    >
+      ↓
+    </button>
+  </div>
+</div>
+
+<div
+  class="profile-item"
+  data-profile-key="dislikes"
+>
+  <label>嫌い</label>
+
+  <textarea
+    id="editCharacterDislikes"
+    class="profile-field"
+  >${escapeHtml(character.dislikes || "")}</textarea>
+
+  <div style="margin-top:6px;">
+    <button
+      type="button"
+      onclick="moveProfileFieldByKey('dislikes', -1)"
+    >
+      ↑
+    </button>
+
+    <button
+      type="button"
+      onclick="moveProfileFieldByKey('dislikes', 1)"
+    >
+      ↓
+    </button>
+  </div>
+</div>
+
+<div
+  class="profile-item"
+  data-profile-key="description"
+>
+  <label>自由記入</label>
+
+  <textarea
+    id="editCharacterDescription"
+    class="profile-field"
+  >${escapeHtml(character.description || "")}</textarea>
+
+  <div style="margin-top:6px;">
+    <button
+      type="button"
+      onclick="moveProfileFieldByKey('description', -1)"
+    >
+      ↑
+    </button>
+
+    <button
+      type="button"
+      onclick="moveProfileFieldByKey('description', 1)"
+    >
+      ↓
+    </button>
+  </div>
+</div>
+
+<div style="text-align:center; margin-top:25px;">
+
+  <div id="customFieldsContainer"></div>
+
+  <button
+    type="button"
+    onclick="addCustomField()"
+  >
+    ＋ 項目を追加
+  </button>
       
       <button onclick="saveCharacterEdit()">
         SAVE
