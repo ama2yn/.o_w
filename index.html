@@ -1206,89 +1206,7 @@ async function editCharacter() {
   const content =
     document.getElementById("characterPageContent");
 
-  const profileFields = [];
-
-  const fixedFieldDefinitions = [
-  ["birthday", "誕生日", "editCharacterBirthday"],
-  ["height", "身長", "editCharacterHeight"],
-  ["weight", "体重", "editCharacterWeight"],
-  ["personality", "性格", "editCharacterPersonality"],
-  ["first_person", "一人称", "editCharacterFirstPerson"],
-  ["second_person", "二人称", "editCharacterSecondPerson"],
-  ["likes", "好き", "editCharacterLikes"],
-  ["dislikes", "嫌い", "editCharacterDislikes"],
-  ["description", "自由記入", "editCharacterDescription"]
-];
-
-  fixedFieldDefinitions.forEach(
-  ([key, label, inputId]) => {
-
-    profileFields.push({
-      type: "fixed",
-      key: key,
-      label: label,
-      inputId: inputId
-    });
-
-  }
-);
-
-  const customFieldElements =
-  document.querySelectorAll(".custom-field");
-
-customFieldElements.forEach(
-  (field, index) => {
-
-    const nameInput =
-      field.querySelector(".custom-field-name");
-
-    const valueInput =
-      field.querySelector(".custom-field-value");
-
-    if (!nameInput || !valueInput) {
-      return;
-    }
-
-    profileFields.push({
-      type: "custom",
-      key: "custom_" + index,
-      label: nameInput.value.trim(),
-      fieldElement: field
-    });
-
-  }
-);
-
-  function moveProfileField(index, direction) {
-
-  const target =
-    profileFields[index];
-
-  if (!target) {
-    return;
-  }
-
-  const newIndex =
-    index + direction;
-
-  if (
-    newIndex < 0 ||
-    newIndex >= profileFields.length
-  ) {
-    return;
-  }
-
-  const temp =
-    profileFields[index];
-
-  profileFields[index] =
-    profileFields[newIndex];
-
-  profileFields[newIndex] =
-    temp;
-
-  renderProfileFields();
-}
+  
 
   function renderProfileFields() {
 
@@ -1335,6 +1253,121 @@ customFieldElements.forEach(
   content.innerHTML =
     "<p>編集画面を読み込んでいます……</p>";
 
+const profileFields = [
+  {
+    key: "birthday",
+    label: "誕生日",
+    inputId: "editCharacterBirthday"
+  },
+  {
+    key: "height",
+    label: "身長",
+    inputId: "editCharacterHeight"
+  },
+  {
+    key: "weight",
+    label: "体重",
+    inputId: "editCharacterWeight"
+  },
+  {
+    key: "personality",
+    label: "性格",
+    inputId: "editCharacterPersonality"
+  },
+  {
+    key: "first_person",
+    label: "一人称",
+    inputId: "editCharacterFirstPerson"
+  },
+  {
+    key: "second_person",
+    label: "二人称",
+    inputId: "editCharacterSecondPerson"
+  },
+  {
+    key: "likes",
+    label: "好き",
+    inputId: "editCharacterLikes"
+  },
+  {
+    key: "dislikes",
+    label: "嫌い",
+    inputId: "editCharacterDislikes"
+  },
+  {
+    key: "description",
+    label: "自由記入",
+    inputId: "editCharacterDescription"
+  }
+];
+
+  const profileOrder =
+  profileFields.map(field => field.key);
+
+  function moveProfileFieldByKey(key, direction) {
+
+  const index =
+    profileOrder.indexOf(key);
+
+  if (index === -1) {
+    return;
+  }
+
+  const newIndex =
+    index + direction;
+
+  if (
+    newIndex < 0 ||
+    newIndex >= profileOrder.length
+  ) {
+    return;
+  }
+
+  const temp =
+    profileOrder[index];
+
+  profileOrder[index] =
+    profileOrder[newIndex];
+
+  profileOrder[newIndex] =
+    temp;
+
+  renderProfileFields();
+}
+
+  function renderProfileFields() {
+
+  const container =
+    document.getElementById("profileFieldsContainer");
+
+  if (!container) {
+    return;
+  }
+
+  const elements = {};
+
+  profileFields.forEach(field => {
+    const element =
+      document.getElementById(field.inputId);
+
+    if (element) {
+      elements[field.key] =
+        element.closest(".profile-item");
+    }
+  });
+
+  profileOrder.forEach(key => {
+
+    const item =
+      elements[key];
+
+    if (item) {
+      container.appendChild(item);
+    }
+
+  });
+}
+  
   const response = await fetch(
     SUPABASE_URL +
     "/rest/v1/characters?id=eq." +
