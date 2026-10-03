@@ -482,6 +482,128 @@ async function showCharacters() {
 
 }
 
+  async function loadCharacters() {
+
+  const characterList =
+    document.getElementById("characterList");
+
+  characterList.innerHTML =
+    "<p>Characterを読み込んでいます……</p>";
+
+  const response = await fetch(
+    SUPABASE_URL +
+    "/rest/v1/characters?select=id,name,reading,gender,age,main_image,created_at&order=created_at.asc",
+    {
+      headers: {
+        "apikey": SUPABASE_PUBLISHABLE_KEY,
+        "Authorization":
+          "Bearer " + SUPABASE_PUBLISHABLE_KEY
+      }
+    }
+  );
+
+  if (!response.ok) {
+
+    const errorText =
+      await response.text();
+
+    characterList.innerHTML =
+      "<p>読み込みに失敗しました。</p>";
+
+    alert(
+      "Supabaseエラー\n" +
+      "Status: " + response.status + "\n\n" +
+      errorText
+    );
+
+    return;
+  }
+
+  const data =
+    await response.json();
+
+  if (data.length === 0) {
+
+    characterList.innerHTML =
+      `
+      <div style="
+        text-align:center;
+        padding:30px 10px;
+        color:#d9cfea;
+      ">
+        ✧ まだCharacterがいません ✧
+        <br><br>
+        最初のCharacterを作ってみよう。
+      </div>
+      `;
+
+    return;
+  }
+
+  characterList.innerHTML =
+    data.map(character => {
+
+      return `
+        <div
+          style="
+            margin-top:15px;
+            padding:20px;
+            border-radius:20px;
+            background:rgba(255,255,255,.08);
+            border:1px solid rgba(255,255,255,.15);
+          "
+        >
+
+          ${
+            character.main_image
+              ? `
+                <img
+                  src="${escapeHtml(character.main_image)}"
+                  style="
+                    width:100%;
+                    max-height:280px;
+                    object-fit:cover;
+                    border-radius:16px;
+                    margin-bottom:15px;
+                  "
+                >
+              `
+              : ""
+          }
+
+          <h3 style="margin:0 0 8px;">
+            🪽 ${escapeHtml(character.name)}
+          </h3>
+
+          ${
+            character.reading
+              ? `
+                <p style="margin:0;">
+                  ${escapeHtml(character.reading)}
+                </p>
+              `
+              : ""
+          }
+
+          <p style="
+            margin:10px 0 0;
+            color:#d9cfea;
+          ">
+            ${escapeHtml(character.gender || "")}
+            ${
+              character.age
+                ? " / " + escapeHtml(character.age)
+                : ""
+            }
+          </p>
+
+        </div>
+      `;
+
+    }).join("");
+
+}
+  
 async function showWorlds() {
 
   const worldSection =
