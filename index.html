@@ -448,6 +448,18 @@ const SUPABASE_URL =
 const SUPABASE_PUBLISHABLE_KEY =
   "sb_publishable_UywVZUnkN4lmElV10n3WWw_HAMxw3q8";
 
+  function showCharacters() {
+
+  const characterSection =
+    document.getElementById("characterSection");
+
+  characterSection.style.display = "block";
+
+  characterSection.scrollIntoView({
+    behavior: "smooth"
+  });
+
+}
 
 async function showWorlds() {
 
