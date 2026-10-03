@@ -649,6 +649,49 @@ async function createCharacter() {
     "characterImage"
   ).files[0];
 
+  let imageUrl = null;
+
+if (imageFile) {
+
+  const fileName =
+    crypto.randomUUID() + "-" + imageFile.name;
+
+  const uploadResponse = await fetch(
+    SUPABASE_URL +
+    "/storage/v1/object/character-images/" +
+    fileName,
+    {
+      method: "POST",
+      headers: {
+        "apikey": SUPABASE_PUBLISHABLE_KEY,
+        "Authorization":
+          "Bearer " + SUPABASE_PUBLISHABLE_KEY,
+        "Content-Type":
+          imageFile.type
+      },
+      body: imageFile
+    }
+  );
+
+  if (!uploadResponse.ok) {
+
+    const errorText =
+      await uploadResponse.text();
+
+    alert(
+      "画像のアップロードに失敗しました。\n\n" +
+      errorText
+    );
+
+    return;
+  }
+
+  imageUrl =
+    SUPABASE_URL +
+    "/storage/v1/object/public/character-images/" +
+    fileName;
+}
+
   if (!name) {
     alert("名前を入力してください。");
     return;
