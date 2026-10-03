@@ -298,6 +298,74 @@ footer {
   </div>
 
 </section>
+
+<section class="world" id="createCharacterSection" style="display:none;">
+
+  <div class="world-title">
+    <h2>✦ CREATE CHARACTER</h2>
+  </div>
+
+  <div style="margin-top:20px;">
+
+    <label>名前</label>
+    <input
+      id="characterName"
+      type="text"
+      placeholder="例：椿"
+      style="width:100%; margin-top:8px; padding:13px; border-radius:14px; border:none;"
+    >
+
+    <label style="display:block; margin-top:18px;">
+      読み
+    </label>
+
+    <input
+      id="characterReading"
+      type="text"
+      placeholder="例：つばき"
+      style="width:100%; margin-top:8px; padding:13px; border-radius:14px; border:none;"
+    >
+
+    <label style="display:block; margin-top:18px;">
+      性別
+    </label>
+
+    <input
+      id="characterGender"
+      type="text"
+      placeholder="例：女性"
+      style="width:100%; margin-top:8px; padding:13px; border-radius:14px; border:none;"
+    >
+
+    <label style="display:block; margin-top:18px;">
+      年齢
+    </label>
+
+    <input
+      id="characterAge"
+      type="text"
+      placeholder="例：17"
+      style="width:100%; margin-top:8px; padding:13px; border-radius:14px; border:none;"
+    >
+
+    <div style="margin-top:20px; display:flex; gap:10px; justify-content:center;">
+
+      <button onclick="createCharacter()">
+        CREATE ✦
+      </button>
+
+      <button
+        onclick="hideCreateCharacter()"
+        style="background:rgba(255,255,255,.15); color:white;"
+      >
+        CANCEL
+      </button>
+
+    </div>
+
+  </div>
+
+</section>
   
 <section class="world" id="worldSection" style="display:none;">
 
