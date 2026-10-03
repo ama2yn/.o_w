@@ -967,6 +967,7 @@ function backToCharacters() {
 
 }
   
+  
 async function showWorlds() {
 
   const worldSection =
@@ -985,6 +986,20 @@ async function showWorlds() {
   await loadWorlds();
 }
 
+function backToHome() {
+
+  document.getElementById("characterSection").style.display = "none";
+  document.getElementById("createCharacterSection").style.display = "none";
+  document.getElementById("characterPage").style.display = "none";
+
+  document.querySelector("main").style.display = "block";
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+
+}
 
 async function loadWorlds() {
 
