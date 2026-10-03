@@ -325,7 +325,7 @@ function gacha() {
 }
 
 const SUPABASE_URL = "https://scdtamllafamkacrpmvr.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "ここは今使っているPublishable Keyをそのまま残す";
+const SUPABASE_PUBLISHABLE_KEY = "今入っているPublishable Keyをそのまま残す";
 
 async function showWorlds() {
   const response = await fetch(
@@ -340,80 +340,23 @@ async function showWorlds() {
 
   if (!response.ok) {
     const errorText = await response.text();
+
     alert(
       "Supabaseエラー\n" +
       "Status: " + response.status + "\n\n" +
       errorText
     );
+
     return;
   }
 
   const data = await response.json();
 
-  let message = "✦ WORLDS ✦\n\n";
-
-  data.forEach((world, index) => {
-    message +=
-      "【" + (index + 1) + "】 " +
-      world.name +
-      "\n" +
-      (world.discription || "") +
-      "\n\n";
-  });
-
-  message += "＋ 新しいWorldを登録";
-
-  const choice = prompt(
-    message +
-    "\n\n新しいWorldを登録する場合は「＋」と入力してください。"
+  alert(
+    data.map(world =>
+      world.name + "\n" + world.discription
+    ).join("\n\n")
   );
-
-  if (choice === "＋" || choice === "+") {
-    createWorld();
-  }
-}
-
-async function createWorld() {
-  const name = prompt("World名を入力してください。");
-
-  if (!name) return;
-
-  const discription = prompt("Worldの説明を入力してください。");
-
-  if (discription === null) return;
-
-  const response = await fetch(
-    SUPABASE_URL + "/rest/v1/worlds",
-    {
-      method: "POST",
-      headers: {
-        "apikey": SUPABASE_PUBLISHABLE_KEY,
-        "Authorization": "Bearer " + SUPABASE_PUBLISHABLE_KEY,
-        "Content-Type": "application/json",
-        "Prefer": "return=minimal"
-      },
-      body: JSON.stringify({
-        name: name,
-        discription: discription
-      })
-    }
-  );
-
-  if (!response.ok) {
-    const errorText = await response.text();
-
-    alert(
-      "Worldの登録に失敗しました。\n\n" +
-      "Status: " + response.status +
-      "\n\n" +
-      errorText
-    );
-
-    return;
-  }
-
-  alert("✦ Worldを登録しました ✦");
-  showWorlds();
 }
 </script>
   
