@@ -1002,6 +1002,16 @@ async function showWorlds() {
 
 function backToHome() {
 
+  const characterSection =
+    document.getElementById("characterSection");
+
+  const parent =
+    characterSection.parentElement;
+
+  Array.from(parent.children).forEach(element => {
+    element.style.display = "";
+  });
+
   document.getElementById("characterSection").style.display = "none";
   document.getElementById("createCharacterSection").style.display = "none";
   document.getElementById("characterPage").style.display = "none";
