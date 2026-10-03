@@ -1381,9 +1381,7 @@ async function saveCharacterEdit() {
     ).value.trim();
 
   if (!name) {
-
     alert("名前を入力してください。");
-
     return;
   }
 
@@ -1428,12 +1426,16 @@ async function saveCharacterEdit() {
       currentData[0].custom_fields;
 
     try {
+
       existingCustomFields =
         typeof stored === "string"
           ? JSON.parse(stored || "{}")
           : (stored || {});
+
     } catch {
+
       existingCustomFields = {};
+
     }
   }
 
@@ -1452,6 +1454,50 @@ async function saveCharacterEdit() {
 
   existingCustomFields.second_person =
     secondPerson;
+
+
+  const customFieldElements =
+    Array.from(
+      document.querySelectorAll(".custom-field")
+    );
+
+  customFieldElements.forEach(
+    (field, index) => {
+
+      const nameInput =
+        field.querySelector(
+          ".custom-field-name"
+        );
+
+      const valueInput =
+        field.querySelector(
+          ".custom-field-value"
+        );
+
+      if (!nameInput || !valueInput) {
+        return;
+      }
+
+      const fieldName =
+        nameInput.value.trim();
+
+      const fieldValue =
+        valueInput.value.trim();
+
+      if (!fieldName) {
+        return;
+      }
+
+      existingCustomFields[
+        "custom_" + index
+      ] = {
+        label: fieldName,
+        value: fieldValue
+      };
+
+    }
+  );
+
 
   const updates = {
 
@@ -1509,7 +1555,9 @@ async function saveCharacterEdit() {
 
     custom_fields:
       existingCustomFields
+
   };
+
 
   const response = await fetch(
     SUPABASE_URL +
@@ -1533,6 +1581,7 @@ async function saveCharacterEdit() {
     }
   );
 
+
   if (!response.ok) {
 
     const errorText =
@@ -1549,19 +1598,31 @@ async function saveCharacterEdit() {
     return;
   }
 
+
   alert("保存しました。");
 
   await openCharacter(characterId);
 }
 
-  function addCustomField() {
-  const container = document.getElementById("customFieldsContainer");
 
-  if (!container) return;
+function addCustomField() {
 
-  const field = document.createElement("div");
+  const container =
+    document.getElementById(
+      "customFieldsContainer"
+    );
 
-  field.className = "custom-field";
+  if (!container) {
+    return;
+  }
+
+
+  const field =
+    document.createElement("div");
+
+  field.className =
+    "custom-field";
+
 
   field.innerHTML = `
     <input
@@ -1583,6 +1644,7 @@ async function saveCharacterEdit() {
       ×
     </button>
   `;
+
 
   container.appendChild(field);
 }
