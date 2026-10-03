@@ -564,7 +564,21 @@ async function showCharacters() {
   const characterSection =
     document.getElementById("characterSection");
 
-  characterSection.style.display = "block";
+  const createCharacterSection =
+    document.getElementById("createCharacterSection");
+
+  const characterPage =
+    document.getElementById("characterPage");
+
+  Array.from(characterSection.parentElement.children).forEach(
+    element => {
+      element.style.display =
+        element === characterSection ? "block" : "none";
+    }
+  );
+
+  createCharacterSection.style.display = "none";
+  characterPage.style.display = "none";
 
   characterSection.scrollIntoView({
     behavior: "smooth"
@@ -573,7 +587,7 @@ async function showCharacters() {
   await loadCharacters();
 
 }
-
+  
 function showCreateCharacter() {
 
   const createSection =
