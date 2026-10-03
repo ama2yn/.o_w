@@ -1742,6 +1742,20 @@ function addCustomField() {
       class="custom-field-value"
     >
 
+        <button
+      type="button"
+      onclick="moveCustomField(this, -1)"
+    >
+      ↑
+    </button>
+
+    <button
+      type="button"
+      onclick="moveCustomField(this, 1)"
+    >
+      ↓
+    </button>
+
     <button
       type="button"
       onclick="this.parentElement.remove()"
