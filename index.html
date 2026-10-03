@@ -654,7 +654,7 @@ async function createCharacter() {
 if (imageFile) {
 
   const fileName =
-    crypto.randomUUID() + "-" + imageFile.name;
+  crypto.randomUUID() + ".jpg";
 
   const uploadResponse = await fetch(
     SUPABASE_URL +
