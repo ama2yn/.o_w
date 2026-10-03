@@ -1264,6 +1264,8 @@ const profileFields = [
   const profileOrder =
   profileFields.map(field => field.key);
 
+  
+
     function moveProfileFieldByKey(key, direction) {
 
   const index =
@@ -1295,60 +1297,9 @@ const profileFields = [
   renderProfileFields();
 }
 
-  function moveProfileFieldByKey(key, direction) {
+  
 
-  const index =
-    profileOrder.indexOf(key);
-
-  if (index === -1) {
-    return;
-  }
-
-  const newIndex =
-    index + direction;
-
-  if (
-    newIndex < 0 ||
-    newIndex >= profileOrder.length
-  ) {
-    return;
-  }
-
-  const temp =
-    profileOrder[index];
-
-  profileOrder[index] =
-    profileOrder[newIndex];
-
-  profileOrder[newIndex] =
-    temp;
-
-  renderProfileFields();
-}
-
-  function renderProfileFields() {
-
-  const container =
-    document.getElementById("profileFieldsContainer");
-
-  if (!container) {
-    return;
-  }
-
-  profileOrder.forEach(key => {
-
-    const item =
-      document.querySelector(
-        `.profile-item[data-profile-key="${key}"]`
-      );
-
-    if (item) {
-      container.appendChild(item);
-    }
-
-  });
-
-}
+  
 
   function renderProfileFields() {
 
@@ -1775,6 +1726,8 @@ const profileFields = [
       </button>
     </div>
     `;
+
+    renderProfileFields();
 
   Object.entries(customFields).forEach(
   ([key, field]) => {
