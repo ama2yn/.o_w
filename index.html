@@ -1762,26 +1762,50 @@ const profileFields = [
     customField.className =
       "custom-field";
 
-    customField.innerHTML = `
-      <input
-        type="text"
-        value="${escapeHtml(field.label)}"
-        class="custom-field-name"
-      >
+    customField.className =
+  "profile-item custom-field";
 
-      <input
-        type="text"
-        value="${escapeHtml(field.value || "")}"
-        class="custom-field-value"
-      >
+customField.dataset.profileKey =
+  key;
 
-      <button
-        type="button"
-        onclick="this.parentElement.remove()"
-      >
-        ×
-      </button>
-    `;
+customField.innerHTML = `
+  <input
+    type="text"
+    value="${escapeHtml(field.label)}"
+    class="custom-field-name profile-field"
+  >
+
+  <input
+    type="text"
+    value="${escapeHtml(field.value || "")}"
+    class="custom-field-value profile-field"
+  >
+
+  <div style="margin-top:6px;">
+
+    <button
+      type="button"
+      onclick="moveProfileFieldByKey('${key}', -1)"
+    >
+      ↑
+    </button>
+
+    <button
+      type="button"
+      onclick="moveProfileFieldByKey('${key}', 1)"
+    >
+      ↓
+    </button>
+
+    <button
+      type="button"
+      onclick="this.closest('.profile-item').remove()"
+    >
+      ×
+    </button>
+
+  </div>
+`;
 
     container.appendChild(customField);
 
@@ -2065,59 +2089,85 @@ async function saveCharacterEdit() {
 function addCustomField() {
 
   const container =
-    document.getElementById(
-      "customFieldsContainer"
-    );
+    document.getElementById("profileFieldsContainer");
 
   if (!container) {
     return;
   }
 
+  const order =
+    window.currentProfileOrder || [];
+
+  const customIndex =
+    order.filter(key =>
+      key.startsWith("custom_")
+    ).length;
+
+  const key =
+    "custom_" + Date.now();
+
+  order.push(key);
+
+  window.currentProfileOrder =
+    order;
 
   const field =
     document.createElement("div");
 
   field.className =
-    "custom-field";
+    "profile-item custom-field";
 
+  field.dataset.profileKey =
+    key;
 
   field.innerHTML = `
     <input
       type="text"
       placeholder="項目名"
-      class="custom-field-name"
+      class="custom-field-name profile-field"
     >
 
     <input
       type="text"
       placeholder="内容"
-      class="custom-field-value"
+      class="custom-field-value profile-field"
     >
 
-        <button
-      type="button"
-      onclick="moveCustomField(this, -1)"
-    >
-      ↑
-    </button>
+    <div style="margin-top:6px;">
 
-    <button
-      type="button"
-      onclick="moveCustomField(this, 1)"
-    >
-      ↓
-    </button>
+      <button
+        type="button"
+        onclick="moveProfileFieldByKey('${key}', -1)"
+      >
+        ↑
+      </button>
 
-    <button
-      type="button"
-      onclick="this.parentElement.remove()"
-    >
-      ×
-    </button>
+      <button
+        type="button"
+        onclick="moveProfileFieldByKey('${key}', 1)"
+      >
+        ↓
+      </button>
+
+      <button
+        type="button"
+        onclick="
+          this.closest('.profile-item').remove();
+          window.currentProfileOrder =
+            window.currentProfileOrder.filter(
+              item => item !== '${key}'
+            );
+        "
+      >
+        ×
+      </button>
+
+    </div>
   `;
 
-
   container.appendChild(field);
+
+  setupAutoResize();
 }
 
   function moveCustomField(button, direction) {
