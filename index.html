@@ -520,11 +520,7 @@ footer {
   <p>Characterを読み込んでいます……</p>
 </div>
 
-<div style="margin-top:25px; text-align:center;">
-  <button onclick="editCharacter()">
-    ✎ EDIT CHARACTER
-  </button>
-</div>
+
 
   <div style="margin-top:25px; text-align:center;">
     <button onclick="backToCharacters()">
@@ -1213,6 +1209,21 @@ content.innerHTML =
   }
   `;
 
+    const editButton =
+  document.createElement("div");
+
+editButton.style.cssText =
+  "margin-top:25px; text-align:center;";
+
+editButton.innerHTML =
+  `
+  <button onclick="editCharacter()">
+    ✎ EDIT CHARACTER
+  </button>
+  `;
+
+content.appendChild(editButton);
+    
 }
 
 async function editCharacter() {
