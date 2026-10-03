@@ -1010,6 +1010,35 @@ async function openCharacter(characterId) {
   const secondPerson =
     customFields.second_person || "";
 
+  let customFieldsHtml = "";
+
+  Object.entries(customFields).forEach(
+    ([key, field]) => {
+
+      if (
+        key === "first_person" ||
+        key === "second_person"
+      ) {
+        return;
+      }
+
+      if (
+        !field ||
+        typeof field !== "object" ||
+        !field.label
+      ) {
+        return;
+      }
+
+      customFieldsHtml += `
+        <p>
+          ${escapeHtml(field.label)}：
+          ${escapeHtml(field.value || "")}
+        </p>
+      `;
+    }
+  );
+  
   content.innerHTML =
   `
   ${
