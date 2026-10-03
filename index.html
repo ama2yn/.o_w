@@ -221,6 +221,28 @@ footer {
     align-items: flex-start;
     flex-direction: column;
   }
+
+  .profile-field {
+  box-sizing: border-box;
+  width: 100%;
+  margin-top: 8px;
+  margin-bottom: 15px;
+  padding: 12px 14px;
+  border: none;
+  border-radius: 14px;
+  font: inherit;
+  font-size: 15px;
+  line-height: 1.6;
+  background: rgba(255,255,255,0.92);
+  color: #2b173d;
+  resize: none;
+  overflow: hidden;
+}
+
+.profile-field:focus {
+  outline: 2px solid rgba(120, 80, 160, 0.25);
+}
+  
 }
 </style>
 </head>
@@ -390,27 +412,7 @@ footer {
   style="width:100%; margin-top:8px; padding:13px; border-radius:14px; border:none;"
 >
 
-<label style="display:block; margin-top:18px;">
-  種族
-</label>
 
-<input
-  id="characterSpecies"
-  type="text"
-  placeholder="例：人間"
-  style="width:100%; margin-top:8px; padding:13px; border-radius:14px; border:none;"
->
-
-<label style="display:block; margin-top:18px;">
-  所属
-</label>
-
-<input
-  id="characterAffiliation"
-  type="text"
-  placeholder="例：○○学園"
-  style="width:100%; margin-top:8px; padding:13px; border-radius:14px; border:none;"
->
 
 <label style="display:block; margin-top:18px;">
   性格
@@ -1281,28 +1283,28 @@ async function editCharacter() {
     <input
       id="editCharacterName"
       value="${escapeHtml(character.name || "")}"
-      style="width:100%; margin-bottom:15px;"
-    >
+      class="profile-field"
+     > 
 
     <label>読み</label>
     <input
       id="editCharacterReading"
       value="${escapeHtml(character.reading || "")}"
-      style="width:100%; margin-bottom:15px;"
-    >
+      class="profile-field"
+      >
 
     <label>性別</label>
     <input
       id="editCharacterGender"
       value="${escapeHtml(character.gender || "")}"
-      style="width:100%; margin-bottom:15px;"
+      class="profile-field"
     >
 
     <label>年齢</label>
     <input
       id="editCharacterAge"
       value="${escapeHtml(character.age || "")}"
-      style="width:100%; margin-bottom:15px;"
+      class="profile-field"
     >
 
     <hr style="
@@ -1318,7 +1320,7 @@ async function editCharacter() {
       id="editCharacterBirthday"
       value="${escapeHtml(character.birthday || "")}"
       placeholder="例：4月12日"
-      style="width:100%; margin-bottom:15px;"
+      class="profile-field"
     >
 
     <label>身長</label>
@@ -1326,7 +1328,7 @@ async function editCharacter() {
       id="editCharacterHeight"
       value="${escapeHtml(character.height || "")}"
       placeholder="例：165cm"
-      style="width:100%; margin-bottom:15px;"
+      class="profile-field"
     >
 
     <label>体重</label>
@@ -1334,61 +1336,47 @@ async function editCharacter() {
       id="editCharacterWeight"
       value="${escapeHtml(character.weight || "")}"
       placeholder="例：52kg"
-      style="width:100%; margin-bottom:15px;"
+      class="profile-field"
     >
 
-    <label>種族</label>
-    <input
-      id="editCharacterSpecies"
-      value="${escapeHtml(character.species || "")}"
-      placeholder="例：人間"
-      style="width:100%; margin-bottom:15px;"
-    >
-
-    <label>所属</label>
-    <input
-      id="editCharacterAffiliation"
-      value="${escapeHtml(character.affiliation || "")}"
-      placeholder="例：○○学園"
-      style="width:100%; margin-bottom:15px;"
-    >
+    
 
     <label>性格</label>
     <textarea
       id="editCharacterPersonality"
-      style="width:100%; min-height:100px; margin-bottom:15px;"
+      class="profile-field"
     >${escapeHtml(character.personality || "")}</textarea>
 
     <label>一人称</label>
     <input
       id="editCharacterFirstPerson"
       value="${escapeHtml(character["first-person"] || "")}"
-      style="width:100%; margin-bottom:15px;"
+      class="profile-field"
     >
 
     <label>二人称</label>
     <input
       id="editCharacterSecondPerson"
       value="${escapeHtml(character["second-person"] || "")}"
-      style="width:100%; margin-bottom:15px;"
+      class="profile-field"
     >
 
     <label>好き</label>
     <textarea
       id="editCharacterLikes"
-      style="width:100%; min-height:80px; margin-bottom:15px;"
+      class="profile-field"
     >${escapeHtml(character.likes || "")}</textarea>
 
     <label>嫌い</label>
     <textarea
       id="editCharacterDislikes"
-      style="width:100%; min-height:80px; margin-bottom:15px;"
+      class="profile-field"
     >${escapeHtml(character.dislikes || "")}</textarea>
 
     <label>自由記入</label>
     <textarea
       id="editCharacterDescription"
-      style="width:100%; min-height:140px; margin-bottom:20px;"
+      class="profile-field"
     >${escapeHtml(character.description || "")}</textarea>
 
     <div style="text-align:center; margin-top:25px;">
