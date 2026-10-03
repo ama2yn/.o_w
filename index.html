@@ -1208,47 +1208,7 @@ async function editCharacter() {
 
   
 
-  function renderProfileFields() {
 
-  profileFields.forEach(
-    (field, index) => {
-
-      if (field.type === "fixed") {
-
-        const element =
-          document.getElementById(field.inputId);
-
-        if (!element) {
-          return;
-        }
-
-        const wrapper =
-          element.closest("div");
-
-        if (!wrapper) {
-          return;
-        }
-
-        wrapper.dataset.profileIndex =
-          index;
-
-      }
-
-      if (field.type === "custom") {
-
-        if (!field.fieldElement) {
-          return;
-        }
-
-        field.fieldElement.dataset.profileIndex =
-          index;
-
-      }
-
-    }
-  );
-
-}
   
   content.innerHTML =
     "<p>編集画面を読み込んでいます……</p>";
@@ -1303,6 +1263,37 @@ const profileFields = [
 
   const profileOrder =
   profileFields.map(field => field.key);
+
+    function moveProfileFieldByKey(key, direction) {
+
+  const index =
+    profileOrder.indexOf(key);
+
+  if (index === -1) {
+    return;
+  }
+
+  const newIndex =
+    index + direction;
+
+  if (
+    newIndex < 0 ||
+    newIndex >= profileOrder.length
+  ) {
+    return;
+  }
+
+  const temp =
+    profileOrder[index];
+
+  profileOrder[index] =
+    profileOrder[newIndex];
+
+  profileOrder[newIndex] =
+    temp;
+
+  renderProfileFields();
+}
 
   function moveProfileFieldByKey(key, direction) {
 
