@@ -292,6 +292,12 @@ footer {
   </div>
 
   <div style="margin-top:25px; text-align:center;">
+  <button onclick="editCharacter()">
+    ✎ EDIT CHARACTER
+  </button>
+</div>
+
+  <div style="margin-top:25px; text-align:center;">
     <button onclick="showCreateCharacter()">
       ＋ NEW CHARACTER
     </button>
@@ -764,61 +770,6 @@ async function createCharacter() {
       "characterAge"
     ).value.trim();
 
-  const birthday =
-  document.getElementById(
-    "characterBirthday"
-  ).value.trim();
-
-const height =
-  document.getElementById(
-    "characterHeight"
-  ).value.trim();
-
-const weight =
-  document.getElementById(
-    "characterWeight"
-  ).value.trim();
-
-const species =
-  document.getElementById(
-    "characterSpecies"
-  ).value.trim();
-
-const affiliation =
-  document.getElementById(
-    "characterAffiliation"
-  ).value.trim();
-
-const personality =
-  document.getElementById(
-    "characterPersonality"
-  ).value.trim();
-
-const firstPerson =
-  document.getElementById(
-    "characterFirstPerson"
-  ).value.trim();
-
-const secondPerson =
-  document.getElementById(
-    "characterSecondPerson"
-  ).value.trim();
-
-const likes =
-  document.getElementById(
-    "characterLikes"
-  ).value.trim();
-
-const dislikes =
-  document.getElementById(
-    "characterDislikes"
-  ).value.trim();
-
-const description =
-  document.getElementById(
-    "characterDescription"
-  ).value.trim();
-
   const imageFile =
   document.getElementById(
     "characterImage"
@@ -892,17 +843,6 @@ if (imageFile) {
   reading: reading || null,
   gender: gender || null,
   age: age || null,
-  birthday: birthday || null,
-  height: height || null,
-  weight: weight || null,
-  species: species || null,
-  affiliation: affiliation || null,
-  personality: personality || null,
-  "first-person": firstPerson || null,
-  "second-person": secondPerson || null,
-  likes: likes || null,
-  dislikes: dislikes || null,
-  description: description || null,
   main_image: imageUrl
 })
     }
@@ -1079,7 +1019,8 @@ if (imageFile) {
 }
 
   async function openCharacter(characterId) {
-
+window.currentCharacterId = characterId;
+    
 const characterPage =
   document.getElementById("characterPage");
 
@@ -1265,6 +1206,190 @@ content.innerHTML =
       : ""
   }
   `;
+
+}
+
+async function editCharacter() {
+
+  const characterId =
+    window.currentCharacterId;
+
+  const content =
+    document.getElementById(
+      "characterPageContent"
+    );
+
+  content.innerHTML =
+    "<p>編集画面を読み込んでいます……</p>";
+
+  const response = await fetch(
+    SUPABASE_URL +
+    "/rest/v1/characters?id=eq." +
+    characterId +
+    "&select=*",
+    {
+      headers: {
+        "apikey": SUPABASE_PUBLISHABLE_KEY,
+        "Authorization":
+          "Bearer " + SUPABASE_PUBLISHABLE_KEY
+      }
+    }
+  );
+
+  if (!response.ok) {
+
+    content.innerHTML =
+      "<p>編集画面の読み込みに失敗しました。</p>";
+
+    return;
+  }
+
+  const data =
+    await response.json();
+
+  if (data.length === 0) {
+
+    content.innerHTML =
+      "<p>Characterが見つかりません。</p>";
+
+    return;
+  }
+
+  const character =
+    data[0];
+
+  content.innerHTML =
+    `
+    <h2 style="margin-bottom:25px;">
+      ✎ EDIT CHARACTER
+    </h2>
+
+    <label>名前</label>
+    <input
+      id="editCharacterName"
+      value="${escapeHtml(character.name || "")}"
+      style="width:100%; margin-bottom:15px;"
+    >
+
+    <label>読み</label>
+    <input
+      id="editCharacterReading"
+      value="${escapeHtml(character.reading || "")}"
+      style="width:100%; margin-bottom:15px;"
+    >
+
+    <label>性別</label>
+    <input
+      id="editCharacterGender"
+      value="${escapeHtml(character.gender || "")}"
+      style="width:100%; margin-bottom:15px;"
+    >
+
+    <label>年齢</label>
+    <input
+      id="editCharacterAge"
+      value="${escapeHtml(character.age || "")}"
+      style="width:100%; margin-bottom:15px;"
+    >
+
+    <hr style="
+      margin:25px 0;
+      border:0;
+      border-top:1px solid rgba(255,255,255,.15);
+    ">
+
+    <h3>PROFILE</h3>
+
+    <label>誕生日</label>
+    <input
+      id="editCharacterBirthday"
+      value="${escapeHtml(character.birthday || "")}"
+      placeholder="例：4月12日"
+      style="width:100%; margin-bottom:15px;"
+    >
+
+    <label>身長</label>
+    <input
+      id="editCharacterHeight"
+      value="${escapeHtml(character.height || "")}"
+      placeholder="例：165cm"
+      style="width:100%; margin-bottom:15px;"
+    >
+
+    <label>体重</label>
+    <input
+      id="editCharacterWeight"
+      value="${escapeHtml(character.weight || "")}"
+      placeholder="例：52kg"
+      style="width:100%; margin-bottom:15px;"
+    >
+
+    <label>種族</label>
+    <input
+      id="editCharacterSpecies"
+      value="${escapeHtml(character.species || "")}"
+      placeholder="例：人間"
+      style="width:100%; margin-bottom:15px;"
+    >
+
+    <label>所属</label>
+    <input
+      id="editCharacterAffiliation"
+      value="${escapeHtml(character.affiliation || "")}"
+      placeholder="例：○○学園"
+      style="width:100%; margin-bottom:15px;"
+    >
+
+    <label>性格</label>
+    <textarea
+      id="editCharacterPersonality"
+      style="width:100%; min-height:100px; margin-bottom:15px;"
+    >${escapeHtml(character.personality || "")}</textarea>
+
+    <label>一人称</label>
+    <input
+      id="editCharacterFirstPerson"
+      value="${escapeHtml(character["first-person"] || "")}"
+      style="width:100%; margin-bottom:15px;"
+    >
+
+    <label>二人称</label>
+    <input
+      id="editCharacterSecondPerson"
+      value="${escapeHtml(character["second-person"] || "")}"
+      style="width:100%; margin-bottom:15px;"
+    >
+
+    <label>好き</label>
+    <textarea
+      id="editCharacterLikes"
+      style="width:100%; min-height:80px; margin-bottom:15px;"
+    >${escapeHtml(character.likes || "")}</textarea>
+
+    <label>嫌い</label>
+    <textarea
+      id="editCharacterDislikes"
+      style="width:100%; min-height:80px; margin-bottom:15px;"
+    >${escapeHtml(character.dislikes || "")}</textarea>
+
+    <label>自由記入</label>
+    <textarea
+      id="editCharacterDescription"
+      style="width:100%; min-height:140px; margin-bottom:20px;"
+    >${escapeHtml(character.description || "")}</textarea>
+
+    <div style="text-align:center; margin-top:25px;">
+      <button onclick="saveCharacterEdit()">
+        SAVE
+      </button>
+    </div>
+
+    <div style="text-align:center; margin-top:15px;">
+      <button onclick="openCharacter(${character.id})">
+        ← CANCEL
+      </button>
+    </div>
+    `;
 
 }
 
