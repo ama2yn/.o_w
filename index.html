@@ -1553,6 +1553,8 @@ async function saveCharacterEdit() {
       document.querySelectorAll(".custom-field")
     );
 
+    const newCustomFields = {};
+
   customFieldElements.forEach(
     (field, index) => {
 
@@ -1580,7 +1582,7 @@ async function saveCharacterEdit() {
         return;
       }
 
-      existingCustomFields[
+      newCustomFields[
         "custom_" + index
       ] = {
         label: fieldName,
@@ -1589,6 +1591,16 @@ async function saveCharacterEdit() {
 
     }
   );
+
+  existingCustomFields = {
+    first_person:
+      existingCustomFields.first_person || "",
+
+    second_person:
+      existingCustomFields.second_person || "",
+
+    ...newCustomFields
+  };
 
 
   const updates = {
