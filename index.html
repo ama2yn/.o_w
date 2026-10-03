@@ -670,7 +670,7 @@ async function createCharacter() {
 
 }
   
-  async function loadCharacters() {
+ async function loadCharacters() {
 
   const characterList =
     document.getElementById("characterList");
@@ -733,12 +733,14 @@ async function createCharacter() {
 
       return `
         <div
+          onclick="openCharacter(${character.id})"
           style="
             margin-top:15px;
             padding:20px;
             border-radius:20px;
             background:rgba(255,255,255,.08);
             border:1px solid rgba(255,255,255,.15);
+            cursor:pointer;
           "
         >
 
