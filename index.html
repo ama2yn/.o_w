@@ -648,10 +648,27 @@ function escapeHtml(value) {
 
 function openWorld(worldId) {
 
-  alert(
-    "このWorldを開きます\n\n" +
-    "World ID: " + worldId
-  );
+  const worldSection =
+    document.getElementById("worldSection");
+
+  const createSection =
+    document.getElementById("createWorldSection");
+
+  worldSection.style.display = "none";
+  createSection.style.display = "none";
+
+  const worldPage =
+    document.getElementById("worldPage");
+
+  worldPage.style.display = "block";
+
+  worldPage.dataset.worldId = worldId;
+
+  loadWorldDetail(worldId);
+
+  worldPage.scrollIntoView({
+    behavior: "smooth"
+  });
 
 }
   
