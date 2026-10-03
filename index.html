@@ -550,6 +550,19 @@ async function showCharacters() {
 
 }
 
+function showCreateCharacter() {
+
+  const createSection =
+    document.getElementById("createCharacterSection");
+
+  createSection.style.display = "block";
+
+  createSection.scrollIntoView({
+    behavior: "smooth"
+  });
+
+}
+  
   async function loadCharacters() {
 
   const characterList =
