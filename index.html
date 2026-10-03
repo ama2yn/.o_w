@@ -1397,21 +1397,21 @@ async function editCharacter() {
   async function saveCharacterEdit() {
   const characterId = window.currentCharacterId;
 
-  const updates = {
-    name: document.getElementById("editCharacterName").value.trim(),
-    reading: document.getElementById("editCharacterReading").value.trim() || null,
-    gender: document.getElementById("editCharacterGender").value.trim() || null,
-    age: document.getElementById("editCharacterAge").value.trim() || null,
-    birthday: document.getElementById("editCharacterBirthday").value.trim() || null,
-    height: document.getElementById("editCharacterHeight").value.trim() || null,
-    weight: document.getElementById("editCharacterWeight").value.trim() || null,
-    personality: document.getElementById("editCharacterPersonality").value.trim() || null,
-    "first-person": document.getElementById("editCharacterFirstPerson").value.trim() || null,
-    "second-person": document.getElementById("editCharacterSecondPerson").value.trim() || null,
-    likes: document.getElementById("editCharacterLikes").value.trim() || null,
-    dislikes: document.getElementById("editCharacterDislikes").value.trim() || null,
-    description: document.getElementById("editCharacterDescription").value.trim() || null
-  };
+const updates = {
+  name: document.getElementById("editCharacterName").value.trim(),
+  reading: document.getElementById("editCharacterReading").value.trim() || null,
+  gender: document.getElementById("editCharacterGender").value.trim() || null,
+  age: document.getElementById("editCharacterAge").value.trim() || null,
+  birthday: document.getElementById("editCharacterBirthday").value.trim() || null,
+  height: document.getElementById("editCharacterHeight").value.trim() || null,
+  weight: document.getElementById("editCharacterWeight").value.trim() || null,
+  personality: document.getElementById("editCharacterPersonality").value.trim() || null,
+  "first-person": document.getElementById("editCharacterFirstPerson").value.trim() || null,
+  "second-person": document.getElementById("editCharacterSecondPerson").value.trim() || null,
+  likes: document.getElementById("editCharacterLikes").value.trim() || null,
+  dislikes: document.getElementById("editCharacterDislikes").value.trim() || null,
+  description: document.getElementById("editCharacterDescription").value.trim() || null
+};
 
   if (!updates.name) {
     alert("名前を入力してください。");
