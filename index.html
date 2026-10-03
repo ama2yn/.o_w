@@ -467,7 +467,7 @@ const SUPABASE_URL =
 const SUPABASE_PUBLISHABLE_KEY =
   "sb_publishable_UywVZUnkN4lmElV10n3WWw_HAMxw3q8";
 
-  function showCharacters() {
+async function showCharacters() {
 
   const characterSection =
     document.getElementById("characterSection");
@@ -477,6 +477,8 @@ const SUPABASE_PUBLISHABLE_KEY =
   characterSection.scrollIntoView({
     behavior: "smooth"
   });
+
+  await loadCharacters();
 
 }
 
