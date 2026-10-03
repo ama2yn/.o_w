@@ -573,6 +573,15 @@ function hideCreateCharacter() {
 
 async function createCharacter() {
 
+const userId =
+  localStorage.getItem("secretBaseUserId")
+  || crypto.randomUUID();
+
+localStorage.setItem(
+  "secretBaseUserId",
+  userId
+);
+  
   const name =
     document.getElementById(
       "characterName"
@@ -614,9 +623,7 @@ async function createCharacter() {
       },
 
       body: JSON.stringify({
-  user_id:
-    localStorage.getItem("secretBaseUserId")
-    || crypto.randomUUID(),
+user_id: userId,
 
   name: name,
   reading: reading || null,
