@@ -1006,7 +1006,12 @@ function backToHome() {
   document.getElementById("createCharacterSection").style.display = "none";
   document.getElementById("characterPage").style.display = "none";
 
-  document.querySelector("main").style.display = "block";
+  const allSections =
+    document.querySelectorAll("section");
+
+  allSections.forEach(section => {
+    section.style.display = "";
+  });
 
   window.scrollTo({
     top: 0,
