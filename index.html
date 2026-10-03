@@ -814,14 +814,16 @@ async function createCharacter() {
 
   async function openCharacter(characterId) {
 
-  document.getElementById("characterSection").style.display = "none";
-  document.getElementById("createCharacterSection").style.display = "none";
+const characterPage =
+  document.getElementById("characterPage");
 
-  
+Array.from(characterPage.parentElement.children).forEach(
+  element => {
+    element.style.display =
+      element === characterPage ? "block" : "none";
+  }
+);
     
-  const characterPage =
-    document.getElementById("characterPage");
-
   characterPage.style.display = "block";
 
   characterPage.scrollIntoView({
