@@ -933,6 +933,20 @@ async function createCharacter() {
     `;
 
 }
+
+function backToCharacters() {
+
+  document.getElementById("characterPage").style.display = "none";
+
+  document.querySelector("main").style.display = "block";
+
+  document.getElementById("characterSection").style.display = "block";
+
+  document.getElementById("characterSection").scrollIntoView({
+    behavior: "smooth"
+  });
+
+}
   
 async function showWorlds() {
 
