@@ -644,6 +644,11 @@ async function createCharacter() {
       "characterAge"
     ).value.trim();
 
+  const imageFile =
+  document.getElementById(
+    "characterImage"
+  ).files[0];
+
   if (!name) {
     alert("名前を入力してください。");
     return;
