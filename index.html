@@ -1532,6 +1532,39 @@ async function saveCharacterEdit() {
   await openCharacter(characterId);
 }
 
+  function addCustomField() {
+  const container = document.getElementById("customFieldsContainer");
+
+  if (!container) return;
+
+  const field = document.createElement("div");
+
+  field.className = "custom-field";
+
+  field.innerHTML = `
+    <input
+      type="text"
+      placeholder="項目名"
+      class="custom-field-name"
+    >
+
+    <input
+      type="text"
+      placeholder="内容"
+      class="custom-field-value"
+    >
+
+    <button
+      type="button"
+      onclick="this.parentElement.remove()"
+    >
+      ×
+    </button>
+  `;
+
+  container.appendChild(field);
+}
+  
 
 function backToCharacters() {
 
