@@ -938,15 +938,26 @@ Array.from(characterPage.parentElement.children).forEach(
 
 function backToCharacters() {
 
-  document.getElementById("characterPage").style.display = "none";
+  const characterSection =
+    document.getElementById("characterSection");
 
-  document.querySelector("main").style.display = "block";
+  const createCharacterSection =
+    document.getElementById("createCharacterSection");
 
-  document.getElementById("characterSection").style.display = "block";
+  const characterPage =
+    document.getElementById("characterPage");
 
-  document.getElementById("characterSection").scrollIntoView({
+  characterPage.style.display = "none";
+
+  characterSection.style.display = "block";
+
+  createCharacterSection.style.display = "none";
+
+  characterSection.scrollIntoView({
     behavior: "smooth"
   });
+
+  loadCharacters();
 
 }
   
