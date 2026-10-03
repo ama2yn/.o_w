@@ -1335,6 +1335,30 @@ const profileFields = [
     return;
   }
 
+  profileOrder.forEach(key => {
+
+    const item =
+      document.querySelector(
+        `.profile-item[data-profile-key="${key}"]`
+      );
+
+    if (item) {
+      container.appendChild(item);
+    }
+
+  });
+
+}
+
+  function renderProfileFields() {
+
+  const container =
+    document.getElementById("profileFieldsContainer");
+
+  if (!container) {
+    return;
+  }
+
   const elements = {};
 
   profileFields.forEach(field => {
