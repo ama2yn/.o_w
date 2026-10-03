@@ -1451,6 +1451,38 @@ customFieldElements.forEach(
       placeholder="例：4月12日"
       class="profile-field"
     >
+  <div style="margin-top:6px;">
+  <button
+    type="button"
+    onclick="moveProfileFieldByKey('birthday', -1)"
+  >
+    ↑
+  </button>
+
+  <button
+    type="button"
+    onclick="moveProfileFieldByKey('birthday', 1)"
+  >
+    ↓
+  </button>
+</div>
+
+function moveProfileFieldByKey(key, direction) {
+
+  const index =
+    profileFields.findIndex(
+      field => field.key === key
+    );
+
+  if (index === -1) {
+    return;
+  }
+
+  moveProfileField(
+    index,
+    direction
+  );
+}
 
     <label>身長</label>
 
