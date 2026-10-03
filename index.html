@@ -1006,12 +1006,9 @@ function backToHome() {
   document.getElementById("createCharacterSection").style.display = "none";
   document.getElementById("characterPage").style.display = "none";
 
-  const allSections =
-    document.querySelectorAll("section");
-
-  allSections.forEach(section => {
-    section.style.display = "";
-  });
+  document.getElementById("worldSection").style.display = "none";
+  document.getElementById("createWorldSection").style.display = "none";
+  document.getElementById("worldPage").style.display = "none";
 
   window.scrollTo({
     top: 0,
