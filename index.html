@@ -1767,6 +1767,40 @@ function addCustomField() {
 
   container.appendChild(field);
 }
+
+  function moveCustomField(button, direction) {
+
+  const field =
+    button.parentElement;
+
+  const container =
+    field.parentElement;
+
+  if (direction === -1) {
+
+    const previous =
+      field.previousElementSibling;
+
+    if (previous) {
+      container.insertBefore(
+        field,
+        previous
+      );
+    }
+
+  } else {
+
+    const next =
+      field.nextElementSibling;
+
+    if (next) {
+      container.insertBefore(
+        next,
+        field
+      );
+    }
+  }
+}
   
 
 function backToCharacters() {
