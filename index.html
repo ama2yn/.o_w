@@ -1306,6 +1306,10 @@ async function editCharacter() {
     >${escapeHtml(character.description || "")}</textarea>
 
     <div style="text-align:center; margin-top:25px;">
+     <button type="button" onclick="addCustomField()">
+  ＋ 項目を追加
+</button>
+      
       <button onclick="saveCharacterEdit()">
         SAVE
       </button>
