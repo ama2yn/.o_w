@@ -280,6 +280,67 @@ footer {
 
 </section>
 
+<section class="world" id="worldSection" style="display:none;">
+
+  <div class="world-title">
+    <h2>🌙 WORLDS</h2>
+    <span class="badge">MY WORLDS</span>
+  </div>
+
+  <div id="worldList">
+    <p>Worldを読み込んでいます……</p>
+  </div>
+
+  <div style="margin-top:25px; text-align:center;">
+    <button onclick="showCreateWorld()">
+      ＋ NEW WORLD
+    </button>
+  </div>
+
+</section>
+
+<section class="world" id="createWorldSection" style="display:none;">
+
+  <div class="world-title">
+    <h2>✦ CREATE WORLD</h2>
+  </div>
+
+  <div style="margin-top:20px;">
+
+    <label>World名</label>
+    <input
+      id="worldName"
+      type="text"
+      placeholder="例：星降る王国"
+      style="width:100%; margin-top:8px; padding:13px; border-radius:14px; border:none;"
+    >
+
+    <label style="display:block; margin-top:18px;">
+      説明
+    </label>
+
+    <textarea
+      id="worldDescription"
+      placeholder="この世界について……"
+      style="width:100%; min-height:120px; margin-top:8px; padding:13px; border-radius:14px; border:none; resize:vertical;"
+    ></textarea>
+
+    <div style="margin-top:20px; display:flex; gap:10px; justify-content:center;">
+      <button onclick="createWorld()">
+        CREATE ✦
+      </button>
+
+      <button
+        onclick="hideCreateWorld()"
+        style="background:rgba(255,255,255,.15); color:white;"
+      >
+        CANCEL
+      </button>
+    </div>
+
+  </div>
+
+</section>
 
 <section class="gacha">
 
@@ -301,6 +362,7 @@ footer {
 </div>
 
 <script>
+
 const words = [
   "星",
   "雪",
@@ -317,6 +379,7 @@ const words = [
 ];
 
 function gacha() {
+
   const result =
     words[Math.floor(Math.random() * words.length)];
 
@@ -324,40 +387,254 @@ function gacha() {
     "✦ " + result + " ✦";
 }
 
-const SUPABASE_URL = "https://scdtamllafamkacrpmvr.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "今入っているPublishable Keyをそのまま残す";
+
+const SUPABASE_URL =
+  "https://scdtamllafamkacrpmvr.supabase.co";
+
+const SUPABASE_PUBLISHABLE_KEY =
+  "今入っているPublishable Keyをそのまま残す";
+
 
 async function showWorlds() {
+
+  const worldSection =
+    document.getElementById("worldSection");
+
+  const createSection =
+    document.getElementById("createWorldSection");
+
+  worldSection.style.display = "block";
+  createSection.style.display = "none";
+
+  worldSection.scrollIntoView({
+    behavior: "smooth"
+  });
+
+  await loadWorlds();
+}
+
+
+async function loadWorlds() {
+
+  const worldList =
+    document.getElementById("worldList");
+
+  worldList.innerHTML =
+    "<p>Worldを読み込んでいます……</p>";
+
+
   const response = await fetch(
-    SUPABASE_URL + "/rest/v1/worlds?select=name,discription&order=created_at.asc",
+    SUPABASE_URL +
+    "/rest/v1/worlds?select=id,name,discription,created_at&order=created_at.asc",
     {
       headers: {
         "apikey": SUPABASE_PUBLISHABLE_KEY,
-        "Authorization": "Bearer " + SUPABASE_PUBLISHABLE_KEY
+        "Authorization":
+          "Bearer " + SUPABASE_PUBLISHABLE_KEY
       }
     }
   );
 
+
   if (!response.ok) {
-    const errorText = await response.text();
+
+    const errorText =
+      await response.text();
+
+    worldList.innerHTML =
+      "<p>読み込みに失敗しました。</p>";
 
     alert(
       "Supabaseエラー\n" +
-      "Status: " + response.status + "\n\n" +
+      "Status: " +
+      response.status +
+      "\n\n" +
       errorText
     );
 
     return;
   }
 
-  const data = await response.json();
 
-  alert(
-    data.map(world =>
-      world.name + "\n" + world.discription
-    ).join("\n\n")
-  );
+  const data =
+    await response.json();
+
+
+  if (data.length === 0) {
+
+    worldList.innerHTML =
+      `
+      <div style="
+        text-align:center;
+        padding:30px 10px;
+        color:#d9cfea;
+      ">
+        ✧ まだWorldがありません ✧
+        <br><br>
+        最初のWorldを作ってみよう。
+      </div>
+      `;
+
+    return;
+  }
+
+
+  worldList.innerHTML =
+    data.map(world => {
+
+      return `
+        <div
+          style="
+            margin-top:15px;
+            padding:20px;
+            border-radius:20px;
+            background:rgba(255,255,255,.08);
+            border:1px solid rgba(255,255,255,.15);
+          "
+        >
+
+          <h3 style="margin:0 0 8px;">
+            🌙 ${escapeHtml(world.name)}
+          </h3>
+
+          <p style="
+            margin:0;
+            white-space:pre-wrap;
+          ">
+            ${escapeHtml(
+              world.discription || "説明なし"
+            )}
+          </p>
+
+        </div>
+      `;
+
+    }).join("");
 }
+
+
+function showCreateWorld() {
+
+  document.getElementById(
+    "createWorldSection"
+  ).style.display = "block";
+
+  document.getElementById(
+    "createWorldSection"
+  ).scrollIntoView({
+    behavior: "smooth"
+  });
+}
+
+
+function hideCreateWorld() {
+
+  document.getElementById(
+    "createWorldSection"
+  ).style.display = "none";
+}
+
+
+async function createWorld() {
+
+  const name =
+    document.getElementById(
+      "worldName"
+    ).value.trim();
+
+  const description =
+    document.getElementById(
+      "worldDescription"
+    ).value.trim();
+
+
+  if (!name) {
+
+    alert("World名を入力してください。");
+
+    return;
+  }
+
+
+  const response = await fetch(
+    SUPABASE_URL + "/rest/v1/worlds",
+    {
+      method: "POST",
+
+      headers: {
+        "apikey": SUPABASE_PUBLISHABLE_KEY,
+        "Authorization":
+          "Bearer " + SUPABASE_PUBLISHABLE_KEY,
+        "Content-Type":
+          "application/json",
+        "Prefer":
+          "return=representation"
+      },
+
+      body: JSON.stringify({
+
+        name: name,
+
+        discription:
+          description
+
+      })
+    }
+  );
+
+
+  if (!response.ok) {
+
+    const errorText =
+      await response.text();
+
+    alert(
+      "Worldの作成に失敗しました。\n\n" +
+      "Status: " +
+      response.status +
+      "\n\n" +
+      errorText
+    );
+
+    return;
+  }
+
+
+  document.getElementById(
+    "worldName"
+  ).value = "";
+
+  document.getElementById(
+    "worldDescription"
+  ).value = "";
+
+
+  document.getElementById(
+    "createWorldSection"
+  ).style.display = "none";
+
+
+  await loadWorlds();
+
+  document.getElementById(
+    "worldSection"
+  ).scrollIntoView({
+    behavior: "smooth"
+  });
+
+}
+
+
+function escapeHtml(value) {
+
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 </script>
   
 </body>
