@@ -1476,55 +1476,67 @@ const profileFields = [
 
     <h3>PROFILE</h3>
 
-    <label>誕生日</label>
+    <div id="profileFieldsContainer"></div>
 
-    <input
-      id="editCharacterBirthday"
-      value="${escapeHtml(character.birthday || "")}"
-      placeholder="例：4月12日"
-      class="profile-field"
-    >
+    <div
+  class="profile-item"
+  data-profile-key="birthday"
+>
+  <label>誕生日</label>
+
+  <input
+    id="editCharacterBirthday"
+    value="${escapeHtml(character.birthday || "")}"
+    placeholder="例：4月12日"
+    class="profile-field"
+  >
+
   <div style="margin-top:6px;">
-  <button
-    type="button"
-    onclick="moveProfileFieldByKey('birthday', -1)"
-  >
-    ↑
-  </button>
+    <button
+      type="button"
+      onclick="moveProfileFieldByKey('birthday', -1)"
+    >
+      ↑
+    </button>
 
-  <button
-    type="button"
-    onclick="moveProfileFieldByKey('birthday', 1)"
-  >
-    ↓
-  </button>
+    <button
+      type="button"
+      onclick="moveProfileFieldByKey('birthday', 1)"
+    >
+      ↓
+    </button>
+  </div>
 </div>
 
-function moveProfileFieldByKey(key, direction) {
+ <div
+  class="profile-item"
+  data-profile-key="height"
+>
+  <label>身長</label>
 
-  const index =
-    profileFields.findIndex(
-      field => field.key === key
-    );
+  <input
+    id="editCharacterHeight"
+    value="${escapeHtml(character.height || "")}"
+    placeholder="例：165cm"
+    class="profile-field"
+  >
 
-  if (index === -1) {
-    return;
-  }
-
-  moveProfileField(
-    index,
-    direction
-  );
-}
-
-    <label>身長</label>
-
-    <input
-      id="editCharacterHeight"
-      value="${escapeHtml(character.height || "")}"
-      placeholder="例：165cm"
-      class="profile-field"
+  <div style="margin-top:6px;">
+    <button
+      type="button"
+      onclick="moveProfileFieldByKey('height', -1)"
     >
+      ↑
+    </button>
+
+    <button
+      type="button"
+      onclick="moveProfileFieldByKey('height', 1)"
+    >
+      ↓
+    </button>
+  </div>
+</div>
 
     <label>体重</label>
 
