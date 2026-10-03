@@ -811,6 +811,126 @@ async function createCharacter() {
     }).join("");
 
 }
+
+  async function openCharacter(characterId) {
+
+  document.getElementById("characterSection").style.display = "none";
+  document.getElementById("createCharacterSection").style.display = "none";
+
+  const characterPage =
+    document.getElementById("characterPage");
+
+  characterPage.style.display = "block";
+
+  characterPage.scrollIntoView({
+    behavior: "smooth"
+  });
+
+  const content =
+    document.getElementById("characterPageContent");
+
+  content.innerHTML =
+    "<p>Characterを読み込んでいます……</p>";
+
+  const response = await fetch(
+    SUPABASE_URL +
+    "/rest/v1/characters?id=eq." +
+    characterId +
+    "&select=*",
+    {
+      headers: {
+        "apikey": SUPABASE_PUBLISHABLE_KEY,
+        "Authorization":
+          "Bearer " + SUPABASE_PUBLISHABLE_KEY
+      }
+    }
+  );
+
+  if (!response.ok) {
+
+    const errorText =
+      await response.text();
+
+    content.innerHTML =
+      "<p>Characterの読み込みに失敗しました。</p>";
+
+    alert(
+      "Supabaseエラー\n" +
+      "Status: " + response.status + "\n\n" +
+      errorText
+    );
+
+    return;
+  }
+
+  const data =
+    await response.json();
+
+  if (data.length === 0) {
+
+    content.innerHTML =
+      "<p>Characterが見つかりません。</p>";
+
+    return;
+  }
+
+  const character = data[0];
+
+  content.innerHTML =
+    `
+    ${
+      character.main_image
+        ? `
+          <img
+            src="${escapeHtml(character.main_image)}"
+            style="
+              width:100%;
+              max-height:400px;
+              object-fit:cover;
+              border-radius:20px;
+              margin-bottom:20px;
+            "
+          >
+        `
+        : ""
+    }
+
+    <h2 style="margin:0 0 10px;">
+      🪽 ${escapeHtml(character.name)}
+    </h2>
+
+    ${
+      character.reading
+        ? `
+          <p>
+            読み：${escapeHtml(character.reading)}
+          </p>
+        `
+        : ""
+    }
+
+    ${
+      character.gender
+        ? `
+          <p>
+            性別：${escapeHtml(character.gender)}
+          </p>
+        `
+        : ""
+    }
+
+    ${
+      character.age
+        ? `
+          <p>
+            年齢：${escapeHtml(character.age)}
+          </p>
+        `
+        : ""
+    }
+    `;
+
+}
   
 async function showWorlds() {
 
