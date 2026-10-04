@@ -1408,6 +1408,26 @@ editButton.innerHTML =
   `;
 
 content.appendChild(editButton);
+  if (!window.characterViewOnly) {
+
+  const shareButton =
+    document.createElement("div");
+
+  shareButton.style.cssText =
+    "margin-top:15px; text-align:center;";
+
+  shareButton.innerHTML =
+    `
+    <button
+      type="button"
+      onclick="copyCharacterShareUrl('${character.id}')"
+    >
+      🔗 閲覧用URLをコピー
+    </button>
+    `;
+
+  content.appendChild(shareButton);
+}
 }
   
 
