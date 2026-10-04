@@ -2302,8 +2302,12 @@ async function saveCharacterEdit() {
         "editCharacterDescription"
       ).value.trim() || null,
 
-    custom_fields:
-      existingCustomFields
+        custom_fields:
+      existingCustomFields,
+
+    ...(imageUrl
+      ? { main_image: imageUrl }
+      : {})
 
   };
 
