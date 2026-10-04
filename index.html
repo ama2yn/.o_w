@@ -1969,6 +1969,9 @@ relationships.forEach(
     .sort()
     .join("_");
 
+        characterIds.add(a);
+    characterIds.add(b);
+
     if (!relationshipGroups[key]) {
       relationshipGroups[key] = [];
     }
@@ -1980,253 +1983,422 @@ relationships.forEach(
   }
 );
 
-const defs =
-  document.createElementNS(
-    "http://www.w3.org/2000/svg",
-    "defs"
-  );
+  const idList =
+    Array.from(characterIds).join(",");
 
-const marker =
-  document.createElementNS(
-    "http://www.w3.org/2000/svg",
-    "marker"
-  );
+  const characterResponse =
+    await fetch(
+      SUPABASE_URL +
+      "/rest/v1/characters" +
+      "?select=id,name,reading,main_image" +
+      "&id=in.(" +
+      idList +
+      ")",
+      {
+        headers: {
+          "apikey":
+            SUPABASE_PUBLISHABLE_KEY,
 
-marker.setAttribute(
-  "id",
-  "relationshipArrow"
-);
-
-marker.setAttribute(
-  "markerWidth",
-  "8"
-);
-
-marker.setAttribute(
-  "markerHeight",
-  "8"
-);
-
-marker.setAttribute(
-  "refX",
-  "7"
-);
-
-marker.setAttribute(
-  "refY",
-  "4"
-);
-
-marker.setAttribute(
-  "orient",
-  "auto"
-);
-
-const arrow =
-  document.createElementNS(
-    "http://www.w3.org/2000/svg",
-    "path"
-  );
-
-arrow.setAttribute(
-  "d",
-  "M0,0 L8,4 L0,8 Z"
-);
-
-arrow.setAttribute(
-  "fill",
-  "rgba(255,255,255,.8)"
-);
-
-marker.appendChild(arrow);
-defs.appendChild(marker);
-svg.appendChild(defs);
-
-
-Object.values(
-  relationshipGroups
-).forEach(
-  group => {
-
-    if (!group.length) {
-      return;
-    }
-
-    const first =
-      group[0];
-
-    const aId =
-      first.character_a_id;
-
-    const bId =
-      first.character_b_id;
-
-    const a =
-      positions[aId];
-
-    const b =
-      positions[bId];
-
-    if (!a || !b) {
-      return;
-    }
-
-    /*
-     * 同じ2人について
-     * A→B / B→A の向きを整理する
-     */
-
-    let aToB = null;
-    let bToA = null;
-    let both = null;
-
-    group.forEach(
-      relationship => {
-
-        if (
-          relationship.direction ===
-          "a_to_b"
-        ) {
-          aToB = relationship;
+          "Authorization":
+            "Bearer " +
+            SUPABASE_PUBLISHABLE_KEY
         }
-
-        else if (
-          relationship.direction ===
-          "b_to_a"
-        ) {
-          bToA = relationship;
-        }
-
-        else {
-          both = relationship;
-        }
-
       }
     );
 
+  if (!characterResponse.ok) {
 
-    /*
-     * ⇔ の関係が1件だけある場合
-     */
+    list.innerHTML = `
+      <p style="
+        text-align:center;
+        color:#ff9fcf;
+      ">
+        Character情報の読み込みに失敗しました。
+      </p>
+    `;
 
-    if (both) {
+    return;
+  }
 
-      drawRelationshipLine(
-        svg,
-        a,
-        b,
-        both,
-        0,
-        true
+  const characters =
+    await characterResponse.json();
+
+  const characterMap =
+    {};
+
+  characters.forEach(
+    character => {
+
+      characterMap[
+        character.id
+      ] = character;
+
+    }
+  );
+
+  const nodes =
+    document.getElementById(
+      "relationshipNodes"
+    );
+
+  const svg =
+    document.getElementById(
+      "relationshipLines"
+    );
+
+  const positions =
+    {};
+
+  const characterArray =
+    characters;
+
+  const centerX = 450;
+  const centerY = 280;
+  const radius = 190;
+
+  characterArray.forEach(
+    (character, index) => {
+
+      const angle =
+        (
+          Math.PI * 2 *
+          index /
+          characterArray.length
+        ) -
+        Math.PI / 2;
+
+      positions[
+        character.id
+      ] = {
+        x:
+          centerX +
+          Math.cos(angle) *
+          radius,
+
+        y:
+          centerY +
+          Math.sin(angle) *
+          radius
+      };
+
+    }
+  );
+
+  relationships.forEach(
+    relationship => {
+
+      const from =
+        positions[
+          relationship.character_a_id
+        ];
+
+      const to =
+        positions[
+          relationship.character_b_id
+        ];
+
+      if (!from || !to) {
+        return;
+      }
+
+      const markerId =
+        "arrow-" + relationship.id;
+
+      const defs =
+        document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "defs"
+        );
+
+      const marker =
+        document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "marker"
+        );
+
+      marker.setAttribute(
+        "id",
+        markerId
       );
 
-      return;
-    }
+      marker.setAttribute(
+        "markerWidth",
+        "8"
+      );
 
+      marker.setAttribute(
+        "markerHeight",
+        "8"
+      );
 
-    /*
-     * A→B と B→A の両方が存在
-     */
+      marker.setAttribute(
+        "refX",
+        "7"
+      );
 
-    if (
-      aToB &&
-      bToA
-    ) {
+      marker.setAttribute(
+        "refY",
+        "4"
+      );
 
-      const sameName =
-        (
-          aToB.relationship_name ||
-          ""
-        ).trim() ===
-        (
-          bToA.relationship_name ||
-          ""
-        ).trim();
+      marker.setAttribute(
+        "orient",
+        "auto"
+      );
 
+      const arrow =
+        document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "path"
+        );
 
-      /*
-       * 関係名が同じ
-       * → 1本の ⇔ にまとめる
-       */
+      arrow.setAttribute(
+        "d",
+        "M0,0 L8,4 L0,8 Z"
+      );
 
-      if (sameName) {
+      arrow.setAttribute(
+        "fill",
+        "rgba(255,255,255,.7)"
+      );
 
-        drawRelationshipLine(
-          svg,
-          a,
-          b,
-          aToB,
-          0,
-          true
+      marker.appendChild(arrow);
+      defs.appendChild(marker);
+      svg.appendChild(defs);
+
+      const line =
+        document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "line"
+        );
+
+      line.setAttribute(
+        "x1",
+        from.x
+      );
+
+      line.setAttribute(
+        "y1",
+        from.y
+      );
+
+      line.setAttribute(
+        "x2",
+        to.x
+      );
+
+      line.setAttribute(
+        "y2",
+        to.y
+      );
+
+      line.setAttribute(
+        "stroke",
+        "rgba(255,255,255,.55)"
+      );
+
+      line.setAttribute(
+        "stroke-width",
+        "2"
+      );
+
+      if (
+        relationship.direction ===
+        "a_to_b"
+      ) {
+
+        line.setAttribute(
+          "marker-end",
+          "url(#" + markerId + ")"
         );
 
       }
 
+      else if (
+        relationship.direction ===
+        "b_to_a"
+      ) {
 
-      /*
-       * 関係名が違う
-       * → 2本に分ける
-       */
+        line.setAttribute(
+          "marker-start",
+          "url(#" + markerId + ")"
+        );
+
+      }
 
       else {
 
-        drawRelationshipLine(
-          svg,
-          a,
-          b,
-          aToB,
-          -12,
-          false
+        line.setAttribute(
+          "marker-start",
+          "url(#" + markerId + ")"
         );
 
-        drawRelationshipLine(
-          svg,
-          a,
-          b,
-          bToA,
-          12,
-          false
+        line.setAttribute(
+          "marker-end",
+          "url(#" + markerId + ")"
         );
 
       }
 
-      return;
-    }
+      line.style.pointerEvents =
+        "stroke";
 
+      line.style.cursor =
+        "pointer";
 
-    /*
-     * 片方向だけ
-     */
+      line.onclick =
+        () => {
 
-    if (aToB) {
+          openRelationshipDetail(
+            relationship.id
+          );
 
-      drawRelationshipLine(
-        svg,
-        a,
-        b,
-        aToB,
-        0,
-        false
+        };
+
+      svg.appendChild(line);
+
+      const label =
+        document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "text"
+        );
+
+      label.setAttribute(
+        "x",
+        (from.x + to.x) / 2
       );
 
-      return;
-    }
-
-    if (bToA) {
-
-      drawRelationshipLine(
-        svg,
-        a,
-        b,
-        bToA,
-        0,
-        false
+      label.setAttribute(
+        "y",
+        (from.y + to.y) / 2 - 8
       );
 
-    }
+      label.setAttribute(
+        "text-anchor",
+        "middle"
+      );
 
-  }
-);
+      label.setAttribute(
+        "fill",
+        "rgba(255,255,255,.8)"
+      );
+
+      label.setAttribute(
+        "font-size",
+        "12"
+      );
+
+      label.textContent =
+        relationship.relationship_name ||
+        "";
+
+      label.style.cursor =
+        "pointer";
+
+      label.style.pointerEvents =
+        "auto";
+
+      label.onclick =
+        () => {
+
+          openRelationshipDetail(
+            relationship.id
+          );
+
+        };
+
+      svg.appendChild(label);
+
+    }
+  );
+
+  characterArray.forEach(
+    character => {
+
+      const position =
+        positions[character.id];
+
+      const node =
+        document.createElement("div");
+
+      node.style.cssText = `
+        position:absolute;
+        left:${position.x - 45}px;
+        top:${position.y - 45}px;
+        width:90px;
+        height:90px;
+        border-radius:50%;
+        background:rgba(45,30,70,.95);
+        border:2px solid rgba(255,255,255,.65);
+        box-shadow:0 5px 20px rgba(0,0,0,.3);
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        cursor:pointer;
+        overflow:hidden;
+        text-align:center;
+      `;
+
+      node.onclick =
+        () => {
+
+          const relation =
+            relationships.find(
+              relationship =>
+                relationship.character_a_id ===
+                  character.id ||
+                relationship.character_b_id ===
+                  character.id ||
+                relationship.character_c_id ===
+                  character.id
+            );
+
+          if (relation) {
+
+            openRelationshipDetail(
+              relation.id
+            );
+
+          }
+
+        };
+
+      if (
+        character.main_image
+      ) {
+
+        node.innerHTML = `
+          <img
+            src="${character.main_image}"
+            style="
+              width:100%;
+              height:100%;
+              object-fit:cover;
+            "
+          >
+        `;
+
+      } else {
+
+        node.innerHTML = `
+          <span style="
+            padding:8px;
+            font-size:13px;
+          ">
+            ${
+              escapeHtml(
+                character.name
+              )
+            }
+          </span>
+        `;
+
+      }
+
+      nodes.appendChild(node);
+
+    }
+  );
 
 
 function drawRelationshipLine(
