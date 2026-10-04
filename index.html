@@ -1796,6 +1796,329 @@ function openRelationshipEditor() {
   loadCharacterRelationships();
 }
 
+  async function loadCharacterRelationships() {
+
+  const currentCharacterId =
+    window.currentCharacterId;
+
+  const response =
+    await fetch(
+      SUPABASE_URL +
+      "/rest/v1/character_relationships" +
+      "?select=*" +
+      "&or=(character_a_id.eq." +
+      currentCharacterId +
+      ",character_b_id.eq." +
+      currentCharacterId +
+      ")",
+      {
+        headers: {
+          "apikey":
+            SUPABASE_PUBLISHABLE_KEY,
+
+          "Authorization":
+            "Bearer " +
+            SUPABASE_PUBLISHABLE_KEY
+        }
+      }
+    );
+
+  const list =
+    document.getElementById(
+      "relationshipList"
+    );
+
+  if (!response.ok) {
+
+    const errorText =
+      await response.text();
+
+    list.innerHTML = `
+      <p style="
+        text-align:center;
+        color:#ff9fcf;
+      ">
+        関係の読み込みに失敗しました。
+      </p>
+    `;
+
+    console.error(
+      "character_relationships error:",
+      errorText
+    );
+
+    return;
+  }
+
+  const relationships =
+    await response.json();
+
+  if (relationships.length === 0) {
+
+    list.innerHTML = `
+      <p style="
+        text-align:center;
+        opacity:.7;
+        padding:20px 0;
+      ">
+        まだ関係が登録されていません。
+      </p>
+    `;
+
+    return;
+  }
+
+  const characterIds = new Set();
+
+  relationships.forEach(
+    relationship => {
+
+      characterIds.add(
+        relationship.character_a_id
+      );
+
+      characterIds.add(
+        relationship.character_b_id
+      );
+
+      if (relationship.character_c_id) {
+
+        characterIds.add(
+          relationship.character_c_id
+        );
+
+      }
+
+    }
+  );
+
+  const idList =
+    Array.from(characterIds).join(",");
+
+  const characterResponse =
+    await fetch(
+      SUPABASE_URL +
+      "/rest/v1/characters" +
+      "?select=id,name,reading,main_image" +
+      "&id=in.(" +
+      idList +
+      ")",
+      {
+        headers: {
+          "apikey":
+            SUPABASE_PUBLISHABLE_KEY,
+
+          "Authorization":
+            "Bearer " +
+            SUPABASE_PUBLISHABLE_KEY
+        }
+      }
+    );
+
+  if (!characterResponse.ok) {
+
+    list.innerHTML = `
+      <p style="
+        text-align:center;
+        color:#ff9fcf;
+      ">
+        Character情報の読み込みに失敗しました。
+      </p>
+    `;
+
+    return;
+  }
+
+  const characters =
+    await characterResponse.json();
+
+  const characterMap =
+    {};
+
+  characters.forEach(
+    character => {
+
+      characterMap[
+        character.id
+      ] = character;
+
+    }
+  );
+
+  let html = "";
+
+  relationships.forEach(
+    relationship => {
+
+      const a =
+        characterMap[
+          relationship.character_a_id
+        ];
+
+      const b =
+        characterMap[
+          relationship.character_b_id
+        ];
+
+      if (!a || !b) {
+        return;
+      }
+
+      html += `
+        <div
+  onclick="openRelationshipDetail(${relationship.id})"
+  style="
+            padding:18px;
+            margin-bottom:15px;
+            border-radius:18px;
+            background:rgba(255,255,255,.08);
+            border:1px solid rgba(255,255,255,.15);
+            text-align:center;
+          "
+        >
+
+          <div style="
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            gap:15px;
+          ">
+
+            <div>
+
+              ${
+                a.main_image
+                ? `
+                  <img
+                    src="${a.main_image}"
+                    style="
+                      width:70px;
+                      height:70px;
+                      object-fit:cover;
+                      border-radius:50%;
+                    "
+                  >
+                `
+                : `
+                  <div style="
+                    width:70px;
+                    height:70px;
+                    border-radius:50%;
+                    background:rgba(255,255,255,.15);
+                    display:flex;
+                    align-items:center;
+                    justify-content:center;
+                  ">
+                    ?
+                  </div>
+                `
+              }
+
+              <div style="
+                margin-top:6px;
+                font-size:13px;
+              ">
+                ${
+                  escapeHtml(
+                    a.name
+                  )
+                }
+              </div>
+
+            </div>
+
+            <div style="
+              font-size:22px;
+              opacity:.8;
+            ">
+              ↔
+            </div>
+
+            <div>
+
+              ${
+                b.main_image
+                ? `
+                  <img
+                    src="${b.main_image}"
+                    style="
+                      width:70px;
+                      height:70px;
+                      object-fit:cover;
+                      border-radius:50%;
+                    "
+                  >
+                `
+                : `
+                  <div style="
+                    width:70px;
+                    height:70px;
+                    border-radius:50%;
+                    background:rgba(255,255,255,.15);
+                    display:flex;
+                    align-items:center;
+                    justify-content:center;
+                  ">
+                    ?
+                  </div>
+                `
+              }
+
+              <div style="
+                margin-top:6px;
+                font-size:13px;
+              ">
+                ${
+                  escapeHtml(
+                    b.name
+                  )
+                }
+              </div>
+
+            </div>
+
+          </div>
+
+          <div style="
+            margin-top:15px;
+            font-weight:bold;
+          ">
+            ${
+              escapeHtml(
+                relationship.relationship_name ||
+                ""
+              )
+            }
+          </div>
+
+          ${
+            relationship.description
+            ? `
+              <div style="
+                margin-top:8px;
+                opacity:.75;
+                font-size:13px;
+                white-space:pre-wrap;
+              ">
+                ${
+                  escapeHtml(
+                    relationship.description
+                  )
+                }
+              </div>
+            `
+            : ""
+          }
+
+        </div>
+      `;
+
+    }
+  );
+
+  list.innerHTML = html;
+}
+
 async function editCharacter() {
 
   const characterId =
