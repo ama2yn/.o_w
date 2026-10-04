@@ -1608,16 +1608,20 @@ function openRelationshipEditor() {
 </select>
 
 <label>関係の詳細（任意）</label>
-        style="
-          width:100%;
-          box-sizing:border-box;
-          margin:8px 0 20px;
-          padding:12px;
-          border-radius:12px;
-        "
-      >
 
-      <label>関係の詳細（任意）</label>
+<textarea
+  id="relationshipDescription"
+  rows="5"
+  placeholder="この関係について自由に記入"
+  style="
+    width:100%;
+    box-sizing:border-box;
+    margin:8px 0 20px;
+    padding:12px;
+    border-radius:12px;
+    resize:none;
+  "
+></textarea>
 
       <textarea
         id="relationshipDescription"
@@ -1976,12 +1980,9 @@ relationships.forEach(
       relationship.character_b_id;
 
     const key =
-      [a, b]
-        .sort(
-          (x, y) =>
-            Number(x) - Number(y)
-        )
-        .join("_");
+  [a, b]
+    .sort()
+    .join("_");
 
     if (!relationshipGroups[key]) {
       relationshipGroups[key] = [];
