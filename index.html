@@ -2952,28 +2952,34 @@ const endY =
   margin-top:25px;
 ">
 
-  <button
-    type="button"
-    onclick="openRelationshipEditor('${relationship.id}')"
-  >
-    ✎ 編集
-  </button>
+ ${
+  !window.characterViewOnly
+    ? `
+      <button
+        type="button"
+        onclick="openRelationshipEditor('${relationship.id}')"
+      >
+        ✎ 編集
+      </button>
 
-  <button
-    type="button"
-    onclick="deleteRelationship('${relationship.id}')"
-    style="margin-left:10px;"
-  >
-    🗑 削除
-  </button>
+      <button
+        type="button"
+        onclick="deleteRelationship('${relationship.id}')"
+        style="margin-left:10px;"
+      >
+        🗑 削除
+      </button>
+    `
+    : ""
+}
 
-  <button
-    type="button"
-    onclick="openCharacterRelationships()"
-    style="margin-left:10px;"
-  >
-    ← 相関図に戻る
-  </button>
+<button
+  type="button"
+  onclick="openCharacterRelationships()"
+  style="margin-left:10px;"
+>
+  ← 相関図に戻る
+</button>
 
 </div>
 
