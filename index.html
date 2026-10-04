@@ -1525,16 +1525,72 @@ async function loadRelationshipCharacters(
 
 }
 
-function openRelationshipEditor() {
+async function openRelationshipEditor(
+  relationshipId = null
+) {
 
   const content =
-    document.getElementById("characterPageContent");
+    document.getElementById(
+      "characterPageContent"
+    );
+
+  let existingRelationship = null;
+
+  if (relationshipId) {
+
+    const response =
+      await fetch(
+        SUPABASE_URL +
+        "/rest/v1/character_relationships" +
+        "?id=eq." +
+        relationshipId +
+        "&select=*",
+        {
+          headers: {
+            "apikey":
+              SUPABASE_PUBLISHABLE_KEY,
+
+            "Authorization":
+              "Bearer " +
+              SUPABASE_PUBLISHABLE_KEY
+          }
+        }
+      );
+
+    if (!response.ok) {
+
+      alert(
+        "関係情報の読み込みに失敗しました。"
+      );
+
+      return;
+    }
+
+    const relationships =
+      await response.json();
+
+    if (!relationships.length) {
+
+      alert(
+        "関係情報が見つかりませんでした。"
+      );
+
+      return;
+    }
+
+    existingRelationship =
+      relationships[0];
+  }
 
   content.innerHTML = `
     <div style="padding:20px 0;">
 
       <h2 style="text-align:center;">
-        ＋ 関係を登録
+        ${
+          existingRelationship
+            ? "✎ 関係を編集"
+            : "＋ 関係を登録"
+        }
       </h2>
 
       <p style="
@@ -1542,7 +1598,11 @@ function openRelationshipEditor() {
         opacity:.7;
         margin-bottom:25px;
       ">
-        このCharacterとの関係を登録します。
+        ${
+          existingRelationship
+            ? "この関係の内容を編集します。"
+            : "このCharacterとの関係を登録します。"
+        }
       </p>
 
       <label>関係相手</label>
@@ -1563,72 +1623,90 @@ function openRelationshipEditor() {
       </select>
 
       <label>
-  関係の名前
-  <span style="color:#ff9fcf;">＊</span>
-</label>
+        関係の名前
+        <span style="color:#ff9fcf;">＊</span>
+      </label>
 
-<input
-  type="text"
-  id="relationshipName"
-  placeholder="例：幼なじみ、犬猿、師弟"
-  style="
-    width:100%;
-    box-sizing:border-box;
-    margin:8px 0 20px;
-    padding:12px;
-    border-radius:12px;
-  "
->
+      <input
+        type="text"
+        id="relationshipName"
+        placeholder="例：幼なじみ、犬猿、師弟"
+        value="${
+          existingRelationship
+            ? escapeHtml(
+                existingRelationship.relationship_name || ""
+              )
+            : ""
+        }"
+        style="
+          width:100%;
+          box-sizing:border-box;
+          margin:8px 0 20px;
+          padding:12px;
+          border-radius:12px;
+        "
+      >
 
-<label>
-  関係の向き
-</label>
+      <label>
+        関係の向き
+      </label>
 
-<select
-  id="relationshipDirection"
-  style="
-    width:100%;
-    box-sizing:border-box;
-    margin:8px 0 20px;
-    padding:12px;
-    border-radius:12px;
-  "
->
-  <option value="both">
-    A ⇔ B　双方向
-  </option>
+      <select
+        id="relationshipDirection"
+        style="
+          width:100%;
+          box-sizing:border-box;
+          margin:8px 0 20px;
+          padding:12px;
+          border-radius:12px;
+        "
+      >
+        <option value="both">
+          A ⇔ B　双方向
+        </option>
 
-  <option value="a_to_b">
-    A → B　このCharacterから相手へ
-  </option>
+        <option value="a_to_b">
+          A → B　このCharacterから相手へ
+        </option>
 
-  <option value="b_to_a">
-    A ← B　相手からこのCharacterへ
-  </option>
-</select>
+        <option value="b_to_a">
+          A ← B　相手からこのCharacterへ
+        </option>
+      </select>
 
-<label>関係の詳細（任意）</label>
+      <label>関係の詳細（任意）</label>
 
-<textarea
-  id="relationshipDescription"
-  rows="5"
-  placeholder="この関係について自由に記入"
-  style="
-    width:100%;
-    box-sizing:border-box;
-    margin:8px 0 20px;
-    padding:12px;
-    border-radius:12px;
-    resize:none;
-  "
-></textarea>
+      <textarea
+        id="relationshipDescription"
+        rows="5"
+        placeholder="この関係について自由に記入"
+        style="
+          width:100%;
+          box-sizing:border-box;
+          margin:8px 0 20px;
+          padding:12px;
+          border-radius:12px;
+          resize:none;
+        "
+      >${
+        existingRelationship
+          ? escapeHtml(
+              existingRelationship.description || ""
+            )
+          : ""
+      }</textarea>
 
-<div style="text-align:center;">
+      <div style="text-align:center;">
+
         <button
           type="button"
           onclick="saveRelationship()"
         >
-          保存
+          ${
+            existingRelationship
+              ? "変更を保存"
+              : "保存"
+          }
         </button>
 
         <button
@@ -1647,9 +1725,24 @@ function openRelationshipEditor() {
   const currentCharacterId =
     window.currentCharacterId;
 
-  loadRelationshipCharacters(
+  await loadRelationshipCharacters(
     currentCharacterId
   );
+
+  if (existingRelationship) {
+
+    window.editingRelationshipId = existingRelationship.id;
+
+    document.getElementById(
+      "relationshipCharacterB"
+    ).value =
+      String(existingRelationship.character_b_id);
+
+    document.getElementById(
+      "relationshipDirection"
+    ).value =
+      existingRelationship.direction;
+  }
 }
 
   async function saveRelationship() {
