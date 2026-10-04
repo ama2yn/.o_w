@@ -1264,14 +1264,14 @@ const profileFields = [
   const profileOrder =
   profileFields.map(field => field.key);
 
-  
+  window.currentProfileOrder = profileOrder;
 
   window.moveProfileFieldByKey = function(key, direction) {
 
   const index =
     profileOrder.indexOf(key);
 
-    window.currentProfileOrder = profileOrder;
+    
 
   if (index === -1) {
     return;
