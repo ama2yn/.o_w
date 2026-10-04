@@ -1828,14 +1828,10 @@ function openRelationshipEditor() {
 }
 
   async function loadCharacterRelationships() {
+  const currentCharacterId = window.currentCharacterId;
+  const list = document.getElementById("relationshipList");
 
-  const currentCharacterId =
-    window.currentCharacterId;
-
-  const list =
-    document.getElementById(
-      "relationshipList"
-    );
+  if (!list) return;
 
   list.innerHTML = `
     <div style="
@@ -1844,25 +1840,16 @@ function openRelationshipEditor() {
       height:600px;
       overflow:auto;
       border-radius:20px;
-      background:
-        radial-gradient(
-          circle at 1px 1px,
-          rgba(255,255,255,.12) 1px,
-          transparent 1px
-        );
+      background:radial-gradient(circle at 1px 1px, rgba(255,255,255,.12) 1px, transparent 1px);
       background-size:30px 30px;
       border:1px solid rgba(255,255,255,.12);
     ">
-
-      <div
-        id="relationshipCanvas"
-        style="
-          position:relative;
-          width:900px;
-          height:560px;
-          margin:0 auto;
-        "
-      >
+      <div id="relationshipCanvas" style="
+        position:relative;
+        width:900px;
+        height:560px;
+        margin:0 auto;
+      ">
         <svg
           id="relationshipLines"
           style="
@@ -1871,7 +1858,6 @@ function openRelationshipEditor() {
             top:0;
             width:900px;
             height:560px;
-            pointer-events:none;
             overflow:visible;
           "
         ></svg>
@@ -1886,521 +1872,320 @@ function openRelationshipEditor() {
             height:560px;
           "
         ></div>
-
       </div>
-
     </div>
   `;
 
-  const response =
-    await fetch(
-      SUPABASE_URL +
-      "/rest/v1/character_relationships" +
-      "?select=*" +
-      "&or=(character_a_id.eq." +
-      currentCharacterId +
-      ",character_b_id.eq." +
-      currentCharacterId +
-      ")",
-      {
-        headers: {
-          "apikey":
-            SUPABASE_PUBLISHABLE_KEY,
-
-          "Authorization":
-            "Bearer " +
-            SUPABASE_PUBLISHABLE_KEY
-        }
+  const response = await fetch(
+    SUPABASE_URL +
+    "/rest/v1/character_relationships" +
+    "?select=*" +
+    "&or=(character_a_id.eq." +
+    currentCharacterId +
+    ",character_b_id.eq." +
+    currentCharacterId +
+    ")",
+    {
+      headers: {
+        "apikey": SUPABASE_PUBLISHABLE_KEY,
+        "Authorization": "Bearer " + SUPABASE_PUBLISHABLE_KEY
       }
-    );
+    }
+  );
 
   if (!response.ok) {
-
     list.innerHTML = `
-      <p style="
-        text-align:center;
-        color:#ff9fcf;
-      ">
+      <p style="text-align:center; color:#ff8fa3;">
         関係の読み込みに失敗しました。
       </p>
     `;
-
     return;
   }
 
-  const relationships =
-    await response.json();
+  const relationships = await response.json();
 
-  if (
-    relationships.length === 0
-  ) {
-
+  if (relationships.length === 0) {
     list.innerHTML = `
       <div style="
-        height:300px;
-        display:flex;
-        align-items:center;
-        justify-content:center;
+        text-align:center;
         opacity:.7;
+        padding:40px 20px;
       ">
         まだ関係が登録されていません。
       </div>
     `;
-
     return;
   }
 
-  const characterIds =
-    new Set();
-
+  const characterIds = new Set();
   const relationshipGroups = {};
 
-relationships.forEach(
-  relationship => {
+  relationships.forEach(relationship => {
+    const a = String(relationship.character_a_id);
+    const b = String(relationship.character_b_id);
 
-    const a =
-      relationship.character_a_id;
+    characterIds.add(a);
+    characterIds.add(b);
 
-    const b =
-      relationship.character_b_id;
-
-    const key =
-  [a, b]
-    .sort(
-      (x, y) =>
-        Number(x) - Number(y)
-    )
-    .join("_");
-
-        
+    const key = [a, b].sort().join("_");
 
     if (!relationshipGroups[key]) {
       relationshipGroups[key] = [];
     }
 
-    relationshipGroups[key].push(
-      relationship
-    );
+    relationshipGroups[key].push(relationship);
+  });
 
-  }
-);
+  const idList = Array.from(characterIds).join(",");
 
-  const idList =
-    Array.from(characterIds).join(",");
-
-  const characterResponse =
-    await fetch(
-      SUPABASE_URL +
-      "/rest/v1/characters" +
-      "?select=id,name,reading,main_image" +
-      "&id=in.(" +
-      idList +
-      ")",
-      {
-        headers: {
-          "apikey":
-            SUPABASE_PUBLISHABLE_KEY,
-
-          "Authorization":
-            "Bearer " +
-            SUPABASE_PUBLISHABLE_KEY
-        }
+  const characterResponse = await fetch(
+    SUPABASE_URL +
+    "/rest/v1/characters" +
+    "?select=id,name,reading,main_image" +
+    "&id=in.(" + idList + ")",
+    {
+      headers: {
+        "apikey": SUPABASE_PUBLISHABLE_KEY,
+        "Authorization": "Bearer " + SUPABASE_PUBLISHABLE_KEY
       }
-    );
-
-  if (!characterResponse.ok) {
-
-    list.innerHTML = `
-      <p style="
-        text-align:center;
-        color:#ff9fcf;
-      ">
-        Character情報の読み込みに失敗しました。
-      </p>
-    `;
-
-    return;
-  }
-
-  const characters =
-    await characterResponse.json();
-
-  const characterMap =
-    {};
-
-  characters.forEach(
-    character => {
-
-      characterMap[
-        character.id
-      ] = character;
-
     }
   );
 
-  const nodes =
-    document.getElementById(
-      "relationshipNodes"
-    );
+  if (!characterResponse.ok) {
+    list.innerHTML = `
+      <p style="text-align:center; color:#ff8fa3;">
+        Character情報の読み込みに失敗しました。
+      </p>
+    `;
+    return;
+  }
 
-  const svg =
-    document.getElementById(
-      "relationshipLines"
-    );
+  const characters = await characterResponse.json();
 
-  const positions =
-    {};
+  const nodes = document.getElementById("relationshipNodes");
+  const svg = document.getElementById("relationshipLines");
 
-  const characterArray =
-    characters;
+  if (!nodes || !svg) return;
+
+  const positions = {};
 
   const centerX = 450;
   const centerY = 280;
   const radius = 190;
 
-  characterArray.forEach(
-    (character, index) => {
+  characters.forEach((character, index) => {
+    const angle =
+      (Math.PI * 2 * index / characters.length) -
+      Math.PI / 2;
 
-      const angle =
-        (
-          Math.PI * 2 *
-          index /
-          characterArray.length
-        ) -
-        Math.PI / 2;
+    positions[String(character.id)] = {
+      x: centerX + Math.cos(angle) * radius,
+      y: centerY + Math.sin(angle) * radius
+    };
+  });
 
-      positions[
-        character.id
-      ] = {
-        x:
-          centerX +
-          Math.cos(angle) *
-          radius,
-
-        y:
-          centerY +
-          Math.sin(angle) *
-          radius
-      };
-
-    }
+  const defs = document.createElementNS(
+    "http://www.w3.org/2000/svg",
+    "defs"
   );
 
-  relationships.forEach(
-    relationship => {
+  const marker = document.createElementNS(
+    "http://www.w3.org/2000/svg",
+    "marker"
+  );
 
-      const from =
-        positions[
-          relationship.character_a_id
-        ];
+  marker.setAttribute("id", "relationshipArrow");
+  marker.setAttribute("viewBox", "0 0 8 8");
+  marker.setAttribute("refX", "7");
+  marker.setAttribute("refY", "4");
+  marker.setAttribute("markerWidth", "8");
+  marker.setAttribute("markerHeight", "8");
+  marker.setAttribute("orient", "auto");
+  marker.setAttribute("markerUnits", "strokeWidth");
 
-      const to =
-        positions[
-          relationship.character_b_id
-        ];
+  const path = document.createElementNS(
+    "http://www.w3.org/2000/svg",
+    "path"
+  );
 
-      if (!from || !to) {
-        return;
+  path.setAttribute(
+    "d",
+    "M 0 0 L 8 4 L 0 8 Z"
+  );
+
+  path.setAttribute(
+    "fill",
+    "rgba(255,255,255,.85)"
+  );
+
+  marker.appendChild(path);
+  defs.appendChild(marker);
+  svg.appendChild(defs);
+
+  Object.values(relationshipGroups).forEach(group => {
+    const first = group[0];
+
+    const a = positions[String(first.character_a_id)];
+    const b = positions[String(first.character_b_id)];
+
+    if (!a || !b) return;
+
+    let aToB = null;
+    let bToA = null;
+    let both = null;
+
+    group.forEach(relationship => {
+      if (relationship.direction === "a_to_b") {
+        aToB = relationship;
       }
 
-      const markerId =
-        "arrow-" + relationship.id;
+      if (relationship.direction === "b_to_a") {
+        bToA = relationship;
+      }
 
-      const defs =
-        document.createElementNS(
-          "http://www.w3.org/2000/svg",
-          "defs"
-        );
+      if (relationship.direction === "both") {
+        both = relationship;
+      }
+    });
 
-      const marker =
-        document.createElementNS(
-          "http://www.w3.org/2000/svg",
-          "marker"
-        );
-
-      marker.setAttribute(
-        "id",
-        markerId
+    if (both) {
+      drawRelationshipLine(
+        svg,
+        a,
+        b,
+        both,
+        0,
+        true
       );
+      return;
+    }
 
-      marker.setAttribute(
-        "markerWidth",
-        "8"
-      );
-
-      marker.setAttribute(
-        "markerHeight",
-        "8"
-      );
-
-      marker.setAttribute(
-        "refX",
-        "7"
-      );
-
-      marker.setAttribute(
-        "refY",
-        "4"
-      );
-
-      marker.setAttribute(
-        "orient",
-        "auto"
-      );
-
-      const arrow =
-        document.createElementNS(
-          "http://www.w3.org/2000/svg",
-          "path"
-        );
-
-      arrow.setAttribute(
-        "d",
-        "M0,0 L8,4 L0,8 Z"
-      );
-
-      arrow.setAttribute(
-        "fill",
-        "rgba(255,255,255,.7)"
-      );
-
-      marker.appendChild(arrow);
-      defs.appendChild(marker);
-      svg.appendChild(defs);
-
-      const line =
-        document.createElementNS(
-          "http://www.w3.org/2000/svg",
-          "line"
-        );
-
-      line.setAttribute(
-        "x1",
-        from.x
-      );
-
-      line.setAttribute(
-        "y1",
-        from.y
-      );
-
-      line.setAttribute(
-        "x2",
-        to.x
-      );
-
-      line.setAttribute(
-        "y2",
-        to.y
-      );
-
-      line.setAttribute(
-        "stroke",
-        "rgba(255,255,255,.55)"
-      );
-
-      line.setAttribute(
-        "stroke-width",
-        "2"
-      );
-
+    if (aToB && bToA) {
       if (
-        relationship.direction ===
-        "a_to_b"
+        aToB.relationship_name ===
+        bToA.relationship_name
       ) {
-
-        line.setAttribute(
-          "marker-end",
-          "url(#" + markerId + ")"
+        drawRelationshipLine(
+          svg,
+          a,
+          b,
+          aToB,
+          0,
+          true
+        );
+      } else {
+        drawRelationshipLine(
+          svg,
+          a,
+          b,
+          aToB,
+          -12,
+          false
         );
 
+        drawRelationshipLine(
+          svg,
+          a,
+          b,
+          bToA,
+          12,
+          false
+        );
       }
 
-      else if (
-        relationship.direction ===
-        "b_to_a"
-      ) {
-
-        line.setAttribute(
-          "marker-start",
-          "url(#" + markerId + ")"
-        );
-
-      }
-
-      else {
-
-        line.setAttribute(
-          "marker-start",
-          "url(#" + markerId + ")"
-        );
-
-        line.setAttribute(
-          "marker-end",
-          "url(#" + markerId + ")"
-        );
-
-      }
-
-      line.style.pointerEvents =
-        "stroke";
-
-      line.style.cursor =
-        "pointer";
-
-      line.onclick =
-        () => {
-
-          openRelationshipDetail(
-            relationship.id
-          );
-
-        };
-
-      svg.appendChild(line);
-
-      const label =
-        document.createElementNS(
-          "http://www.w3.org/2000/svg",
-          "text"
-        );
-
-      label.setAttribute(
-        "x",
-        (from.x + to.x) / 2
-      );
-
-      label.setAttribute(
-        "y",
-        (from.y + to.y) / 2 - 8
-      );
-
-      label.setAttribute(
-        "text-anchor",
-        "middle"
-      );
-
-      label.setAttribute(
-        "fill",
-        "rgba(255,255,255,.8)"
-      );
-
-      label.setAttribute(
-        "font-size",
-        "12"
-      );
-
-      label.textContent =
-        relationship.relationship_name ||
-        "";
-
-      label.style.cursor =
-        "pointer";
-
-      label.style.pointerEvents =
-        "auto";
-
-      label.onclick =
-        () => {
-
-          openRelationshipDetail(
-            relationship.id
-          );
-
-        };
-
-      svg.appendChild(label);
-
+      return;
     }
-  );
 
-  characterArray.forEach(
-    character => {
+    if (aToB) {
+      drawRelationshipLine(
+        svg,
+        a,
+        b,
+        aToB,
+        0,
+        false
+      );
+    }
 
-      const position =
-        positions[character.id];
+    if (bToA) {
+      drawRelationshipLine(
+        svg,
+        a,
+        b,
+        bToA,
+        0,
+        false
+      );
+    }
+  });
 
-      const node =
-        document.createElement("div");
+  characters.forEach(character => {
+    const position =
+      positions[String(character.id)];
 
-      node.style.cssText = `
-        position:absolute;
-        left:${position.x - 45}px;
-        top:${position.y - 45}px;
-        width:90px;
-        height:90px;
-        border-radius:50%;
-        background:rgba(45,30,70,.95);
-        border:2px solid rgba(255,255,255,.65);
-        box-shadow:0 5px 20px rgba(0,0,0,.3);
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        cursor:pointer;
-        overflow:hidden;
-        text-align:center;
+    if (!position) return;
+
+    const node =
+      document.createElement("div");
+
+    node.style.cssText = `
+      position:absolute;
+      left:${position.x - 45}px;
+      top:${position.y - 45}px;
+      width:90px;
+      height:90px;
+      border-radius:50%;
+      overflow:hidden;
+      border:2px solid rgba(255,255,255,.7);
+      background:rgba(255,255,255,.08);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      cursor:pointer;
+      box-sizing:border-box;
+    `;
+
+    node.onclick = () => {
+      const relation =
+        relationships.find(
+          r =>
+            String(r.character_a_id) ===
+              String(character.id) ||
+            String(r.character_b_id) ===
+              String(character.id) ||
+            String(r.character_c_id) ===
+              String(character.id)
+        );
+
+      if (relation) {
+        openRelationshipDetail(
+          relation.id
+        );
+      }
+    };
+
+    if (character.main_image) {
+      const img =
+        document.createElement("img");
+
+      img.src = character.main_image;
+
+      img.style.cssText = `
+        width:100%;
+        height:100%;
+        object-fit:cover;
       `;
 
-      node.onclick =
-        () => {
-
-          const relation =
-            relationships.find(
-              relationship =>
-                relationship.character_a_id ===
-                  character.id ||
-                relationship.character_b_id ===
-                  character.id ||
-                relationship.character_c_id ===
-                  character.id
-            );
-
-          if (relation) {
-
-            openRelationshipDetail(
-              relation.id
-            );
-
-          }
-
-        };
-
-      if (
-        character.main_image
-      ) {
-
-        node.innerHTML = `
-          <img
-            src="${character.main_image}"
-            style="
-              width:100%;
-              height:100%;
-              object-fit:cover;
-            "
-          >
-        `;
-
-      } else {
-
-        node.innerHTML = `
-          <span style="
-            padding:8px;
-            font-size:13px;
-          ">
-            ${
-              escapeHtml(
-                character.name
-              )
-            }
-          </span>
-        `;
-
-      }
-
-      nodes.appendChild(node);
-
+      node.appendChild(img);
+    } else {
+      node.textContent =
+        character.name || "";
     }
-  );
+
+    nodes.appendChild(node);
+  });
+}
 
 
 function drawRelationshipLine(
