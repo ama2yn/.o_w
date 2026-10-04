@@ -2197,27 +2197,20 @@ function drawRelationshipLine(
   bothDirections
 ) {
 
-  const dx =
-    to.x - from.x;
+  const dx = to.x - from.x;
+  const dy = to.y - from.y;
 
-  const dy =
-    to.y - from.y;
-
-  const length =
-    Math.sqrt(
-      dx * dx +
-      dy * dy
-    );
+  const length = Math.sqrt(
+    dx * dx +
+    dy * dy
+  );
 
   if (!length) {
     return;
   }
 
-  const nx =
-    -dy / length;
-
-  const ny =
-    dx / length;
+  const nx = -dy / length;
+  const ny = dx / length;
 
   const startX =
     from.x +
@@ -2274,7 +2267,7 @@ function drawRelationshipLine(
 
 
   /*
-   * ⇔
+   * A ⇔ B
    */
 
   if (bothDirections) {
@@ -2293,7 +2286,7 @@ function drawRelationshipLine(
 
 
   /*
-   * A→B
+   * A → B
    */
 
   else if (
@@ -2310,7 +2303,7 @@ function drawRelationshipLine(
 
 
   /*
-   * B→A
+   * A ← B
    */
 
   else if (
@@ -2353,6 +2346,10 @@ function drawRelationshipLine(
       "http://www.w3.org/2000/svg",
       "text"
     );
+
+  /*
+   * 線から少し上にずらす
+   */
 
   const labelX =
     (
