@@ -4536,6 +4536,24 @@ async function copyCharacterShareUrl(characterId) {
   }
 }
 
+  // 閲覧専用共有URL
+const shareParams =
+  new URLSearchParams(
+    window.location.search
+  );
+
+const sharedCharacterId =
+  shareParams.get("character");
+
+if (
+  sharedCharacterId &&
+  shareParams.get("view") === "public"
+) {
+
+  window.characterViewOnly = true;
+
+  openCharacter(sharedCharacterId);
+}
 
 </script>
 
