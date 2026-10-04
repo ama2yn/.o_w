@@ -2061,40 +2061,45 @@ function openRelationshipEditor() {
     }
 
     if (aToB && bToA) {
-      if (
-        aToB.relationship_name ===
-        bToA.relationship_name
-      ) {
-        drawRelationshipLine(
-          svg,
-          a,
-          b,
-          aToB,
-          0,
-          true
-        );
-      } else {
-        drawRelationshipLine(
-          svg,
-          a,
-          b,
-          aToB,
-          -12,
-          false
-        );
 
-        drawRelationshipLine(
-          svg,
-          a,
-          b,
-          bToA,
-          12,
-          false
-        );
-      }
+  if (
+    aToB.relationship_name ===
+    bToA.relationship_name
+  ) {
 
-      return;
-    }
+    drawRelationshipLine(
+      svg,
+      a,
+      b,
+      aToB,
+      0,
+      true
+    );
+
+  } else {
+
+    drawRelationshipLine(
+      svg,
+      a,
+      b,
+      aToB,
+      -18,
+      false
+    );
+
+    drawRelationshipLine(
+      svg,
+      a,
+      b,
+      bToA,
+      18,
+      false
+    );
+
+  }
+
+  return;
+}
 
     if (aToB) {
       drawRelationshipLine(
