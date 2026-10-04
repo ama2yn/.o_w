@@ -1240,29 +1240,26 @@ Object.entries(customFields).forEach(
       return;
     }
 
-    customFieldsHtml += `
-      <div style="
-        margin-top:15px;
-      ">
-        <strong>
-          ${escapeHtml(field.label)}
-        </strong>
+   customFieldsHtml += `
+  <div style="
+    margin-top:15px;
+  ">
+    <p style="
+      margin:0;
+      font-weight:normal;
+    ">${escapeHtml(field.label)}</p>
 
-        ${
-          field.value
-            ? `
-              <p style="
-                white-space:pre-wrap;
-                line-height:1.8;
-                margin:5px 0 0;
-              ">
-                ${escapeHtml(field.value)}
-              </p>
-            `
-            : ""
-        }
-      </div>
-    `;
+    ${
+      field.value
+        ? `<p style="
+          white-space:pre-wrap;
+          line-height:1.8;
+          margin:5px 0 0;
+        ">${escapeHtml(field.value)}</p>`
+        : ""
+    }
+  </div>
+`;
   }
 );
   
