@@ -1388,6 +1388,27 @@ const profileFields = [
   const secondPerson =
     customFields.second_person || "";
 
+  Object.entries(customFields).forEach(([key, field]) => {
+
+  if (
+    key === "first_person" ||
+    key === "second_person"
+  ) {
+    return;
+  }
+
+  if (
+    !field ||
+    typeof field !== "object" ||
+    !field.label
+  ) {
+    return;
+  }
+
+  profileOrder.push(key);
+
+});
+
   content.innerHTML =
     `
     <h2 style="margin-bottom:25px;">
