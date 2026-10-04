@@ -1394,6 +1394,70 @@ ${escapeHtml(field.value || "")}</p>
   content.appendChild(editButton);
 }
 
+  async function loadRelationshipCharacters() {
+
+  const response =
+    await fetch(
+      SUPABASE_URL +
+      "/rest/v1/characters?select=id,name,reading&order=sort_order.asc.nullslast",
+      {
+        headers: {
+          "apikey": SUPABASE_PUBLISHABLE_KEY,
+          "Authorization":
+            "Bearer " + SUPABASE_PUBLISHABLE_KEY
+        }
+      }
+    );
+
+  if (!response.ok) {
+    alert("Character一覧の読み込みに失敗しました。");
+    return;
+  }
+
+  const characters =
+    await response.json();
+
+  const selects = [
+    document.getElementById(
+      "relationshipCharacterA"
+    ),
+    document.getElementById(
+      "relationshipCharacterB"
+    ),
+    document.getElementById(
+      "relationshipCharacterC"
+    )
+  ];
+
+  selects.forEach(select => {
+
+    if (!select) {
+      return;
+    }
+
+    characters.forEach(character => {
+
+      const option =
+        document.createElement("option");
+
+      option.value =
+        character.id;
+
+      option.textContent =
+        character.reading
+          ? character.name +
+            "（" +
+            character.reading +
+            "）"
+          : character.name;
+
+      select.appendChild(option);
+    });
+
+  });
+
+}
+
   function openRelationshipEditor() {
 
   const content =
