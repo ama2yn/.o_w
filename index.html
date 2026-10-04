@@ -2918,37 +2918,85 @@ const endY =
 
       </div>
 
-      <div style="
-        text-align:center;
-        margin-top:25px;
-      ">
+   <div style="
+  text-align:center;
+  margin-top:25px;
+">
 
-      <button
-  type="button"
-  onclick="openRelationshipEditor('${relationship.id}')"
->
-  ✎ 編集
-</button>
+  <button
+    type="button"
+    onclick="openRelationshipEditor('${relationship.id}')"
+  >
+    ✎ 編集
+  </button>
 
-<button
-  type="button"
-  onclick="openCharacterRelationships()"
-  style="margin-left:10px;"
->
-  ← 相関図に戻る
-</button>
+  <button
+    type="button"
+    onclick="deleteRelationship('${relationship.id}')"
+    style="margin-left:10px;"
+  >
+    🗑 削除
+  </button>
 
-        <button
-          type="button"
-          onclick="openCharacterRelationships()"
-        >
-          ← 相関図に戻る
-        </button>
+  <button
+    type="button"
+    onclick="openCharacterRelationships()"
+    style="margin-left:10px;"
+  >
+    ← 相関図に戻る
+  </button>
 
-      </div>
+</div>
 
     </div>
   `;
+}
+
+  async function deleteRelationship(relationshipId) {
+
+  if (!confirm("この関係を削除しますか？")) {
+    return;
+  }
+
+  const response =
+    await fetch(
+      SUPABASE_URL +
+      "/rest/v1/character_relationships" +
+      "?id=eq." +
+      relationshipId,
+      {
+        method: "DELETE",
+
+        headers: {
+          "apikey":
+            SUPABASE_PUBLISHABLE_KEY,
+
+          "Authorization":
+            "Bearer " +
+            SUPABASE_PUBLISHABLE_KEY,
+
+          "Prefer":
+            "return=minimal"
+        }
+      }
+    );
+
+  if (!response.ok) {
+
+    const errorText =
+      await response.text();
+
+    alert(
+      "関係の削除に失敗しました。\n\n" +
+      errorText
+    );
+
+    return;
+  }
+
+  alert("関係を削除しました。");
+
+  openCharacterRelationships();
 }
 
 async function editCharacter() {
