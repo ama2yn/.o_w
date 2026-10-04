@@ -1280,13 +1280,16 @@ customFieldsHtml += `
               ${escapeHtml(field.label)}
             </p>
 
-            <p style="
-              white-space:pre-wrap;
-              line-height:1.8;
-              margin:5px 0 0;
-            ">
-              ${escapeHtml(customValue)}
-            </p>
+          <p style="
+  white-space:pre-wrap;
+  line-height:1.8;
+  margin:5px 0 0;
+">${escapeHtml(
+  customValue
+    .split("\n")
+    .map(line => line.trimStart())
+    .join("\n")
+)}</p>
           `
           : `
             <p style="
