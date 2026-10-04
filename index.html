@@ -682,6 +682,10 @@ async function showCharacters() {
 
 function showCreateCharacter() {
 
+  if (window.characterViewOnly) {
+    return;
+  }
+
   const createSection =
     document.getElementById("createCharacterSection");
 
