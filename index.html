@@ -2053,6 +2053,62 @@ function setupAutoResize() {
 
 async function saveCharacterEdit() {
 
+    const imageInput =
+    document.getElementById("editCharacterImage");
+
+  let imageUrl = null;
+
+  if (
+    imageInput &&
+    imageInput.files &&
+    imageInput.files.length > 0
+  ) {
+
+    const file =
+      imageInput.files[0];
+
+    const fileName =
+      crypto.randomUUID() + ".jpg";
+
+    const uploadResponse =
+      await fetch(
+        SUPABASE_URL +
+        "/storage/v1/object/character-images/" +
+        fileName,
+        {
+          method: "POST",
+          headers: {
+            "apikey":
+              SUPABASE_PUBLISHABLE_KEY,
+            "Authorization":
+              "Bearer " +
+              SUPABASE_PUBLISHABLE_KEY,
+            "Content-Type":
+              file.type
+          },
+          body: file
+        }
+      );
+
+    if (!uploadResponse.ok) {
+
+      const errorText =
+        await uploadResponse.text();
+
+      alert(
+        "画像のアップロードに失敗しました。\n\n" +
+        errorText
+      );
+
+      return;
+    }
+
+    imageUrl =
+      SUPABASE_URL +
+      "/storage/v1/object/public/character-images/" +
+      fileName;
+  }
+
   const characterId =
     window.currentCharacterId;
 
