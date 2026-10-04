@@ -1372,9 +1372,25 @@ ${escapeHtml(field.value || "")}</p>
     </button>
     `;
 
-  content.appendChild(editButton);
     const relationshipButton =
     document.createElement("div");
+
+  relationshipButton.style.cssText =
+    "margin-top:25px; text-align:center;";
+
+  relationshipButton.innerHTML =
+    `
+    <button
+      type="button"
+      onclick="openCharacterRelationships()"
+    >
+      ♡ 相関図
+    </button>
+    `;
+
+  content.appendChild(relationshipButton);
+
+  content.appendChild(editButton);
 
   relationshipButton.style.cssText =
     "margin-top:15px; text-align:center;";
