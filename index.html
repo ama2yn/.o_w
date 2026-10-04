@@ -1394,20 +1394,23 @@ Object.entries(customFields).forEach(
   content.appendChild(relationshipButton);
 
 
- const editButton =
-  document.createElement("div");
+ if (!window.characterViewOnly) {
 
-editButton.style.cssText =
-  "margin-top:15px; text-align:center;";
+  const editButton =
+    document.createElement("div");
 
-editButton.innerHTML =
-  `
-  <button onclick="editCharacter()">
-    ✎ EDIT CHARACTER
-  </button>
-  `;
+  editButton.style.cssText =
+    "margin-top:15px; text-align:center;";
 
-content.appendChild(editButton);
+  editButton.innerHTML =
+    `
+    <button onclick="editCharacter()">
+      ✎ EDIT CHARACTER
+    </button>
+    `;
+
+  content.appendChild(editButton);
+}
   if (!window.characterViewOnly) {
 
   const shareButton =
