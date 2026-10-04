@@ -1563,14 +1563,51 @@ function openRelationshipEditor() {
       </select>
 
       <label>
-        関係の名前
-        <span style="color:#ff9fcf;">＊</span>
-      </label>
+  関係の名前
+  <span style="color:#ff9fcf;">＊</span>
+</label>
 
-      <input
-        type="text"
-        id="relationshipName"
-        placeholder="例：幼なじみ、犬猿、師弟"
+<input
+  type="text"
+  id="relationshipName"
+  placeholder="例：幼なじみ、犬猿、師弟"
+  style="
+    width:100%;
+    box-sizing:border-box;
+    margin:8px 0 20px;
+    padding:12px;
+    border-radius:12px;
+  "
+>
+
+<label>
+  関係の向き
+</label>
+
+<select
+  id="relationshipDirection"
+  style="
+    width:100%;
+    box-sizing:border-box;
+    margin:8px 0 20px;
+    padding:12px;
+    border-radius:12px;
+  "
+>
+  <option value="both">
+    A ⇔ B　双方向
+  </option>
+
+  <option value="a_to_b">
+    A → B　このCharacterから相手へ
+  </option>
+
+  <option value="b_to_a">
+    A ← B　相手からこのCharacterへ
+  </option>
+</select>
+
+<label>関係の詳細（任意）</label>
         style="
           width:100%;
           box-sizing:border-box;
