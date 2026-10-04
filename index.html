@@ -2551,18 +2551,19 @@ const endY =
    * 線から少し上にずらす
    */
 
-  const labelX =
+    const labelX =
     (
       startX +
       endX
-    ) / 2;
+    ) / 2 +
+    nx * 18;
 
   const labelY =
     (
       startY +
       endY
-    ) / 2 -
-    8;
+    ) / 2 +
+    ny * 18;
 
   label.setAttribute(
     "x",
