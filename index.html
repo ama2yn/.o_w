@@ -1995,12 +1995,18 @@ async function openRelationshipEditor(
         text-align:center;
       ">
 
-        <button
-          type="button"
-          onclick="openRelationshipEditor()"
-        >
-          ＋ 関係を登録
-        </button>
+        ${
+  !window.characterViewOnly
+    ? `
+      <button
+        type="button"
+        onclick="openRelationshipEditor()"
+      >
+        ＋ 関係を登録
+      </button>
+    `
+    : ""
+}
 
         <button
           type="button"
