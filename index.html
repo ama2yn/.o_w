@@ -1724,23 +1724,28 @@ function openRelationshipEditor() {
         },
 
         body: JSON.stringify({
-          character_a_id:
-            characterAId,
+  character_a_id:
+    characterAId,
 
-          character_b_id:
-            characterBId,
+  character_b_id:
+    characterBId,
 
-          character_c_id:
-            null,
+  character_c_id:
+    null,
 
-          relationship_name:
-            relationshipName,
+  relationship_name:
+    relationshipName,
 
-          description:
-            relationshipDescription,
+  direction:
+    document.getElementById(
+      "relationshipDirection"
+    ).value,
 
-          details: {}
-        })
+  description:
+    relationshipDescription,
+
+  details: {}
+})
       }
     );
 
