@@ -1359,19 +1359,6 @@ ${escapeHtml(field.value || "")}</p>
   }
   `;
 
-  const editButton =
-    document.createElement("div");
-
-  editButton.style.cssText =
-    "margin-top:25px; text-align:center;";
-
-  editButton.innerHTML =
-    `
-    <button onclick="editCharacter()">
-      ✎ EDIT CHARACTER
-    </button>
-    `;
-
     const relationshipButton =
     document.createElement("div");
 
@@ -1390,22 +1377,21 @@ ${escapeHtml(field.value || "")}</p>
 
   content.appendChild(relationshipButton);
 
-  content.appendChild(editButton);
 
-  relationshipButton.style.cssText =
+  const editButton =
+    document.createElement("div");
+
+  editButton.style.cssText =
     "margin-top:15px; text-align:center;";
 
-  relationshipButton.innerHTML =
+  editButton.innerHTML =
     `
-    <button
-      type="button"
-      onclick="openCharacterRelationships()"
-    >
-      ♡ 相関図
+    <button onclick="editCharacter()">
+      ✎ EDIT CHARACTER
     </button>
     `;
 
-  content.appendChild(relationshipButton);
+  content.appendChild(editButton);
 }
 
   function openCharacterRelationships() {
