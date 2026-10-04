@@ -2035,18 +2035,50 @@ function openRelationshipEditor() {
     let both = null;
 
     group.forEach(relationship => {
-      if (relationship.direction === "a_to_b") {
-        aToB = relationship;
-      }
 
-      if (relationship.direction === "b_to_a") {
-        bToA = relationship;
-      }
+  const relationshipA =
+    String(relationship.character_a_id);
 
-      if (relationship.direction === "both") {
-        both = relationship;
-      }
-    });
+  const relationshipB =
+    String(relationship.character_b_id);
+
+  const fixedA =
+    String(first.character_a_id);
+
+  const fixedB =
+    String(first.character_b_id);
+
+  if (relationship.direction === "both") {
+    both = relationship;
+    return;
+  }
+
+  if (
+    relationshipA === fixedA &&
+    relationshipB === fixedB
+  ) {
+    if (relationship.direction === "a_to_b") {
+      aToB = relationship;
+    }
+
+    if (relationship.direction === "b_to_a") {
+      bToA = relationship;
+    }
+  }
+
+  if (
+    relationshipA === fixedB &&
+    relationshipB === fixedA
+  ) {
+    if (relationship.direction === "a_to_b") {
+      bToA = relationship;
+    }
+
+    if (relationship.direction === "b_to_a") {
+      aToB = relationship;
+    }
+  }
+});
 
     if (both) {
       drawRelationshipLine(
