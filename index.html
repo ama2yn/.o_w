@@ -1591,6 +1591,26 @@ const profileFields = [
 
   content.innerHTML =
     `
+
+  <div class="profile-item">
+  <label style="display:block; margin-bottom:8px;">
+    アイコン画像
+  </label>
+
+  <input
+    type="file"
+    id="editCharacterImage"
+    accept="image/*"
+    style="
+      width:100%;
+      box-sizing:border-box;
+      padding:10px;
+      border-radius:12px;
+      background:rgba(255,255,255,.9);
+    "
+  >
+</div>
+    
     <h2 style="margin-bottom:25px;">
       ✎ EDIT CHARACTER
     </h2>
