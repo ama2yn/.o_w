@@ -919,6 +919,7 @@ characterList.parentElement.insertBefore(
 
       return `
         <div
+        data-character-id="${character.id}"
           onclick="openCharacter(${character.id})"
           style="
             margin-top:15px;
@@ -1031,6 +1032,94 @@ characterList.parentElement.insertBefore(
 
     card.appendChild(controls);
   });
+
+}
+
+  async function moveCharacter(characterId, direction) {
+
+  const characterList =
+    document.getElementById("characterList");
+
+  const cards =
+    Array.from(
+      characterList.querySelectorAll(
+        "[data-character-id]"
+      )
+    );
+
+  const currentIndex =
+    cards.findIndex(
+      card =>
+        String(card.dataset.characterId) ===
+        String(characterId)
+    );
+
+  const targetIndex =
+    currentIndex + direction;
+
+  if (
+    currentIndex === -1 ||
+    targetIndex < 0 ||
+    targetIndex >= cards.length
+  ) {
+    return;
+  }
+
+  const currentCard =
+    cards[currentIndex];
+
+  const targetCard =
+    cards[targetIndex];
+
+  if (direction === -1) {
+    characterList.insertBefore(
+      currentCard,
+      targetCard
+    );
+  } else {
+    characterList.insertBefore(
+      targetCard,
+      currentCard
+    );
+  }
+
+  const newCards =
+    Array.from(
+      characterList.querySelectorAll(
+        "[data-character-id]"
+      )
+    );
+
+  for (
+    let index = 0;
+    index < newCards.length;
+    index++
+  ) {
+
+    const id =
+      newCards[index].dataset.characterId;
+
+    await fetch(
+      SUPABASE_URL +
+      "/rest/v1/characters?id=eq." +
+      id,
+      {
+        method: "PATCH",
+        headers: {
+          "apikey": SUPABASE_PUBLISHABLE_KEY,
+          "Authorization":
+            "Bearer " + SUPABASE_PUBLISHABLE_KEY,
+          "Content-Type":
+            "application/json",
+          "Prefer":
+            "return=minimal"
+        },
+        body: JSON.stringify({
+          sort_order: index
+        })
+      }
+    );
+  }
 
 }
 
