@@ -1222,38 +1222,49 @@ async function openCharacter(characterId) {
 
   let customFieldsHtml = "";
 
-  Object.entries(customFields).forEach(
-    ([key, field]) => {
+Object.entries(customFields).forEach(
+  ([key, field]) => {
 
-      if (
-        key === "first_person" ||
-        key === "second_person"
-      ) {
-        return;
-      }
-
-      if (
-        !field ||
-        typeof field !== "object" ||
-        !field.label
-      ) {
-        return;
-      }
-
-      customFieldsHtml += `
-  <p style="
-  white-space:pre-wrap;
-  line-height:1.8;
-  margin:0;
-">
-  ${
-    escapeHtml(
-      relationship.description
-    )
-  }
-</p>
+    if (
+      key === "first_person" ||
+      key === "second_person"
+    ) {
+      return;
     }
-  );
+
+    if (
+      !field ||
+      typeof field !== "object" ||
+      !field.label
+    ) {
+      return;
+    }
+
+    customFieldsHtml += `
+      <div style="
+        margin-top:15px;
+      ">
+        <strong>
+          ${escapeHtml(field.label)}
+        </strong>
+
+        ${
+          field.value
+            ? `
+              <p style="
+                white-space:pre-wrap;
+                line-height:1.8;
+                margin:5px 0 0;
+              ">
+                ${escapeHtml(field.value)}
+              </p>
+            `
+            : ""
+        }
+      </div>
+    `;
+  }
+);
   
   content.innerHTML =
   `
