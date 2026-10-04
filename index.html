@@ -897,6 +897,23 @@ data.sort(
     return;
   }
 
+const sortButton =
+  document.createElement("button");
+
+sortButton.textContent =
+  "↕ 並べ替え";
+
+sortButton.style.cssText =
+  "display:block; margin:0 auto 15px; padding:10px 18px; border:none; border-radius:20px; cursor:pointer;";
+
+sortButton.onclick =
+  () => toggleCharacterSortMode();
+
+characterList.parentElement.insertBefore(
+  sortButton,
+  characterList
+);
+  
   characterList.innerHTML =
     data.map(character => {
 
