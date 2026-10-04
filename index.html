@@ -1258,24 +1258,57 @@ Object.entries(customFields).forEach(
       return;
     }
 
-   customFieldsHtml += `
+   const customValue =
+  field.value || "";
+
+const isLongCustomValue =
+  customValue.length > 30 ||
+  customValue.includes("\n");
+
+customFieldsHtml += `
   <div style="
     margin-top:15px;
   ">
-    <p style="
-      margin:0;
-      font-weight:normal;
-    ">${escapeHtml(field.label)}</p>
 
     ${
-      field.value
-        ? `<p style="
-          white-space:pre-wrap;
-          line-height:1.8;
-          margin:5px 0 0;
-        ">${escapeHtml(field.value)}</p>`
-        : ""
+      customValue
+        ? isLongCustomValue
+          ? `
+            <p style="
+              margin:0;
+              font-weight:normal;
+            ">
+              ${escapeHtml(field.label)}
+            </p>
+
+            <p style="
+              white-space:pre-wrap;
+              line-height:1.8;
+              margin:5px 0 0;
+            ">
+              ${escapeHtml(customValue)}
+            </p>
+          `
+          : `
+            <p style="
+              margin:0;
+              line-height:1.8;
+              font-weight:normal;
+            ">
+              ${escapeHtml(field.label)}:
+              ${escapeHtml(customValue)}
+            </p>
+          `
+        : `
+          <p style="
+            margin:0;
+            font-weight:normal;
+          ">
+            ${escapeHtml(field.label)}
+          </p>
+        `
     }
+
   </div>
 `;
   }
