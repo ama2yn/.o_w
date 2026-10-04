@@ -1245,9 +1245,13 @@ async function openCharacter(characterId) {
   white-space:pre-wrap;
   line-height:1.8;
   margin:0;
-">${escapeHtml(
-  relationship.description
-)}</p>
+">
+  ${
+    escapeHtml(
+      relationship.description
+    )
+  }
+</p>
     }
   );
   
