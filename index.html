@@ -1259,8 +1259,7 @@ Object.entries(customFields).forEach(
     }
 
    const customValue =
-  field.value || "";
-
+  (field.value || "").replace(/^\s+/, "");
 const isLongCustomValue =
   customValue.length > 30 ||
   customValue.includes("\n");
