@@ -1241,11 +1241,9 @@ async function openCharacter(characterId) {
       }
 
       customFieldsHtml += `
-        <p style="white-space:pre-wrap;">
-          ${escapeHtml(field.label)}：
-          ${escapeHtml(field.value || "")}
-        </p>
-      `;
+  <p style="white-space:pre-wrap;">${escapeHtml(field.label)}：
+${escapeHtml(field.value || "")}</p>
+`;
     }
   );
   
