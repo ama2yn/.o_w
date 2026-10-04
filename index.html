@@ -1015,20 +1015,20 @@ characterList.parentElement.insertBefore(
       "text-align:center; margin-top:10px;";
 
     controls.innerHTML = `
-      <button
-        type="button"
-        onclick="moveCharacter(${card.dataset.characterId}, -1)"
-      >
-        ↑
-      </button>
+  <button
+    type="button"
+    onclick="event.stopPropagation(); moveCharacter(${card.dataset.characterId}, -1)"
+  >
+    ↑
+  </button>
 
-      <button
-        type="button"
-        onclick="moveCharacter(${card.dataset.characterId}, 1)"
-      >
-        ↓
-      </button>
-    `;
+  <button
+    type="button"
+    onclick="event.stopPropagation(); moveCharacter(${card.dataset.characterId}, 1)"
+  >
+    ↓
+  </button>
+`;
 
     card.appendChild(controls);
   });
