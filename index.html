@@ -839,7 +839,7 @@ async function loadCharacters() {
 
   const response = await fetch(
     SUPABASE_URL +
-    "/rest/v1/characters?select=id,name,reading,gender,age,main_image,created_at&order=created_at.asc",
+  "/rest/v1/characters?select=*&order=sort_order.asc.nullslast"
     {
       headers: {
         "apikey": SUPABASE_PUBLISHABLE_KEY,
