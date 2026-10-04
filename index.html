@@ -2088,91 +2088,232 @@ function openRelationshipEditor() {
   );
 
   relationships.forEach(
-    relationship => {
+  relationship => {
 
-      const ids = [
-        relationship.character_a_id,
+    const from =
+      positions[
+        relationship.character_a_id
+      ];
+
+    const to =
+      positions[
         relationship.character_b_id
       ];
 
-      if (
-        relationship.character_c_id
-      ) {
-        ids.push(
-          relationship.character_c_id
-        );
-      }
+    if (!from || !to) {
+      return;
+    }
 
-      for (
-        let i = 0;
-        i < ids.length;
-        i++
-      ) {
+    const markerId =
+      "arrow-" + relationship.id;
 
-        for (
-          let j = i + 1;
-          j < ids.length;
-          j++
-        ) {
+    const defs =
+      document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "defs"
+      );
 
-          const from =
-            positions[ids[i]];
+    const marker =
+      document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "marker"
+      );
 
-          const to =
-            positions[ids[j]];
+    marker.setAttribute(
+      "id",
+      markerId
+    );
 
-          if (
-            !from ||
-            !to
-          ) {
-            continue;
-          }
+    marker.setAttribute(
+      "markerWidth",
+      "8"
+    );
 
-          const line =
-            document.createElementNS(
-              "http://www.w3.org/2000/svg",
-              "line"
-            );
+    marker.setAttribute(
+      "markerHeight",
+      "8"
+    );
 
-          line.setAttribute(
-            "x1",
-            from.x
-          );
+    marker.setAttribute(
+      "refX",
+      "7"
+    );
 
-          line.setAttribute(
-            "y1",
-            from.y
-          );
+    marker.setAttribute(
+      "refY",
+      "4"
+    );
 
-          line.setAttribute(
-            "x2",
-            to.x
-          );
+    marker.setAttribute(
+      "orient",
+      "auto"
+    );
 
-          line.setAttribute(
-            "y2",
-            to.y
-          );
+    const arrow =
+      document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "path"
+      );
 
-          line.setAttribute(
-            "stroke",
-            "rgba(255,255,255,.5)"
-          );
+    arrow.setAttribute(
+      "d",
+      "M0,0 L8,4 L0,8 Z"
+    );
 
-          line.setAttribute(
-            "stroke-width",
-            "2"
-          );
+    arrow.setAttribute(
+      "fill",
+      "rgba(255,255,255,.7)"
+    );
 
-          svg.appendChild(line);
+    marker.appendChild(arrow);
+    defs.appendChild(marker);
+    svg.appendChild(defs);
 
-        }
+    const line =
+      document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "line"
+      );
 
-      }
+    line.setAttribute(
+      "x1",
+      from.x
+    );
+
+    line.setAttribute(
+      "y1",
+      from.y
+    );
+
+    line.setAttribute(
+      "x2",
+      to.x
+    );
+
+    line.setAttribute(
+      "y2",
+      to.y
+    );
+
+    line.setAttribute(
+      "stroke",
+      "rgba(255,255,255,.55)"
+    );
+
+    line.setAttribute(
+      "stroke-width",
+      "2"
+    );
+
+    if (
+      relationship.direction ===
+      "a_to_b"
+    ) {
+
+      line.setAttribute(
+        "marker-end",
+        "url(#" + markerId + ")"
+      );
 
     }
-  );
 
+    else if (
+      relationship.direction ===
+      "b_to_a"
+    ) {
+
+      line.setAttribute(
+        "marker-start",
+        "url(#" + markerId + ")"
+      );
+
+    }
+
+    else {
+
+      line.setAttribute(
+        "marker-start",
+        "url(#" + markerId + ")"
+      );
+
+      line.setAttribute(
+        "marker-end",
+        "url(#" + markerId + ")"
+      );
+
+    }
+
+    line.style.pointerEvents =
+      "stroke";
+
+    line.style.cursor =
+      "pointer";
+
+    line.onclick =
+      () => {
+
+        openRelationshipDetail(
+          relationship.id
+        );
+
+      };
+
+    svg.appendChild(line);
+
+    const label =
+      document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "text"
+      );
+
+    label.setAttribute(
+      "x",
+      (from.x + to.x) / 2
+    );
+
+    label.setAttribute(
+      "y",
+      (from.y + to.y) / 2 - 8
+    );
+
+    label.setAttribute(
+      "text-anchor",
+      "middle"
+    );
+
+    label.setAttribute(
+      "fill",
+      "rgba(255,255,255,.8)"
+    );
+
+    label.setAttribute(
+      "font-size",
+      "12"
+    );
+
+    label.textContent =
+      relationship.relationship_name ||
+      "";
+
+    label.style.cursor =
+      "pointer";
+
+    label.style.pointerEvents =
+      "auto";
+
+    label.onclick =
+      () => {
+
+        openRelationshipDetail(
+          relationship.id
+        );
+
+      };
+
+    svg.appendChild(label);
+
+  }
+);
   characterArray.forEach(
     character => {
 
