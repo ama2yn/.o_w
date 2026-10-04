@@ -839,7 +839,7 @@ async function loadCharacters() {
 
   const response = await fetch(
     SUPABASE_URL +
-  "/rest/v1/characters?select=*&order=sort_order.asc.nullslast"
+  "/rest/v1/characters?select=*&order=sort_order.asc.nullslast",
     {
       headers: {
         "apikey": SUPABASE_PUBLISHABLE_KEY,
@@ -868,6 +868,16 @@ async function loadCharacters() {
 
   const data =
     await response.json();
+
+  data.forEach((character, index) => {
+  if (character.sort_order === null) {
+    character.sort_order = index;
+  }
+});
+
+data.sort(
+  (a, b) => a.sort_order - b.sort_order
+);
 
   if (data.length === 0) {
 
