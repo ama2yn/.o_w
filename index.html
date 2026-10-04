@@ -2022,25 +2022,9 @@ function openRelationshipEditor() {
   defs.appendChild(marker);
   svg.appendChild(defs);
 
-  Object.values(relationshipGroups).forEach(group => {
-    const first = group[0];
+Object.values(relationshipGroups).forEach(group => {
 
-    const a = positions[String(first.character_a_id)];
-    const b = positions[String(first.character_b_id)];
-
-    if (!a || !b) return;
-
-    let aToB = null;
-    let bToA = null;
-    let both = null;
-
- group.forEach(relationship => {
-
-  const relationshipA =
-    String(relationship.character_a_id);
-
-  const relationshipB =
-    String(relationship.character_b_id);
+  const first = group[0];
 
   const fixedA =
     String(first.character_a_id);
@@ -2048,113 +2032,141 @@ function openRelationshipEditor() {
   const fixedB =
     String(first.character_b_id);
 
-  if (relationship.direction === "both") {
-    both = relationship;
-    return;
-  }
+  const a =
+    positions[fixedA];
 
-  if (
-    relationshipA === fixedA &&
-    relationshipB === fixedB
-  ) {
-    if (relationship.direction === "a_to_b") {
-      aToB = relationship;
-    }
+  const b =
+    positions[fixedB];
 
-    if (relationship.direction === "b_to_a") {
-      bToA = relationship;
-    }
-  }
+  if (!a || !b) return;
 
-  if (
-    relationshipA === fixedB &&
-    relationshipB === fixedA
-  ) {
-    if (relationship.direction === "a_to_b") {
-      bToA = relationship;
-    }
+  const normalizedRelationships = [];
 
-    if (relationship.direction === "b_to_a") {
-      aToB = relationship;
-    }
-  }
-});
+  group.forEach(relationship => {
 
-    if (both) {
-      drawRelationshipLine(
-        svg,
-        a,
-        b,
-        both,
-        0,
-        true
+    const relationshipA =
+      String(relationship.character_a_id);
+
+    const relationshipB =
+      String(relationship.character_b_id);
+
+    const normalized =
+      {
+        ...relationship
+      };
+
+    if (
+      relationship.direction ===
+      "both"
+    ) {
+
+      normalized.direction =
+        "both";
+
+      normalizedRelationships.push(
+        {
+          relationship:
+            normalized,
+          bothDirections:
+            true
+        }
       );
+
       return;
     }
 
-    if (aToB && bToA) {
+    if (
+      relationshipA === fixedA &&
+      relationshipB === fixedB
+    ) {
 
-  if (
-    aToB.relationship_name ===
-    bToA.relationship_name
-  ) {
+      normalized.direction =
+        relationship.direction;
 
-    drawRelationshipLine(
-      svg,
-      a,
-      b,
-      aToB,
-      0,
-      true
-    );
-
-  } else {
-
-    drawRelationshipLine(
-      svg,
-      a,
-      b,
-      aToB,
-      -18,
-      false
-    );
-
-    drawRelationshipLine(
-      svg,
-      a,
-      b,
-      bToA,
-      18,
-      false
-    );
-
-  }
-
-  return;
-}
-
-    if (aToB) {
-      drawRelationshipLine(
-        svg,
-        a,
-        b,
-        aToB,
-        0,
-        false
+      normalizedRelationships.push(
+        {
+          relationship:
+            normalized,
+          bothDirections:
+            false
+        }
       );
+
+      return;
     }
 
-    if (bToA) {
-      drawRelationshipLine(
-        svg,
-        a,
-        b,
-        bToA,
-        0,
-        false
+    if (
+      relationshipA === fixedB &&
+      relationshipB === fixedA
+    ) {
+
+      if (
+        relationship.direction ===
+        "a_to_b"
+      ) {
+
+        normalized.direction =
+          "b_to_a";
+
+      }
+      else if (
+        relationship.direction ===
+        "b_to_a"
+      ) {
+
+        normalized.direction =
+          "a_to_b";
+
+      }
+      else {
+
+        return;
+
+      }
+
+      normalizedRelationships.push(
+        {
+          relationship:
+            normalized,
+          bothDirections:
+            false
+        }
       );
+
     }
+
   });
+
+  const total =
+    normalizedRelationships.length;
+
+  normalizedRelationships.forEach(
+    (item, index) => {
+
+      let offset = 0;
+
+      if (total > 1) {
+
+        offset =
+          (index -
+            (total - 1) / 2) *
+          24;
+
+      }
+
+      drawRelationshipLine(
+        svg,
+        a,
+        b,
+        item.relationship,
+        offset,
+        item.bothDirections
+      );
+
+    }
+  );
+
+});
 
   characters.forEach(character => {
     const position =
