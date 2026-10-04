@@ -2327,9 +2327,12 @@ async function saveCharacterEdit() {
       },
 
       body:
-        JSON.stringify(updates)
-    }
-  );
+  JSON.stringify({
+    ...updates,
+    ...(imageUrl
+      ? { main_image: imageUrl }
+      : {})
+  })
 
 
   if (!response.ok) {
