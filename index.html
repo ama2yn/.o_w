@@ -1312,22 +1312,12 @@ const profileFields = [
     return;
   }
 
-  const elements = {};
-
-  profileFields.forEach(field => {
-    const element =
-      document.getElementById(field.inputId);
-
-    if (element) {
-      elements[field.key] =
-        element.closest(".profile-item");
-    }
-  });
-
   profileOrder.forEach(key => {
 
     const item =
-      elements[key];
+      document.querySelector(
+        `.profile-item[data-profile-key="${key}"]`
+      );
 
     if (item) {
       container.appendChild(item);
