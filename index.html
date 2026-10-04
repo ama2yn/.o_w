@@ -897,22 +897,31 @@ data.sort(
     return;
   }
 
-const sortButton =
-  document.createElement("button");
+let sortButton =
+  document.getElementById("characterSortButton");
 
-sortButton.textContent =
-  "並べ替え";
+if (!sortButton) {
 
-sortButton.style.cssText =
-  "display:block; margin:0 0 10px auto; padding:0; border:none; background:none; color:#d9cfea; font-size:13px; cursor:pointer;";
+  sortButton =
+    document.createElement("button");
 
-sortButton.onclick =
-  () => toggleCharacterSortMode();
+  sortButton.id =
+    "characterSortButton";
 
-characterList.parentElement.insertBefore(
-  sortButton,
-  characterList
-);
+  sortButton.textContent =
+    "並べ替え";
+
+  sortButton.style.cssText =
+    "display:block; margin:0 0 10px auto; padding:0; border:none; background:none; color:#d9cfea; font-size:13px; cursor:pointer;";
+
+  sortButton.onclick =
+    () => toggleCharacterSortMode();
+
+  characterList.parentElement.insertBefore(
+    sortButton,
+    characterList
+  );
+}
   
   characterList.innerHTML =
     data.map(character => {
