@@ -4490,24 +4490,7 @@ async function loadWorldDetail(worldId) {
     world.discription || "説明なし";
 }
 
-  // 閲覧専用共有URL
-const shareParams =
-  new URLSearchParams(
-    window.location.search
-  );
 
-const sharedCharacterId =
-  shareParams.get("character");
-
-if (
-  sharedCharacterId &&
-  shareParams.get("view") === "public"
-) {
-
-  window.characterViewOnly = true;
-
-  openCharacter(sharedCharacterId);
-}
 
   async function copyCharacterShareUrl(characterId) {
 
