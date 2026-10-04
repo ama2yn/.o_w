@@ -2212,20 +2212,26 @@ function drawRelationshipLine(
   const nx = -dy / length;
   const ny = dx / length;
 
-  const startX =
+  const nodeRadius = 45;
+
+const startX =
     from.x +
+    (dx / length) * nodeRadius +
     nx * offset;
 
-  const startY =
+const startY =
     from.y +
+    (dy / length) * nodeRadius +
     ny * offset;
 
-  const endX =
-    to.x +
+const endX =
+    to.x -
+    (dx / length) * nodeRadius +
     nx * offset;
 
-  const endY =
-    to.y +
+const endY =
+    to.y -
+    (dy / length) * nodeRadius +
     ny * offset;
 
 
