@@ -979,6 +979,61 @@ characterList.parentElement.insertBefore(
     }).join("");
 }
 
+  function toggleCharacterSortMode() {
+
+  const characterList =
+    document.getElementById("characterList");
+
+  const sortButton =
+    document.querySelector(
+      "#characterList"
+    ).previousElementSibling;
+
+  const cards =
+    characterList.querySelectorAll(
+      "[data-character-id]"
+    );
+
+  cards.forEach(card => {
+
+    let controls =
+      card.querySelector(".character-sort-controls");
+
+    if (controls) {
+      controls.remove();
+      return;
+    }
+
+    controls =
+      document.createElement("div");
+
+    controls.className =
+      "character-sort-controls";
+
+    controls.style.cssText =
+      "text-align:center; margin-top:10px;";
+
+    controls.innerHTML = `
+      <button
+        type="button"
+        onclick="moveCharacter(${card.dataset.characterId}, -1)"
+      >
+        ↑
+      </button>
+
+      <button
+        type="button"
+        onclick="moveCharacter(${card.dataset.characterId}, 1)"
+      >
+        ↓
+      </button>
+    `;
+
+    card.appendChild(controls);
+  });
+
+}
+
 
 async function openCharacter(characterId) {
 
