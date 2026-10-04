@@ -1725,7 +1725,7 @@ function openRelationshipEditor() {
   openCharacterRelationships();
 }
   
-  function openCharacterRelationships() {
+ function openCharacterRelationships() {
 
   const characterPage =
     document.getElementById("characterPage");
@@ -1739,38 +1739,61 @@ function openRelationshipEditor() {
   characterPage.style.display = "block";
 
   const content =
-    document.getElementById("characterPageContent");
+    document.getElementById(
+      "characterPageContent"
+    );
 
   content.innerHTML = `
-    <div style="text-align:center; padding:30px 0;">
+    <div style="
+      padding:20px 0;
+    ">
 
-      <h2 style="margin-bottom:25px;">
+      <h2 style="
+        text-align:center;
+        margin-bottom:25px;
+      ">
         ♡ 相関図
       </h2>
 
-    <p style="
-  opacity:.7;
-  margin-bottom:20px;
-">
-  Character同士の関係を登録できます。
-</p>
-
-<button
-  type="button"
-  onclick="openRelationshipEditor()"
->
-  ＋ 関係を登録
-</button>
-
-      <button
-        type="button"
-        onclick="openCharacter(window.currentCharacterId)"
+      <div
+        id="relationshipList"
+        style="
+          margin-bottom:25px;
+        "
       >
-        ← Characterに戻る
-      </button>
+        <p style="
+          text-align:center;
+          opacity:.7;
+        ">
+          読み込み中…
+        </p>
+      </div>
+
+      <div style="
+        text-align:center;
+      ">
+
+        <button
+          type="button"
+          onclick="openRelationshipEditor()"
+        >
+          ＋ 関係を登録
+        </button>
+
+        <button
+          type="button"
+          onclick="openCharacter(window.currentCharacterId)"
+          style="margin-left:10px;"
+        >
+          ← Characterに戻る
+        </button>
+
+      </div>
 
     </div>
   `;
+
+  loadCharacterRelationships();
 }
 
 async function editCharacter() {
