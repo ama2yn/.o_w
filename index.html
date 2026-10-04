@@ -1392,6 +1392,46 @@ ${escapeHtml(field.value || "")}</p>
   content.appendChild(relationshipButton);
 }
 
+  function openCharacterRelationships() {
+
+  const characterPage =
+    document.getElementById("characterPage");
+
+  Array.from(
+    characterPage.parentElement.children
+  ).forEach(element => {
+    element.style.display = "none";
+  });
+
+  characterPage.style.display = "block";
+
+  const content =
+    document.getElementById("characterPageContent");
+
+  content.innerHTML = `
+    <div style="text-align:center; padding:30px 0;">
+
+      <h2 style="margin-bottom:25px;">
+        ♡ 相関図
+      </h2>
+
+      <p style="
+        opacity:.7;
+        margin-bottom:30px;
+      ">
+        Character同士の関係を登録できます。
+      </p>
+
+      <button
+        type="button"
+        onclick="openCharacter(window.currentCharacterId)"
+      >
+        ← Characterに戻る
+      </button>
+
+    </div>
+  `;
+}
 
 async function editCharacter() {
 
