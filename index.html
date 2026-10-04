@@ -1745,7 +1745,7 @@ async function openRelationshipEditor(
   }
 }
 
-  async function saveRelationship() {
+ async function saveRelationship() {
 
   const characterAId =
     window.currentCharacterId;
@@ -1765,6 +1765,14 @@ async function openRelationshipEditor(
       "relationshipDescription"
     ).value.trim();
 
+  const relationshipDirection =
+    document.getElementById(
+      "relationshipDirection"
+    ).value;
+
+  const editingRelationshipId =
+    window.editingRelationshipId;
+
   if (!characterBId) {
     alert("関係相手を選択してください。");
     return;
@@ -1779,57 +1787,100 @@ async function openRelationshipEditor(
     String(characterAId) ===
     String(characterBId)
   ) {
-    alert("自分自身は関係相手に選択できません。");
+    alert(
+      "自分自身は関係相手に選択できません。"
+    );
     return;
   }
 
-  const response =
-    await fetch(
-      SUPABASE_URL +
-      "/rest/v1/character_relationships",
-      {
-        method: "POST",
+  const relationshipData = {
+    character_a_id:
+      characterAId,
 
-        headers: {
-          "Content-Type":
-            "application/json",
+    character_b_id:
+      characterBId,
 
-          "apikey":
-            SUPABASE_PUBLISHABLE_KEY,
+    character_c_id:
+      null,
 
-          "Authorization":
-            "Bearer " +
-            SUPABASE_PUBLISHABLE_KEY,
+    relationship_name:
+      relationshipName,
 
-          "Prefer":
-            "return=representation"
-        },
+    direction:
+      relationshipDirection,
 
-        body: JSON.stringify({
-  character_a_id:
-    characterAId,
+    description:
+      relationshipDescription,
 
-  character_b_id:
-    characterBId,
+    details: {}
+  };
 
-  character_c_id:
-    null,
+  let response;
 
-  relationship_name:
-    relationshipName,
+  if (editingRelationshipId) {
 
-  direction:
-    document.getElementById(
-      "relationshipDirection"
-    ).value,
+    response =
+      await fetch(
+        SUPABASE_URL +
+        "/rest/v1/character_relationships" +
+        "?id=eq." +
+        editingRelationshipId,
+        {
+          method: "PATCH",
 
-  description:
-    relationshipDescription,
+          headers: {
+            "Content-Type":
+              "application/json",
 
-  details: {}
-})
-      }
-    );
+            "apikey":
+              SUPABASE_PUBLISHABLE_KEY,
+
+            "Authorization":
+              "Bearer " +
+              SUPABASE_PUBLISHABLE_KEY,
+
+            "Prefer":
+              "return=representation"
+          },
+
+          body:
+            JSON.stringify(
+              relationshipData
+            )
+        }
+      );
+
+  } else {
+
+    response =
+      await fetch(
+        SUPABASE_URL +
+        "/rest/v1/character_relationships",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json",
+
+            "apikey":
+              SUPABASE_PUBLISHABLE_KEY,
+
+            "Authorization":
+              "Bearer " +
+              SUPABASE_PUBLISHABLE_KEY,
+
+            "Prefer":
+              "return=representation"
+          },
+
+          body:
+            JSON.stringify(
+              relationshipData
+            )
+        }
+      );
+  }
 
   if (!response.ok) {
 
@@ -1844,7 +1895,14 @@ async function openRelationshipEditor(
     return;
   }
 
-  alert("関係を保存しました。");
+  window.editingRelationshipId =
+    null;
+
+  alert(
+    editingRelationshipId
+      ? "関係を変更しました。"
+      : "関係を保存しました。"
+  );
 
   openCharacterRelationships();
 }
