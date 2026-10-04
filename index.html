@@ -4552,7 +4552,7 @@ async function copyCharacterShareUrl(characterId) {
   }
 }
 
-  // 閲覧専用共有URL
+ // 閲覧専用共有URL
 const shareParams =
   new URLSearchParams(
     window.location.search
@@ -4568,9 +4568,8 @@ if (
 
   window.characterViewOnly = true;
 
-  openCharacter(sharedCharacterId);
+  showCharacters();
 }
-
 </script>
 
 </body>
