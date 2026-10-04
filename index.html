@@ -2392,7 +2392,12 @@ Object.values(relationshipGroups).forEach(group => {
       box-sizing:border-box;
     `;
 
-    node.onclick = () => {
+        node.onclick = () => {
+
+      if (window.characterViewOnly) {
+        return;
+      }
+
       const relation =
         relationships.find(
           r =>
