@@ -1988,11 +1988,10 @@ customField.innerHTML = `
     class="custom-field-name profile-field"
   >
 
-  <input
-    type="text"
-    value="${escapeHtml(field.value || "")}"
+   <textarea
     class="custom-field-value profile-field"
-  >
+    rows="2"
+  >${escapeHtml(field.value || "")}</textarea>
 
   <div style="margin-top:6px;">
 
