@@ -1271,6 +1271,8 @@ const profileFields = [
   const index =
     profileOrder.indexOf(key);
 
+    window.currentProfileOrder = profileOrder;
+
   if (index === -1) {
     return;
   }
