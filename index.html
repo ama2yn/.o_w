@@ -4528,6 +4528,34 @@ if (
   openCharacter(sharedCharacterId);
 }
 
+  async function copyCharacterShareUrl(characterId) {
+
+  const shareUrl =
+    window.location.origin +
+    window.location.pathname +
+    "?character=" +
+    encodeURIComponent(characterId) +
+    "&view=public";
+
+  try {
+
+    await navigator.clipboard.writeText(
+      shareUrl
+    );
+
+    alert(
+      "閲覧用URLをコピーしました。"
+    );
+
+  } catch (error) {
+
+    alert(
+      "URLのコピーに失敗しました。\n\n" +
+      shareUrl
+    );
+  }
+}
+
 </script>
 
 </body>
