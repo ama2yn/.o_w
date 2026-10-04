@@ -2476,7 +2476,15 @@ const endY =
    * A ⇔ B
    */
 
-  if (bothDirections) {
+    const direction =
+    String(
+      relationship.direction || ""
+    ).trim();
+
+  if (
+    bothDirections ||
+    direction === "both"
+  ) {
 
     line.setAttribute(
       "marker-start",
@@ -2489,15 +2497,8 @@ const endY =
     );
 
   }
-
-
-  /*
-   * A → B
-   */
-
   else if (
-    relationship.direction ===
-    "a_to_b"
+    direction === "a_to_b"
   ) {
 
     line.setAttribute(
@@ -2506,15 +2507,8 @@ const endY =
     );
 
   }
-
-
-  /*
-   * A ← B
-   */
-
   else if (
-    relationship.direction ===
-    "b_to_a"
+    direction === "b_to_a"
   ) {
 
     line.setAttribute(
