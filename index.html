@@ -1966,11 +1966,13 @@ relationships.forEach(
 
     const key =
   [a, b]
-    .sort()
+    .sort(
+      (x, y) =>
+        Number(x) - Number(y)
+    )
     .join("_");
 
-        characterIds.add(a);
-    characterIds.add(b);
+        
 
     if (!relationshipGroups[key]) {
       relationshipGroups[key] = [];
