@@ -3900,6 +3900,50 @@ function setupAutoResize() {
   );
 }
 
+function addCharacterMusicField() {
+
+  const container =
+    document.getElementById(
+      "characterMusicContainer"
+    );
+
+  const item =
+    document.createElement("div");
+
+  item.className =
+    "character-music-item";
+
+  item.style.cssText =
+    "margin-top:25px; padding-top:25px; border-top:1px solid rgba(255,255,255,.15);";
+
+  item.innerHTML = `
+    <label>YouTube URL</label>
+
+    <input
+      type="url"
+      class="profile-field character-music-url"
+      placeholder="https://www.youtube.com/watch?v=..."
+    >
+
+    <label style="
+      display:block;
+      margin-top:12px;
+    ">
+      曲名
+    </label>
+
+    <input
+      type="text"
+      class="profile-field character-music-title"
+      placeholder="曲名（任意）"
+    >
+  `;
+
+  container.insertBefore(
+    item,
+    container.querySelector("button")
+  );
+}
 
 async function saveCharacterEdit() {
 
@@ -4202,66 +4246,53 @@ async function saveCharacterEdit() {
   }
 
 
-  const musicUrlInput =
-    document.getElementById(
-      "characterMusicUrl"
+  const musicItems =
+    Array.from(
+      document.querySelectorAll(
+        ".character-music-item"
+      )
     );
 
-  const musicTitleInput =
-    document.getElementById(
-      "characterMusicTitle"
-    );
+  const musicList =
+    musicItems
+      .map(item => {
 
-  const musicUrl =
-    musicUrlInput
-      ? musicUrlInput.value.trim()
-      : "";
+        const urlInput =
+          item.querySelector(
+            ".character-music-url"
+          );
 
-  const musicTitle =
-    musicTitleInput
-      ? musicTitleInput.value.trim()
-      : "";
+        const titleInput =
+          item.querySelector(
+            ".character-music-title"
+          );
 
+        return {
+          youtube_url:
+            urlInput
+              ? urlInput.value.trim()
+              : "",
 
-  const deleteMusicResponse =
-    await fetch(
-      SUPABASE_URL +
-      "/rest/v1/character_music" +
-      "?character_id=eq." +
-      characterId,
-      {
-        method: "DELETE",
-
-        headers: {
-          "apikey":
-            SUPABASE_PUBLISHABLE_KEY,
-
-          "Authorization":
-            "Bearer " +
-            SUPABASE_PUBLISHABLE_KEY,
-
-          "Prefer":
-            "return=minimal"
-        }
-      }
-    );
+          title:
+            titleInput
+              ? titleInput.value.trim()
+              : ""
+        };
+      })
+      .filter(
+        music =>
+          music.youtube_url
+      );
 
 
-  if (!deleteMusicResponse.ok) {
+  for (
+    let index = 0;
+    index < musicList.length;
+    index++
+  ) {
 
-    const errorText =
-      await deleteMusicResponse.text();
-
-    alert(
-      "音楽情報の更新に失敗しました。\n\n" +
-      errorText
-    );
-
-    return;
-  }
-
-
-  if (musicUrl) {
+    const music =
+      musicList[index];
 
     const musicResponse =
       await fetch(
@@ -4291,15 +4322,30 @@ async function saveCharacterEdit() {
                 characterId,
 
               youtube_url:
-                musicUrl,
+                music.youtube_url,
 
               title:
-                musicTitle || null,
+                music.title || null,
 
               sort_order:
-                0
+                index
             })
         }
+      );
+
+    if (!musicResponse.ok) {
+
+      const errorText =
+        await musicResponse.text();
+
+      alert(
+        "音楽情報の保存に失敗しました。\n\n" +
+        errorText
+      );
+
+      return;
+    }
+  }
       );
 
 
