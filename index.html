@@ -3784,7 +3784,90 @@ const profileFields = [
     </div>
     `;
 
-    renderProfileFields();
+        renderProfileFields();
+
+    const musicResponse =
+      await fetch(
+        SUPABASE_URL +
+        "/rest/v1/character_music" +
+        "?character_id=eq." +
+        characterId +
+        "&select=*" +
+        "&order=sort_order.asc",
+        {
+          headers: {
+            "apikey":
+              SUPABASE_PUBLISHABLE_KEY,
+
+            "Authorization":
+              "Bearer " +
+              SUPABASE_PUBLISHABLE_KEY
+          }
+        }
+      );
+
+    if (musicResponse.ok) {
+
+      const characterMusic =
+        await musicResponse.json();
+
+      const musicContainer =
+        document.getElementById(
+          "characterMusicContainer"
+        );
+
+      if (
+        musicContainer &&
+        characterMusic.length > 0
+      ) {
+
+        const firstItem =
+          musicContainer.querySelector(
+            ".character-music-item"
+          );
+
+        if (firstItem) {
+
+          firstItem.querySelector(
+            ".character-music-url"
+          ).value =
+            characterMusic[0].youtube_url || "";
+
+          firstItem.querySelector(
+            ".character-music-title"
+          ).value =
+            characterMusic[0].title || "";
+
+        }
+
+        for (
+          let index = 1;
+          index < characterMusic.length;
+          index++
+        ) {
+
+          addCharacterMusicField();
+
+          const items =
+            musicContainer.querySelectorAll(
+              ".character-music-item"
+            );
+
+          const item =
+            items[items.length - 1];
+
+          item.querySelector(
+            ".character-music-url"
+          ).value =
+            characterMusic[index].youtube_url || "";
+
+          item.querySelector(
+            ".character-music-title"
+          ).value =
+            characterMusic[index].title || "";
+        }
+      }
+    }
     
       
 
