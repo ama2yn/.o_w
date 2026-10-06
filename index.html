@@ -4353,6 +4353,41 @@ async function saveCharacterEdit() {
     return;
   }
 
+  const deleteMusicResponse =
+    await fetch(
+      SUPABASE_URL +
+      "/rest/v1/character_music" +
+      "?character_id=eq." +
+      characterId,
+      {
+        method: "DELETE",
+
+        headers: {
+          "apikey":
+            SUPABASE_PUBLISHABLE_KEY,
+
+          "Authorization":
+            "Bearer " +
+            SUPABASE_PUBLISHABLE_KEY,
+
+          "Prefer":
+            "return=minimal"
+        }
+      }
+    );
+
+  if (!deleteMusicResponse.ok) {
+
+    const errorText =
+      await deleteMusicResponse.text();
+
+    alert(
+      "既存の音楽情報の削除に失敗しました。\n\n" +
+      errorText
+    );
+
+    return;
+  }
 
   const musicItems =
     Array.from(
