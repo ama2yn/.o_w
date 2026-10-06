@@ -1220,6 +1220,33 @@ async function openCharacter(characterId) {
   }
 
   const character = data[0];
+  
+    const musicResponse =
+    await fetch(
+      SUPABASE_URL +
+      "/rest/v1/character_music" +
+      "?character_id=eq." +
+      characterId +
+      "&select=*" +
+      "&order=sort_order.asc",
+      {
+        headers: {
+          "apikey":
+            SUPABASE_PUBLISHABLE_KEY,
+
+          "Authorization":
+            "Bearer " +
+            SUPABASE_PUBLISHABLE_KEY
+        }
+      }
+    );
+
+  let characterMusic = [];
+
+  if (musicResponse.ok) {
+    characterMusic =
+      await musicResponse.json();
+  }
 
   let customFields = {};
 
