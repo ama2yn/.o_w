@@ -3744,28 +3744,38 @@ const profileFields = [
 
 <div id="characterMusicContainer">
 
-  <label>YouTube URL</label>
+  <div class="character-music-item">
 
-  <input
-    id="characterMusicUrl"
-    type="url"
-    placeholder="https://www.youtube.com/watch?v=..."
-    class="profile-field"
+    <label>YouTube URL</label>
+
+    <input
+      type="url"
+      class="profile-field character-music-url"
+      placeholder="https://www.youtube.com/watch?v=..."
+    >
+
+    <label style="
+      display:block;
+      margin-top:12px;
+    ">
+      曲名
+    </label>
+
+    <input
+      type="text"
+      class="profile-field character-music-title"
+      placeholder="曲名（任意）"
+    >
+
+  </div>
+
+  <button
+    type="button"
+    onclick="addCharacterMusicField()"
+    style="margin-top:15px;"
   >
-
-  <label style="
-    display:block;
-    margin-top:12px;
-  ">
-    曲名
-  </label>
-
-  <input
-    id="characterMusicTitle"
-    type="text"
-    placeholder="曲名（任意）"
-    class="profile-field"
-  >
+    ＋ MUSICを追加
+  </button>
 
 </div>
       
