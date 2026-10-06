@@ -4098,6 +4098,122 @@ async function saveCharacterEdit() {
   }
 
 
+  const musicUrlInput =
+    document.getElementById(
+      "characterMusicUrl"
+    );
+
+  const musicTitleInput =
+    document.getElementById(
+      "characterMusicTitle"
+    );
+
+  const musicUrl =
+    musicUrlInput
+      ? musicUrlInput.value.trim()
+      : "";
+
+  const musicTitle =
+    musicTitleInput
+      ? musicTitleInput.value.trim()
+      : "";
+
+
+  const deleteMusicResponse =
+    await fetch(
+      SUPABASE_URL +
+      "/rest/v1/character_music" +
+      "?character_id=eq." +
+      characterId,
+      {
+        method: "DELETE",
+
+        headers: {
+          "apikey":
+            SUPABASE_PUBLISHABLE_KEY,
+
+          "Authorization":
+            "Bearer " +
+            SUPABASE_PUBLISHABLE_KEY,
+
+          "Prefer":
+            "return=minimal"
+        }
+      }
+    );
+
+
+  if (!deleteMusicResponse.ok) {
+
+    const errorText =
+      await deleteMusicResponse.text();
+
+    alert(
+      "音楽情報の更新に失敗しました。\n\n" +
+      errorText
+    );
+
+    return;
+  }
+
+
+  if (musicUrl) {
+
+    const musicResponse =
+      await fetch(
+        SUPABASE_URL +
+        "/rest/v1/character_music",
+        {
+          method: "POST",
+
+          headers: {
+            "apikey":
+              SUPABASE_PUBLISHABLE_KEY,
+
+            "Authorization":
+              "Bearer " +
+              SUPABASE_PUBLISHABLE_KEY,
+
+            "Content-Type":
+              "application/json",
+
+            "Prefer":
+              "return=minimal"
+          },
+
+          body:
+            JSON.stringify({
+              character_id:
+                characterId,
+
+              youtube_url:
+                musicUrl,
+
+              title:
+                musicTitle || null,
+
+              sort_order:
+                0
+            })
+        }
+      );
+
+
+    if (!musicResponse.ok) {
+
+      const errorText =
+        await musicResponse.text();
+
+      alert(
+        "音楽情報の保存に失敗しました。\n\n" +
+        errorText
+      );
+
+      return;
+    }
+  }
+
+
   alert("保存しました。");
 
   await openCharacter(characterId);
