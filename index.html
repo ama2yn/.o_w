@@ -1254,6 +1254,16 @@ async function openCharacter(characterId) {
 
     const music =
       characterMusic[0];
+      
+          const youtubeMatch =
+      music.youtube_url.match(
+        /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&?/]+)/
+      );
+
+    const youtubeVideoId =
+      youtubeMatch
+        ? youtubeMatch[1]
+        : "";
 
     characterMusicHtml = `
       <div style="
@@ -1270,13 +1280,30 @@ async function openCharacter(characterId) {
           )}
         </p>
 
-        <a
-          href="${escapeHtml(music.youtube_url)}"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          ▶ YouTubeで再生
-        </a>
+              <div style="
+          margin-top:15px;
+          width:100%;
+          aspect-ratio:16 / 9;
+        ">
+          <iframe
+            src="${
+  youtubeVideoId
+    ? "https://www.youtube.com/embed/" +
+      youtubeVideoId
+    : ""
+            style="
+              width:100%;
+              height:100%;
+              border:0;
+              border-radius:15px;
+            "
+            title="${escapeHtml(
+              music.title || "YouTube Music"
+            )}"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen
+          ></iframe>
+        </div>
 
       </div>
     `;
