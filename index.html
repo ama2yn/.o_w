@@ -1247,6 +1247,40 @@ async function openCharacter(characterId) {
     characterMusic =
       await musicResponse.json();
   }
+  
+  let characterMusicHtml = "";
+
+  if (characterMusic.length > 0) {
+
+    const music =
+      characterMusic[0];
+
+    characterMusicHtml = `
+      <div style="
+        margin-top:30px;
+      ">
+
+        <h3>MUSIC</h3>
+
+        <p style="
+          margin:10px 0;
+        ">
+          ${escapeHtml(
+            music.title || "Music"
+          )}
+        </p>
+
+        <a
+          href="${escapeHtml(music.youtube_url)}"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          ▶ YouTubeで再生
+        </a>
+
+      </div>
+    `;
+  }
 
   let customFields = {};
 
