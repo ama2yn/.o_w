@@ -4341,22 +4341,7 @@ async function saveCharacterEdit() {
       return;
     }
   }
-      );
-
-
-    if (!musicResponse.ok) {
-
-      const errorText =
-        await musicResponse.text();
-
-      alert(
-        "音楽情報の保存に失敗しました。\n\n" +
-        errorText
-      );
-
-      return;
-    }
-  }
+      
 
 
   alert("保存しました。");
