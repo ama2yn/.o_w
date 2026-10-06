@@ -3366,6 +3366,33 @@ const profileFields = [
 
   const character =
     data[0];
+    
+      const musicResponse =
+    await fetch(
+      SUPABASE_URL +
+      "/rest/v1/character_music" +
+      "?character_id=eq." +
+      characterId +
+      "&select=*" +
+      "&order=sort_order.asc",
+      {
+        headers: {
+          "apikey":
+            SUPABASE_PUBLISHABLE_KEY,
+
+          "Authorization":
+            "Bearer " +
+            SUPABASE_PUBLISHABLE_KEY
+        }
+      }
+    );
+
+  let characterMusic = [];
+
+  if (musicResponse.ok) {
+    characterMusic =
+      await musicResponse.json();
+  }
 
   let customFields = {};
 
@@ -3805,6 +3832,69 @@ const profileFields = [
     `;
 
     renderProfileFields();
+    
+      const musicContainer =
+    document.getElementById(
+      "characterMusicContainer"
+    );
+
+  if (musicContainer) {
+
+    const musicItems =
+      musicContainer.querySelectorAll(
+        ".character-music-item"
+      );
+
+    if (characterMusic.length > 0) {
+
+      const firstItem =
+        musicItems[0];
+
+      if (firstItem) {
+
+        firstItem.querySelector(
+          ".character-music-url"
+        ).value =
+          characterMusic[0].youtube_url || "";
+
+        firstItem.querySelector(
+          ".character-music-title"
+        ).value =
+          characterMusic[0].title || "";
+
+      }
+
+      for (
+        let index = 1;
+        index < characterMusic.length;
+        index++
+      ) {
+
+        const music =
+          characterMusic[index];
+
+        addCharacterMusicField();
+
+        const items =
+          musicContainer.querySelectorAll(
+            ".character-music-item"
+          );
+
+        const item =
+          items[items.length - 1];
+
+        item.querySelector(
+          ".character-music-url"
+        ).value =
+          music.youtube_url || "";
+
+        item.querySelector(
+          ".character-music-title"
+        ).value =
+          music.title || "";
+      }
+    }
+  }
 
   Object.entries(customFields).forEach(
   ([key, field]) => {
