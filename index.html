@@ -3360,30 +3360,60 @@ const profileFields = [
     return;
   }
 
-  const character =
+    const character =
     data[0];
-    
-      
-  Object.entries(customFields).forEach(([key, field]) => {
 
-  if (
-    key === "first_person" ||
-    key === "second_person"
-  ) {
-    return;
+  let customFields = {};
+
+  try {
+
+    customFields =
+      typeof character.custom_fields === "string"
+        ? JSON.parse(
+            character.custom_fields || "{}"
+          )
+        : (
+            character.custom_fields || {}
+          );
+
+  } catch {
+
+    customFields = {};
+
   }
 
-  if (
-    !field ||
-    typeof field !== "object" ||
-    !field.label
-  ) {
-    return;
-  }
+  const firstPerson =
+    typeof customFields.first_person === "string"
+      ? customFields.first_person
+      : "";
 
-  profileOrder.push(key);
+  const secondPerson =
+    typeof customFields.second_person === "string"
+      ? customFields.second_person
+      : "";
 
-});
+  Object.entries(customFields).forEach(
+    ([key, field]) => {
+
+      if (
+        key === "first_person" ||
+        key === "second_person"
+      ) {
+        return;
+      }
+
+      if (
+        !field ||
+        typeof field !== "object" ||
+        !field.label
+      ) {
+        return;
+      }
+
+      profileOrder.push(key);
+
+    }
+  );
 
   content.innerHTML =
     `
