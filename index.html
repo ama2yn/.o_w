@@ -476,6 +476,54 @@ footer {
 
 </section>
 
+<section
+  class="world"
+  id="characterAlbumPage"
+  style="display:none;"
+>
+
+  <div class="world-title">
+    <h2>📷 ALBUM</h2>
+  </div>
+
+  <div id="characterAlbumCategories">
+
+    <div
+      class="card"
+      onclick="openCharacterAlbumGallery('character')"
+      style="cursor:pointer;"
+    >
+      <div class="icon">🪽</div>
+      <h2>キャラクター</h2>
+      <p>キャラクターそのものの画像・動画</p>
+    </div>
+
+    <div
+      class="card"
+      onclick="openCharacterAlbumGallery('photos')"
+      style="cursor:pointer; margin-top:15px;"
+    >
+      <div class="icon">📸</div>
+      <h2>写真</h2>
+      <p>キャラクターが撮った写真など</p>
+    </div>
+
+  </div>
+
+  <div style="
+    margin-top:25px;
+    text-align:center;
+  ">
+    <button
+      type="button"
+      onclick="backToCharacter()"
+    >
+      ← CHARACTERに戻る
+    </button>
+  </div>
+
+</section>
+
 
 <section class="world" id="worldSection" style="display:none;">
 
@@ -5189,6 +5237,29 @@ function openWorldMusic() {
   musicSection.style.display = "block";
 
   musicSection.scrollIntoView({
+    behavior: "smooth"
+  });
+}
+
+function openCharacterAlbum() {
+
+  const characterPage =
+    document.getElementById(
+      "characterPage"
+    );
+
+  const albumPage =
+    document.getElementById(
+      "characterAlbumPage"
+    );
+
+  characterPage.style.display =
+    "none";
+
+  albumPage.style.display =
+    "block";
+
+  albumPage.scrollIntoView({
     behavior: "smooth"
   });
 }
