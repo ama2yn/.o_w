@@ -4072,13 +4072,15 @@ function setupAutoResize() {
 }
 
 function addCharacterMusicField() {
-  
-  console.log("ADD MUSIC");
 
   const container =
     document.getElementById(
       "characterMusicContainer"
     );
+
+  if (!container) {
+    return;
+  }
 
   const item =
     document.createElement("div");
@@ -4096,7 +4098,6 @@ function addCharacterMusicField() {
       type="url"
       class="profile-field character-music-url"
       placeholder="https://www.youtube.com/watch?v=..."
-      value=""
     >
 
     <label style="
@@ -4110,9 +4111,21 @@ function addCharacterMusicField() {
       type="text"
       class="profile-field character-music-title"
       placeholder="曲名（任意）"
-      value=""
     >
   `;
+
+  const urlInput =
+    item.querySelector(
+      ".character-music-url"
+    );
+
+  const titleInput =
+    item.querySelector(
+      ".character-music-title"
+    );
+
+  urlInput.value = "";
+  titleInput.value = "";
 
   container.insertBefore(
     item,
