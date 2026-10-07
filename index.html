@@ -5394,8 +5394,26 @@ async function loadCharacterAlbumGallery(category) {
     return;
   }
 
-  gallery.innerHTML =
-    "<p>アルバムを読み込んでいます……</p>";
+  gallery.innerHTML = `
+  <div
+    id="characterAlbumUploadArea"
+    style="
+      margin-bottom:25px;
+      text-align:center;
+    "
+  >
+    <button
+      type="button"
+      onclick="showCharacterAlbumUpload()"
+    >
+      ＋ 作品を追加
+    </button>
+  </div>
+
+  <div id="characterAlbumMediaList">
+    <p>アルバムを読み込んでいます……</p>
+  </div>
+`;
 
   const response =
     await fetch(
