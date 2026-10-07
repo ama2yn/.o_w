@@ -5357,6 +5357,29 @@ function backToCharacterAlbum() {
   });
 }
 
+function backToCharacter() {
+
+  const albumPage =
+    document.getElementById(
+      "characterAlbumPage"
+    );
+
+  const characterPage =
+    document.getElementById(
+      "characterPage"
+    );
+
+  albumPage.style.display =
+    "none";
+
+  characterPage.style.display =
+    "block";
+
+  characterPage.scrollIntoView({
+    behavior: "smooth"
+  });
+}
+
 </script>
 
 </body>
