@@ -1696,6 +1696,25 @@ customFieldsHtml += `
 
   content.appendChild(shareButton);
 }
+
+  const albumButton =
+    document.createElement("div");
+
+  albumButton.style.cssText =
+    "margin-top:25px; text-align:center;";
+
+  albumButton.innerHTML =
+    `
+    <button
+      type="button"
+      onclick="openCharacterAlbum()"
+    >
+      📷 ALBUM
+    </button>
+    `;
+
+  content.appendChild(albumButton);
+
 }
   
 
