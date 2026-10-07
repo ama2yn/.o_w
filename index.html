@@ -5399,6 +5399,68 @@ function backToCharacter() {
   });
 }
 
+function showCharacterAlbumUpload() {
+
+  const gallery =
+    document.getElementById(
+      "characterAlbumGallery"
+    );
+
+  if (!gallery) {
+    return;
+  }
+
+  const existing =
+    document.getElementById(
+      "characterAlbumUploadForm"
+    );
+
+  if (existing) {
+    return;
+  }
+
+  const form =
+    document.createElement("div");
+
+  form.id =
+    "characterAlbumUploadForm";
+
+  form.style.cssText =
+    "margin-bottom:25px; padding:20px; border-radius:20px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1);";
+
+  form.innerHTML = `
+    <label>
+      画像・動画
+    </label>
+
+    <input
+      id="characterAlbumFile"
+      type="file"
+      accept="image/*,video/*"
+      style="
+        display:block;
+        width:100%;
+        margin-top:10px;
+      "
+    >
+
+    <button
+      type="button"
+      onclick="uploadCharacterAlbumMedia()"
+      style="margin-top:15px;"
+    >
+      アップロード
+    </button>
+  `;
+
+  gallery.insertBefore(
+    form,
+    document.getElementById(
+      "characterAlbumGallery"
+    ).querySelector("p")
+  );
+}
+
 </script>
 
 </body>
