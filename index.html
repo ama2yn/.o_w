@@ -1316,6 +1316,72 @@ async function openCharacter(characterId) {
       </div>
     `;
   }
+  
+    setTimeout(() => {
+
+    document
+      .querySelectorAll(
+        ".character-music-row"
+      )
+      .forEach(row => {
+
+        row.addEventListener(
+          "click",
+          () => {
+
+            const player =
+              row.querySelector(
+                ".character-music-player"
+              );
+
+            const videoId =
+              row.dataset.videoId;
+
+            if (!player || !videoId) {
+              return;
+            }
+
+            if (
+              player.style.display ===
+              "none"
+            ) {
+
+              player.style.display =
+                "block";
+
+              player.innerHTML = `
+                <div style="
+                  width:100%;
+                  aspect-ratio:16 / 9;
+                ">
+                  <iframe
+                    src="https://www.youtube.com/embed/${videoId}?autoplay=1"
+                    style="
+                      width:100%;
+                      height:100%;
+                      border:0;
+                      border-radius:15px;
+                    "
+                    allow="autoplay; encrypted-media; picture-in-picture"
+                    allowfullscreen
+                  ></iframe>
+                </div>
+              `;
+
+            } else {
+
+              player.innerHTML = "";
+
+              player.style.display =
+                "none";
+            }
+
+          }
+        );
+
+      });
+
+  }, 0);
 
   let customFields = {};
 
