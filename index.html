@@ -5334,6 +5334,29 @@ function openCharacterAlbumGallery(category) {
   });
 }
 
+function backToCharacterAlbum() {
+
+  const galleryPage =
+    document.getElementById(
+      "characterAlbumGalleryPage"
+    );
+
+  const albumPage =
+    document.getElementById(
+      "characterAlbumPage"
+    );
+
+  galleryPage.style.display =
+    "none";
+
+  albumPage.style.display =
+    "block";
+
+  albumPage.scrollIntoView({
+    behavior: "smooth"
+  });
+}
+
 </script>
 
 </body>
