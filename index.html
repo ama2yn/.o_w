@@ -5534,14 +5534,88 @@ async function uploadCharacterAlbumMedia() {
   }
 
   const fileUrl =
-    SUPABASE_URL +
-    "/storage/v1/object/public/character-images/" +
-    filePath;
+  SUPABASE_URL +
+  "/storage/v1/object/public/character-images/" +
+  filePath;
+
+const characterId =
+  window.currentCharacterId;
+
+if (!characterId) {
 
   alert(
-    "アップロードしました。\n\n" +
-    fileUrl
+    "Character情報を取得できませんでした。"
   );
+
+  return;
+}
+
+const category =
+  window.currentCharacterAlbumCategory ||
+  "character";
+
+const mediaType =
+  file.type.startsWith("video/")
+    ? "video"
+    : "image";
+
+const response =
+  await fetch(
+    SUPABASE_URL +
+    "/rest/v1/character_media",
+    {
+      method: "POST",
+
+      headers: {
+        "apikey":
+          SUPABASE_PUBLISHABLE_KEY,
+
+        "Authorization":
+          "Bearer " +
+          SUPABASE_PUBLISHABLE_KEY,
+
+        "Content-Type":
+          "application/json",
+
+        "Prefer":
+          "return=representation"
+      },
+
+      body: JSON.stringify({
+        character_id:
+          characterId,
+
+        category:
+          category,
+
+        media_type:
+          mediaType,
+
+        file_url:
+          fileUrl,
+
+        sort_order:
+          0
+      })
+    }
+  );
+
+if (!response.ok) {
+
+  const errorText =
+    await response.text();
+
+  alert(
+    "アルバム情報の保存に失敗しました。\n\n" +
+    errorText
+  );
+
+  return;
+}
+
+alert(
+  "アルバムに追加しました。"
+);
 }
 
 </script>
