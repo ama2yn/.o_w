@@ -1248,7 +1248,7 @@ async function openCharacter(characterId) {
       await musicResponse.json();
   }
   
-    let characterMusicHtml = "";
+      let characterMusicHtml = "";
 
   if (characterMusic.length > 0) {
 
@@ -1259,66 +1259,63 @@ async function openCharacter(characterId) {
 
         <h3>MUSIC</h3>
 
-        ${characterMusic.map(
-          music => {
+        <div id="characterMusicList">
 
-            const youtubeMatch =
-              music.youtube_url.match(
-                /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&?/]+)/
-              );
+          ${characterMusic.map(
+            (music, index) => {
 
-            const youtubeVideoId =
-              youtubeMatch
-                ? youtubeMatch[1]
-                : "";
+              const youtubeMatch =
+                music.youtube_url.match(
+                  /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&?/]+)/
+                );
 
-            return `
-              <div style="
-                margin-top:25px;
-              ">
+              const youtubeVideoId =
+                youtubeMatch
+                  ? youtubeMatch[1]
+                  : "";
 
-                <p style="
-                  margin:10px 0;
-                ">
-                  ${escapeHtml(
-                    music.title || "Music"
-                  )}
-                </p>
+              return `
+                <div
+                  class="character-music-row"
+                  data-video-id="${youtubeVideoId}"
+                  style="
+                    margin-top:12px;
+                    padding:15px 18px;
+                    border-radius:15px;
+                    background:rgba(255,255,255,.06);
+                    cursor:pointer;
+                  "
+                >
 
-                <div style="
-                  width:100%;
-                  aspect-ratio:16 / 9;
-                ">
-                  <iframe
-                    src="${
-                      youtubeVideoId
-                        ? "https://www.youtube.com/embed/" +
-                          youtubeVideoId
-                        : ""
-                    }"
+                  <div style="
+                    font-size:16px;
+                    font-weight:500;
+                  ">
+                    ▶
+                    ${escapeHtml(
+                      music.title || "Music"
+                    )}
+                  </div>
+
+                  <div
+                    class="character-music-player"
                     style="
-                      width:100%;
-                      height:100%;
-                      border:0;
-                      border-radius:15px;
+                      display:none;
+                      margin-top:15px;
                     "
-                    title="${escapeHtml(
-                      music.title || "YouTube Music"
-                    )}"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    allowfullscreen
-                  ></iframe>
-                </div>
+                  >
+                  </div>
 
-              </div>
-            `;
-          }
-        ).join("")}
+                </div>
+              `;
+            }
+          ).join("")}
+
+        </div>
 
       </div>
     `;
   }
-
 
   let customFields = {};
 
