@@ -5356,6 +5356,155 @@ window.currentCharacterAlbumCategory = category;
   await loadCharacterAlbumGallery(category);
 }
 
+async function loadCharacterAlbumGallery(category) {
+
+  const gallery =
+    document.getElementById(
+      "characterAlbumGallery"
+    );
+
+  if (!gallery) {
+    return;
+  }
+
+  const characterId =
+    window.currentCharacterId;
+
+  if (!characterId) {
+
+    gallery.innerHTML =
+      "<p>Character情報を取得できませんでした。</p>";
+
+    return;
+  }
+
+  gallery.innerHTML =
+    "<p>アルバムを読み込んでいます……</p>";
+
+  const response =
+    await fetch(
+      SUPABASE_URL +
+      "/rest/v1/character_media" +
+      "?character_id=eq." +
+      encodeURIComponent(characterId) +
+      "&category=eq." +
+      encodeURIComponent(category) +
+      "&select=*" +
+      "&order=sort_order.asc,created_at.asc",
+      {
+        headers: {
+          "apikey":
+            SUPABASE_PUBLISHABLE_KEY,
+
+          "Authorization":
+            "Bearer " +
+            SUPABASE_PUBLISHABLE_KEY
+        }
+      }
+    );
+
+  if (!response.ok) {
+
+    const errorText =
+      await response.text();
+
+    gallery.innerHTML =
+      "<p>アルバムの読み込みに失敗しました。</p>";
+
+    alert(
+      "アルバムの読み込みに失敗しました。\n\n" +
+      errorText
+    );
+
+    return;
+  }
+
+  const mediaList =
+    await response.json();
+
+  if (mediaList.length === 0) {
+
+    gallery.innerHTML = `
+      <div style="
+        text-align:center;
+        padding:30px 10px;
+      ">
+        まだ作品がありません。
+      </div>
+    `;
+
+    return;
+  }
+
+  gallery.innerHTML = `
+    <div style="
+      display:grid;
+      grid-template-columns:repeat(3, 1fr);
+      gap:8px;
+    ">
+      ${mediaList.map(media => {
+
+        if (media.media_type === "video") {
+
+          return `
+            <div
+              style="
+                position:relative;
+                aspect-ratio:1;
+                overflow:hidden;
+                border-radius:12px;
+                background:#111;
+              "
+            >
+              <video
+                src="${escapeHtml(media.file_url)}"
+                style="
+                  width:100%;
+                  height:100%;
+                  object-fit:cover;
+                "
+                controls
+              ></video>
+
+              <div style="
+                position:absolute;
+                top:8px;
+                left:8px;
+                pointer-events:none;
+              ">
+                ▶
+              </div>
+            </div>
+          `;
+
+        }
+
+        return `
+          <div
+            style="
+              aspect-ratio:1;
+              overflow:hidden;
+              border-radius:12px;
+              background:#111;
+            "
+          >
+            <img
+              src="${escapeHtml(media.file_url)}"
+              style="
+                width:100%;
+                height:100%;
+                object-fit:cover;
+                display:block;
+              "
+            >
+          </div>
+        `;
+
+      }).join("")}
+    </div>
+  `;
+}
+
 function backToCharacterAlbum() {
 
   const galleryPage =
