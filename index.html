@@ -1257,7 +1257,14 @@ async function openCharacter(characterId) {
         margin-top:30px;
       ">
 
-        <h3>MUSIC</h3>
+        <h3 style="
+          margin:0 0 15px;
+          font-size:18px;
+          font-weight:600;
+          letter-spacing:0.08em;
+        ">
+          ♫ MUSIC
+        </h3>
 
         <div id="characterMusicList">
 
@@ -1280,21 +1287,32 @@ async function openCharacter(characterId) {
                   data-video-id="${youtubeVideoId}"
                   style="
                     margin-top:12px;
-                    padding:15px 18px;
-                    border-radius:15px;
+                    padding:16px 18px;
+                    border-radius:16px;
                     background:rgba(255,255,255,.06);
+                    border:1px solid rgba(255,255,255,.08);
                     cursor:pointer;
+                    transition:background .2s ease;
                   "
                 >
 
                   <div style="
+                    display:flex;
+                    align-items:center;
+                    gap:10px;
                     font-size:16px;
                     font-weight:500;
                   ">
-                    ▶
-                    ${escapeHtml(
-                      music.title || "Music"
-                    )}
+                    <span style="
+                      font-size:14px;
+                      opacity:.8;
+                    ">▶</span>
+
+                    <span>
+                      ${escapeHtml(
+                        music.title || "Music"
+                      )}
+                    </span>
                   </div>
 
                   <div
