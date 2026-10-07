@@ -1763,6 +1763,22 @@ customFieldsHtml += `
     `;
 
   content.appendChild(relationshipAlbumRow);
+  
+    const editButton =
+    document.createElement("button");
+
+  editButton.type = "button";
+
+  editButton.textContent =
+    "✎ EDIT CHARACTER";
+
+  editButton.style.cssText =
+    "display:block; width:100%; margin-top:15px;";
+
+  editButton.onclick =
+    editCharacter;
+
+  content.appendChild(editButton);
 
   if (!window.characterViewOnly) {
 
