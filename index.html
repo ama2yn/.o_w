@@ -5458,7 +5458,14 @@ async function loadCharacterAlbumGallery(category) {
 
   if (mediaList.length === 0) {
 
-    gallery.innerHTML = `
+  const mediaListContainer =
+    document.getElementById(
+      "characterAlbumMediaList"
+    );
+
+  if (mediaListContainer) {
+
+    mediaListContainer.innerHTML = `
       <div style="
         text-align:center;
         padding:30px 10px;
@@ -5467,8 +5474,10 @@ async function loadCharacterAlbumGallery(category) {
       </div>
     `;
 
-    return;
   }
+
+  return;
+}
 
   gallery.innerHTML = `
     <div style="
