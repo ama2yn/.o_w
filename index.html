@@ -5461,6 +5461,89 @@ function showCharacterAlbumUpload() {
   );
 }
 
+async function uploadCharacterAlbumMedia() {
+
+  const fileInput =
+    document.getElementById(
+      "characterAlbumFile"
+    );
+
+  if (
+    !fileInput ||
+    !fileInput.files ||
+    !fileInput.files[0]
+  ) {
+    alert("画像または動画を選択してください。");
+    return;
+  }
+
+  const file =
+    fileInput.files[0];
+
+  const extension =
+    file.name.includes(".")
+      ? file.name
+          .split(".")
+          .pop()
+          .toLowerCase()
+      : "";
+
+  const fileName =
+    crypto.randomUUID() +
+    (extension ? "." + extension : "");
+
+  const filePath =
+    "album/" +
+    fileName;
+
+  const uploadResponse =
+    await fetch(
+      SUPABASE_URL +
+      "/storage/v1/object/character-images/" +
+      filePath,
+      {
+        method: "POST",
+
+        headers: {
+          "apikey":
+            SUPABASE_PUBLISHABLE_KEY,
+
+          "Authorization":
+            "Bearer " +
+            SUPABASE_PUBLISHABLE_KEY,
+
+          "Content-Type":
+            file.type
+        },
+
+        body: file
+      }
+    );
+
+  if (!uploadResponse.ok) {
+
+    const errorText =
+      await uploadResponse.text();
+
+    alert(
+      "アップロードに失敗しました。\n\n" +
+      errorText
+    );
+
+    return;
+  }
+
+  const fileUrl =
+    SUPABASE_URL +
+    "/storage/v1/object/public/character-images/" +
+    filePath;
+
+  alert(
+    "アップロードしました。\n\n" +
+    fileUrl
+  );
+}
+
 </script>
 
 </body>
