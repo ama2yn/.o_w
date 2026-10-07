@@ -1640,41 +1640,32 @@ customFieldsHtml += `
   }
   `;
 
-    const relationshipButton =
+     const relationshipAlbumRow =
     document.createElement("div");
 
-  relationshipButton.style.cssText =
-    "margin-top:25px; text-align:center;";
+  relationshipAlbumRow.style.cssText =
+    "margin-top:25px; display:flex; gap:15px;";
 
-  relationshipButton.innerHTML =
+  relationshipAlbumRow.innerHTML =
     `
     <button
       type="button"
       onclick="openCharacterRelationships()"
+      style="flex:1;"
     >
       ♡ 相関図
     </button>
-    `;
 
-  content.appendChild(relationshipButton);
-
-
- if (!window.characterViewOnly) {
-
-  const editButton =
-    document.createElement("div");
-
-  editButton.style.cssText =
-    "margin-top:15px; text-align:center;";
-
-  editButton.innerHTML =
-    `
-    <button onclick="editCharacter()">
-      ✎ EDIT CHARACTER
+    <button
+      type="button"
+      onclick="openCharacterAlbum()"
+      style="flex:1;"
+    >
+      📷 ALBUM
     </button>
     `;
 
-  content.appendChild(editButton);
+  content.appendChild(relationshipAlbumRow);
 }
   if (!window.characterViewOnly) {
 
