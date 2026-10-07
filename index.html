@@ -5313,7 +5313,7 @@ function openCharacterAlbum() {
   });
 }
 
-function openCharacterAlbumGallery(category) {
+async function openCharacterAlbumGallery(category) {
 
 window.currentCharacterAlbumCategory = category;
 
@@ -5353,6 +5353,7 @@ window.currentCharacterAlbumCategory = category;
   galleryPage.scrollIntoView({
     behavior: "smooth"
   });
+  await loadCharacterAlbumGallery(category);
 }
 
 function backToCharacterAlbum() {
