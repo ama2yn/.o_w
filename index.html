@@ -599,6 +599,30 @@ footer {
 
 </section>
 
+<section
+  id="worldMusicSection"
+  class="world"
+  style="display:none;"
+>
+
+  <div class="world-title">
+    <h2>🎧 WORLD MUSIC</h2>
+  </div>
+
+  <div id="worldMusicList">
+    <p>Musicを読み込んでいます……</p>
+  </div>
+
+  <div style="
+    margin-top:25px;
+    text-align:center;
+  ">
+    <button onclick="backToWorld()">
+      ← WORLDに戻る
+    </button>
+  </div>
+
+</section>
 
 <section class="gacha">
 
@@ -5157,6 +5181,25 @@ if (
 
   showCharacters();
 }
+
+function openWorldMusic() {
+
+  const worldPage =
+    document.getElementById("worldPage");
+
+  const musicSection =
+    document.getElementById(
+      "worldMusicSection"
+    );
+
+  worldPage.style.display = "none";
+  musicSection.style.display = "block";
+
+  musicSection.scrollIntoView({
+    behavior: "smooth"
+  });
+}
+
 </script>
 
 </body>
