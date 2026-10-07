@@ -524,6 +524,36 @@ footer {
 
 </section>
 
+<section
+  class="world"
+  id="characterAlbumGalleryPage"
+  style="display:none;"
+>
+
+  <div class="world-title">
+    <h2 id="characterAlbumGalleryTitle">
+      📷 ALBUM
+    </h2>
+  </div>
+
+  <div id="characterAlbumGallery">
+    <p>アルバムを読み込んでいます……</p>
+  </div>
+
+  <div style="
+    margin-top:25px;
+    text-align:center;
+  ">
+    <button
+      type="button"
+      onclick="backToCharacterAlbum()"
+    >
+      ← ALBUMに戻る
+    </button>
+  </div>
+
+</section>
+
 
 <section class="world" id="worldSection" style="display:none;">
 
@@ -5260,6 +5290,46 @@ function openCharacterAlbum() {
     "block";
 
   albumPage.scrollIntoView({
+    behavior: "smooth"
+  });
+}
+
+function openCharacterAlbumGallery(category) {
+
+  const albumPage =
+    document.getElementById(
+      "characterAlbumPage"
+    );
+
+  const galleryPage =
+    document.getElementById(
+      "characterAlbumGalleryPage"
+    );
+
+  const galleryTitle =
+    document.getElementById(
+      "characterAlbumGalleryTitle"
+    );
+
+  albumPage.style.display =
+    "none";
+
+  galleryPage.style.display =
+    "block";
+
+  if (category === "character") {
+
+    galleryTitle.textContent =
+      "🪽 キャラクター";
+
+  } else {
+
+    galleryTitle.textContent =
+      "📸 写真";
+
+  }
+
+  galleryPage.scrollIntoView({
     behavior: "smooth"
   });
 }
