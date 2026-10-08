@@ -3721,21 +3721,24 @@ const profileFields = [
     class="profile-field"
   >
 
-  <div style="margin-top:6px;">
-    <button
-      type="button"
-      onclick="moveProfileFieldByKey('birthday', -1)"
-    >
-      ↑
-    </button>
+  <div
+  class="profile-sort-controls"
+  style="margin-top:6px; display:none;"
+>
+  <button
+    type="button"
+    onclick="moveProfileFieldByKey('birthday', -1)"
+  >
+    ↑
+  </button>
 
-    <button
-      type="button"
-      onclick="moveProfileFieldByKey('birthday', 1)"
-    >
-      ↓
-    </button>
-  </div>
+  <button
+    type="button"
+    onclick="moveProfileFieldByKey('birthday', 1)"
+  >
+    ↓
+  </button>
+</div>
 </div>
 
  <div
@@ -3751,7 +3754,10 @@ const profileFields = [
     class="profile-field"
   >
 
-  <div style="margin-top:6px;">
+    <div
+  class="profile-sort-controls"
+  style="margin-top:6px; display:none;"
+>
     <button
       type="button"
       onclick="moveProfileFieldByKey('height', -1)"
@@ -3781,7 +3787,10 @@ const profileFields = [
     class="profile-field"
   >
 
-  <div style="margin-top:6px;">
+  <div
+  class="profile-sort-controls"
+  style="margin-top:6px; display:none;"
+>
     <button
       type="button"
       onclick="moveProfileFieldByKey('weight', -1)"
@@ -3809,7 +3818,10 @@ const profileFields = [
     class="profile-field"
   >${escapeHtml(character.personality || "")}</textarea>
 
-  <div style="margin-top:6px;">
+  <div
+  class="profile-sort-controls"
+  style="margin-top:6px; display:none;"
+>
     <button
       type="button"
       onclick="moveProfileFieldByKey('personality', -1)"
@@ -3838,7 +3850,10 @@ const profileFields = [
     class="profile-field"
   >
 
-  <div style="margin-top:6px;">
+  <div
+  class="profile-sort-controls"
+  style="margin-top:6px; display:none;"
+>
     <button
       type="button"
       onclick="moveProfileFieldByKey('first_person', -1)"
@@ -3867,7 +3882,10 @@ const profileFields = [
     class="profile-field"
   >
 
-  <div style="margin-top:6px;">
+  <div
+  class="profile-sort-controls"
+  style="margin-top:6px; display:none;"
+>
     <button
       type="button"
       onclick="moveProfileFieldByKey('second_person', -1)"
@@ -3895,7 +3913,10 @@ const profileFields = [
     class="profile-field"
   >${escapeHtml(character.likes || "")}</textarea>
 
-  <div style="margin-top:6px;">
+  <div
+  class="profile-sort-controls"
+  style="margin-top:6px; display:none;"
+>
     <button
       type="button"
       onclick="moveProfileFieldByKey('likes', -1)"
@@ -3923,7 +3944,10 @@ const profileFields = [
     class="profile-field"
   >${escapeHtml(character.dislikes || "")}</textarea>
 
-  <div style="margin-top:6px;">
+  <div
+  class="profile-sort-controls"
+  style="margin-top:6px; display:none;"
+>
     <button
       type="button"
       onclick="moveProfileFieldByKey('dislikes', -1)"
@@ -3951,7 +3975,10 @@ const profileFields = [
     class="profile-field"
   >${escapeHtml(character.description || "")}</textarea>
 
-  <div style="margin-top:6px;">
+  <div
+  class="profile-sort-controls"
+  style="margin-top:6px; display:none;"
+>
     <button
       type="button"
       onclick="moveProfileFieldByKey('description', -1)"
@@ -4177,7 +4204,10 @@ customField.innerHTML = `
     rows="2"
   >${escapeHtml(field.value || "")}</textarea>
 
-  <div style="margin-top:6px;">
+  <div
+  class="profile-sort-controls"
+  style="margin-top:6px; display:none;"
+>
 
     <button
       type="button"
@@ -4789,7 +4819,10 @@ function addCustomField() {
   rows="2"
 ></textarea>
 
-    <div style="margin-top:6px;">
+    <div
+  class="profile-sort-controls"
+  style="margin-top:6px; display:none;"
+>
 
       <button
         type="button"
