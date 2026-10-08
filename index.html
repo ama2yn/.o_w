@@ -6555,8 +6555,8 @@ async function uploadCharacterAlbumMedia() {
     originalFile;
 
   /*
-   * トリミングがONの場合、
-   * 画面上で見えている範囲をCanvasへ切り出す
+   * トリミングONの場合、
+   * 白いトリミング枠の範囲だけをCanvasへ切り出す
    */
   if (shouldCrop) {
 
@@ -6578,18 +6578,35 @@ async function uploadCharacterAlbumMedia() {
     const image =
       state.image;
 
+    const imageElement =
+      state.imageElement;
+
     const preview =
       state.preview;
 
-    const previewWidth =
-      preview.clientWidth;
+    const cropFrame =
+      preview.querySelector(
+        ".character-album-crop-frame"
+      );
 
-    const previewHeight =
-      preview.clientHeight;
+    if (!cropFrame) {
+      alert(
+        "トリミング枠を取得できませんでした。"
+      );
+      return;
+    }
+
+    const imageRect =
+      imageElement.getBoundingClientRect();
+
+    const frameRect =
+      cropFrame.getBoundingClientRect();
 
     if (
-      !previewWidth ||
-      !previewHeight
+      !imageRect.width ||
+      !imageRect.height ||
+      !frameRect.width ||
+      !frameRect.height
     ) {
       alert(
         "トリミング範囲を取得できませんでした。"
@@ -6597,64 +6614,49 @@ async function uploadCharacterAlbumMedia() {
       return;
     }
 
-    const zoom =
-      Number(state.zoom) || 1;
-
-    let ratioWidth =
-      previewWidth;
-
-    let ratioHeight =
-      previewHeight;
-
     /*
-     * updateCharacterAlbumCrop() と
-     * 同じ計算で画像の表示サイズを取得
+     * 画面上の画像サイズから、
+     * 元画像 → 表示画像の倍率を取得
      */
-    const scale =
-      Math.max(
-        previewWidth / image.naturalWidth,
-        previewHeight / image.naturalHeight
-      ) * zoom;
+    const scaleX =
+      image.naturalWidth /
+      imageRect.width;
 
-    const displayedWidth =
-      image.naturalWidth * scale;
-
-    const displayedHeight =
-      image.naturalHeight * scale;
-
-    const imageLeft =
-      (previewWidth - displayedWidth) / 2 +
-      state.x;
-
-    const imageTop =
-      (previewHeight - displayedHeight) / 2 +
-      state.y;
+    const scaleY =
+      image.naturalHeight /
+      imageRect.height;
 
     /*
-     * プレビュー上の座標を
-     * 元画像の座標へ変換
+     * 白い枠の左上位置を
+     * 元画像上の座標へ変換
      */
     let sourceX =
-      (0 - imageLeft) / scale;
+      (frameRect.left -
+        imageRect.left) *
+      scaleX;
 
     let sourceY =
-      (0 - imageTop) / scale;
+      (frameRect.top -
+        imageRect.top) *
+      scaleY;
 
     let sourceWidth =
-      ratioWidth / scale;
+      frameRect.width *
+      scaleX;
 
     let sourceHeight =
-      ratioHeight / scale;
+      frameRect.height *
+      scaleY;
 
     /*
-     * 念のため画像範囲内に収める
+     * 画像の範囲内に収める
      */
     sourceX =
       Math.max(
         0,
         Math.min(
           sourceX,
-          image.naturalWidth - sourceWidth
+          image.naturalWidth
         )
       );
 
@@ -6663,24 +6665,36 @@ async function uploadCharacterAlbumMedia() {
         0,
         Math.min(
           sourceY,
-          image.naturalHeight - sourceHeight
+          image.naturalHeight
         )
       );
 
     sourceWidth =
       Math.min(
         sourceWidth,
-        image.naturalWidth - sourceX
+        image.naturalWidth -
+          sourceX
       );
 
     sourceHeight =
       Math.min(
         sourceHeight,
-        image.naturalHeight - sourceY
+        image.naturalHeight -
+          sourceY
       );
 
+    if (
+      sourceWidth <= 0 ||
+      sourceHeight <= 0
+    ) {
+      alert(
+        "トリミング範囲が正しくありません。"
+      );
+      return;
+    }
+
     /*
-     * 元画像の解像度をできるだけ維持して
+     * 元画像の解像度を維持して
      * Canvasへ切り出す
      */
     const outputWidth =
@@ -6744,7 +6758,7 @@ async function uploadCharacterAlbumMedia() {
         [blob],
         "cropped.png",
         {
-          type:"image/png"
+          type: "image/png"
         }
       );
   }
@@ -6784,9 +6798,9 @@ async function uploadCharacterAlbumMedia() {
       "/storage/v1/object/character-images/" +
       filePath,
       {
-        method:"POST",
+        method: "POST",
 
-        headers:{
+        headers: {
           "apikey":
             SUPABASE_PUBLISHABLE_KEY,
 
@@ -6847,9 +6861,9 @@ async function uploadCharacterAlbumMedia() {
       SUPABASE_URL +
       "/rest/v1/character_media",
       {
-        method:"POST",
+        method: "POST",
 
-        headers:{
+        headers: {
           "apikey":
             SUPABASE_PUBLISHABLE_KEY,
 
