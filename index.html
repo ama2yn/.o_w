@@ -5997,68 +5997,190 @@ function updateCharacterAlbumCrop() {
     ratio
   } = state;
 
-  if (!imageElement || !preview) {
+  if (
+    !image ||
+    !imageElement ||
+    !preview
+  ) {
     return;
   }
 
+  /*
+   * 編集画面のサイズは固定。
+   * 比率変更でここ自体を伸縮させない。
+   */
   const previewWidth =
     preview.clientWidth;
 
-  if (!previewWidth) {
-    return;
-  }
-
-  let previewHeight;
-
-  if (ratio === "1:1") {
-    previewHeight = previewWidth;
-  } else if (ratio === "4:3") {
-    previewHeight = previewWidth * 3 / 4;
-  } else if (ratio === "3:4") {
-    previewHeight = previewWidth * 4 / 3;
-  } else if (ratio === "16:9") {
-    previewHeight = previewWidth * 9 / 16;
-  } else if (ratio === "9:16") {
-    previewHeight = previewWidth * 16 / 9;
-  } else {
-    previewHeight =
-      previewWidth *
-      image.naturalHeight /
-      image.naturalWidth;
-  }
+  const previewHeight =
+    420;
 
   preview.style.height =
     previewHeight + "px";
 
-  const scale =
+  /*
+   * 画像は編集画面いっぱいを
+   * 常に覆う。
+   */
+  const baseScale =
     Math.max(
       previewWidth / image.naturalWidth,
       previewHeight / image.naturalHeight
-    ) * zoom;
+    );
 
-  const width =
+  const scale =
+    baseScale *
+    (Number(zoom) || 1);
+
+  const imageWidth =
     image.naturalWidth * scale;
 
-  const height =
+  const imageHeight =
     image.naturalHeight * scale;
 
-  const centerX =
-    (previewWidth - width) / 2;
+  /*
+   * 画像中央配置
+   */
+  const baseLeft =
+    (previewWidth - imageWidth) / 2;
 
-  const centerY =
-    (previewHeight - height) / 2;
+  const baseTop =
+    (previewHeight - imageHeight) / 2;
 
   imageElement.style.width =
-    width + "px";
+    imageWidth + "px";
 
   imageElement.style.height =
-    height + "px";
+    imageHeight + "px";
 
   imageElement.style.left =
-    (centerX + x) + "px";
+    (baseLeft + x) + "px";
 
   imageElement.style.top =
-    (centerY + y) + "px";
+    (baseTop + y) + "px";
+
+
+  /*
+   * 既存のクロップ枠を削除
+   */
+  let cropFrame =
+    preview.querySelector(
+      ".character-album-crop-frame"
+    );
+
+  if (!cropFrame) {
+
+    cropFrame =
+      document.createElement("div");
+
+    cropFrame.className =
+      "character-album-crop-frame";
+
+    cropFrame.style.cssText = `
+      position:absolute;
+      left:50%;
+      top:50%;
+      transform:translate(-50%, -50%);
+      border:2px solid white;
+      box-shadow:
+        0 0 0 9999px rgba(0,0,0,.55);
+      pointer-events:none;
+      z-index:10;
+      box-sizing:border-box;
+    `;
+
+    preview.appendChild(
+      cropFrame
+    );
+  }
+
+
+  /*
+   * トリミング枠の比率
+   */
+  let frameWidth =
+    previewWidth * 0.82;
+
+  let frameHeight =
+    previewHeight * 0.82;
+
+
+  if (ratio === "1:1") {
+
+    const size =
+      Math.min(
+        frameWidth,
+        frameHeight
+      );
+
+    frameWidth =
+      size;
+
+    frameHeight =
+      size;
+
+  } else if (ratio === "4:3") {
+
+    frameHeight =
+      frameWidth * 3 / 4;
+
+  } else if (ratio === "3:4") {
+
+    frameHeight =
+      frameWidth * 4 / 3;
+
+    if (
+      frameHeight >
+      previewHeight * 0.82
+    ) {
+
+      frameHeight =
+        previewHeight * 0.82;
+
+      frameWidth =
+        frameHeight * 3 / 4;
+    }
+
+  } else if (ratio === "16:9") {
+
+    frameHeight =
+      frameWidth * 9 / 16;
+
+  } else if (ratio === "9:16") {
+
+    frameHeight =
+      frameWidth * 16 / 9;
+
+    if (
+      frameHeight >
+      previewHeight * 0.82
+    ) {
+
+      frameHeight =
+        previewHeight * 0.82;
+
+      frameWidth =
+        frameHeight * 9 / 16;
+    }
+
+  } else {
+
+    /*
+     * 自由
+     */
+    frameWidth =
+      previewWidth * 0.82;
+
+    frameHeight =
+      previewHeight * 0.82;
+  }
+
+
+  cropFrame.style.width =
+    frameWidth + "px";
+
+  cropFrame.style.height =
+    frameHeight + "px";
 }
 
 
