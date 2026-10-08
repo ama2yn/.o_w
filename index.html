@@ -3478,8 +3478,20 @@ const profileFields = [
   }
 ];
 
-  profileOrder =
-  profileFields.map(field => field.key);
+    if (!Array.isArray(profileOrder)) {
+    profileOrder = [];
+  }
+
+  const defaultProfileOrder =
+    profileFields.map(field => field.key);
+
+  defaultProfileOrder.forEach(key => {
+
+    if (!profileOrder.includes(key)) {
+      profileOrder.push(key);
+    }
+
+  });
 
   window.currentProfileOrder = profileOrder;
 
