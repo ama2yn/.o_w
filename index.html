@@ -7446,7 +7446,10 @@ async function uploadCharacterAlbumMedia() {
               fileUrl,
 
                         sort_order:
-              Date.now()
+              await getNextCharacterAlbumSortOrder(
+                characterId,
+                category
+              )
           })
       }
     );
@@ -7478,6 +7481,53 @@ async function uploadCharacterAlbumMedia() {
   }
 
   loadCharacterAlbumGallery(category);
+}
+
+async function getNextCharacterAlbumSortOrder(
+  characterId,
+  category
+) {
+
+  const response =
+    await fetch(
+      SUPABASE_URL +
+      "/rest/v1/character_media" +
+      "?character_id=eq." +
+      encodeURIComponent(characterId) +
+      "&category=eq." +
+      encodeURIComponent(category) +
+      "&select=sort_order" +
+      "&order=sort_order.desc" +
+      "&limit=1",
+      {
+        headers: {
+          "apikey":
+            SUPABASE_PUBLISHABLE_KEY,
+
+          "Authorization":
+            "Bearer " +
+            SUPABASE_PUBLISHABLE_KEY
+        }
+      }
+    );
+
+  if (!response.ok) {
+    return 0;
+  }
+
+  const rows =
+    await response.json();
+
+  if (
+    !rows ||
+    rows.length === 0
+  ) {
+    return 0;
+  }
+
+  return (
+    Number(rows[0].sort_order) + 1
+  );
 }
 
 </script>
