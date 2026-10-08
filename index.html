@@ -6603,27 +6603,7 @@ function setupCharacterAlbumCropResize(cropFrame) {
     event.stopPropagation();
   }
   
-    function endResize() {
-
-    resizing = false;
-    direction = "";
-  }
-
-  cropFrame.addEventListener(
-    "pointerdown",
-    startResize
-  );
-
-  window.addEventListener(
-    "pointermove",
-    moveResize
-  );
-
-  window.addEventListener(
-    "pointerup",
-    endResize
-  );
-}
+    
 
   function endResize() {
 
