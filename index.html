@@ -6726,11 +6726,36 @@ function setupCharacterAlbumCropDrag(
 
       event.preventDefault();
       
-      if (
-  event.target.closest(".character-album-crop-frame")
-) {
-  return;
-}
+            const cropFrame =
+        event.target.closest(
+          ".character-album-crop-frame"
+        );
+
+      if (cropFrame) {
+
+        const rect =
+          cropFrame.getBoundingClientRect();
+
+        const x =
+          event.touches[0].clientX -
+          rect.left;
+
+        const y =
+          event.touches[0].clientY -
+          rect.top;
+
+        const edge = 18;
+
+        const nearEdge =
+          x <= edge ||
+          x >= rect.width - edge ||
+          y <= edge ||
+          y >= rect.height - edge;
+
+        if (nearEdge) {
+          return;
+        }
+      }
 
       const state =
         window.characterAlbumCropState;
