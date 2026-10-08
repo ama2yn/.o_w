@@ -4263,6 +4263,38 @@ customField.innerHTML = `
   setupAutoResize();
 }
 
+function toggleProfileSortMode() {
+
+  const controls =
+    document.querySelectorAll(
+      ".profile-sort-controls"
+    );
+
+  const button =
+    document.getElementById(
+      "profileSortToggle"
+    );
+
+  if (!controls.length || !button) {
+    return;
+  }
+
+  const sorting =
+    controls[0].style.display !== "none";
+
+  controls.forEach(control => {
+
+    control.style.display =
+      sorting ? "none" : "block";
+
+  });
+
+  button.textContent =
+    sorting
+      ? "並べ替え"
+      : "並べ替え完了";
+}
+
 
 function setupAutoResize() {
 
