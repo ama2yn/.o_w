@@ -6205,34 +6205,255 @@ async function uploadCharacterAlbumMedia() {
     return;
   }
 
-  const file =
+  const originalFile =
     fileInput.files[0];
 
+  const cropCheckbox =
+    document.getElementById(
+      "characterAlbumUseCrop"
+    );
+
+  const shouldCrop =
+    cropCheckbox &&
+    cropCheckbox.checked &&
+    originalFile.type.startsWith("image/");
+
+  let uploadFile =
+    originalFile;
+
+  /*
+   * トリミングがONの場合、
+   * 画面上で見えている範囲をCanvasへ切り出す
+   */
+  if (shouldCrop) {
+
+    const state =
+      window.characterAlbumCropState;
+
+    if (
+      !state ||
+      !state.image ||
+      !state.imageElement ||
+      !state.preview
+    ) {
+      alert(
+        "トリミング情報を取得できませんでした。"
+      );
+      return;
+    }
+
+    const image =
+      state.image;
+
+    const preview =
+      state.preview;
+
+    const previewWidth =
+      preview.clientWidth;
+
+    const previewHeight =
+      preview.clientHeight;
+
+    if (
+      !previewWidth ||
+      !previewHeight
+    ) {
+      alert(
+        "トリミング範囲を取得できませんでした。"
+      );
+      return;
+    }
+
+    const zoom =
+      Number(state.zoom) || 1;
+
+    let ratioWidth =
+      previewWidth;
+
+    let ratioHeight =
+      previewHeight;
+
+    /*
+     * updateCharacterAlbumCrop() と
+     * 同じ計算で画像の表示サイズを取得
+     */
+    const scale =
+      Math.max(
+        previewWidth / image.naturalWidth,
+        previewHeight / image.naturalHeight
+      ) * zoom;
+
+    const displayedWidth =
+      image.naturalWidth * scale;
+
+    const displayedHeight =
+      image.naturalHeight * scale;
+
+    const imageLeft =
+      (previewWidth - displayedWidth) / 2 +
+      state.x;
+
+    const imageTop =
+      (previewHeight - displayedHeight) / 2 +
+      state.y;
+
+    /*
+     * プレビュー上の座標を
+     * 元画像の座標へ変換
+     */
+    let sourceX =
+      (0 - imageLeft) / scale;
+
+    let sourceY =
+      (0 - imageTop) / scale;
+
+    let sourceWidth =
+      ratioWidth / scale;
+
+    let sourceHeight =
+      ratioHeight / scale;
+
+    /*
+     * 念のため画像範囲内に収める
+     */
+    sourceX =
+      Math.max(
+        0,
+        Math.min(
+          sourceX,
+          image.naturalWidth - sourceWidth
+        )
+      );
+
+    sourceY =
+      Math.max(
+        0,
+        Math.min(
+          sourceY,
+          image.naturalHeight - sourceHeight
+        )
+      );
+
+    sourceWidth =
+      Math.min(
+        sourceWidth,
+        image.naturalWidth - sourceX
+      );
+
+    sourceHeight =
+      Math.min(
+        sourceHeight,
+        image.naturalHeight - sourceY
+      );
+
+    /*
+     * 元画像の解像度をできるだけ維持して
+     * Canvasへ切り出す
+     */
+    const outputWidth =
+      Math.round(sourceWidth);
+
+    const outputHeight =
+      Math.round(sourceHeight);
+
+    const canvas =
+      document.createElement("canvas");
+
+    canvas.width =
+      outputWidth;
+
+    canvas.height =
+      outputHeight;
+
+    const context =
+      canvas.getContext("2d");
+
+    if (!context) {
+      alert(
+        "画像の処理に失敗しました。"
+      );
+      return;
+    }
+
+    context.drawImage(
+      image,
+      sourceX,
+      sourceY,
+      sourceWidth,
+      sourceHeight,
+      0,
+      0,
+      outputWidth,
+      outputHeight
+    );
+
+    const blob =
+      await new Promise(
+        (resolve) => {
+
+          canvas.toBlob(
+            resolve,
+            "image/png"
+          );
+
+        }
+      );
+
+    if (!blob) {
+      alert(
+        "トリミング画像の作成に失敗しました。"
+      );
+      return;
+    }
+
+    uploadFile =
+      new File(
+        [blob],
+        "cropped.png",
+        {
+          type:"image/png"
+        }
+      );
+  }
+
+  /*
+   * ファイル名作成
+   */
   const extension =
-    file.name.includes(".")
-      ? file.name
+    uploadFile.name.includes(".")
+      ? uploadFile.name
           .split(".")
           .pop()
           .toLowerCase()
-      : "";
+      : (
+          uploadFile.type === "image/png"
+            ? "png"
+            : uploadFile.type === "image/jpeg"
+              ? "jpg"
+              : "bin"
+        );
 
   const fileName =
     crypto.randomUUID() +
-    (extension ? "." + extension : "");
+    "." +
+    extension;
 
   const filePath =
     "album/" +
     fileName;
 
+  /*
+   * Storageへアップロード
+   */
   const uploadResponse =
     await fetch(
       SUPABASE_URL +
       "/storage/v1/object/character-images/" +
       filePath,
       {
-        method: "POST",
+        method:"POST",
 
-        headers: {
+        headers:{
           "apikey":
             SUPABASE_PUBLISHABLE_KEY,
 
@@ -6241,10 +6462,11 @@ async function uploadCharacterAlbumMedia() {
             SUPABASE_PUBLISHABLE_KEY,
 
           "Content-Type":
-            file.type
+            uploadFile.type
         },
 
-        body: file
+        body:
+          uploadFile
       }
     );
 
@@ -6262,90 +6484,108 @@ async function uploadCharacterAlbumMedia() {
   }
 
   const fileUrl =
-  SUPABASE_URL +
-  "/storage/v1/object/public/character-images/" +
-  filePath;
-
-const characterId =
-  window.currentCharacterId;
-
-if (!characterId) {
-
-  alert(
-    "Character情報を取得できませんでした。"
-  );
-
-  return;
-}
-
-const category =
-  window.currentCharacterAlbumCategory ||
-  "character";
-
-const mediaType =
-  file.type.startsWith("video/")
-    ? "video"
-    : "image";
-
-const response =
-  await fetch(
     SUPABASE_URL +
-    "/rest/v1/character_media",
-    {
-      method: "POST",
+    "/storage/v1/object/public/character-images/" +
+    filePath;
 
-      headers: {
-        "apikey":
-          SUPABASE_PUBLISHABLE_KEY,
+  const characterId =
+    window.currentCharacterId;
 
-        "Authorization":
-          "Bearer " +
-          SUPABASE_PUBLISHABLE_KEY,
+  if (!characterId) {
 
-        "Content-Type":
-          "application/json",
+    alert(
+      "Character情報を取得できませんでした。"
+    );
 
-        "Prefer":
-          "return=representation"
-      },
+    return;
+  }
 
-      body: JSON.stringify({
-        character_id:
-          characterId,
+  const category =
+    window.currentCharacterAlbumCategory ||
+    "character";
 
-        category:
-          category,
+  const mediaType =
+    uploadFile.type.startsWith("video/")
+      ? "video"
+      : "image";
 
-        media_type:
-          mediaType,
+  const response =
+    await fetch(
+      SUPABASE_URL +
+      "/rest/v1/character_media",
+      {
+        method:"POST",
 
-        file_url:
-          fileUrl,
+        headers:{
+          "apikey":
+            SUPABASE_PUBLISHABLE_KEY,
 
-        sort_order:
-          0
-      })
-    }
-  );
+          "Authorization":
+            "Bearer " +
+            SUPABASE_PUBLISHABLE_KEY,
 
-if (!response.ok) {
+          "Content-Type":
+            "application/json",
 
-  const errorText =
-    await response.text();
+          "Prefer":
+            "return=representation"
+        },
+
+        body:
+          JSON.stringify({
+            character_id:
+              characterId,
+
+            category:
+              category,
+
+            media_type:
+              mediaType,
+
+            file_url:
+              fileUrl,
+
+            sort_order:
+              0
+          })
+      }
+    );
+
+  if (!response.ok) {
+
+    const errorText =
+      await response.text();
+
+    alert(
+      "アルバム情報の保存に失敗しました。\n\n" +
+      errorText
+    );
+
+    return;
+  }
 
   alert(
-    "アルバム情報の保存に失敗しました。\n\n" +
-    errorText
+    "アップロードしました。"
   );
 
-  return;
-}
+  const form =
+    document.getElementById(
+      "characterAlbumUploadForm"
+    );
 
-await loadCharacterAlbumGallery(category);
+  if (form) {
+    form.remove();
+  }
 
-alert(
-  "アルバムに追加しました。"
-);
+  if (
+    typeof loadCharacterAlbum ===
+    "function"
+  ) {
+    loadCharacterAlbum(
+      characterId,
+      category
+    );
+  }
 }
 
 </script>
