@@ -6180,13 +6180,14 @@ function updateCharacterAlbumCrop() {
           direction;
 
         handle.style.cssText = `
-          position:absolute;
-          width:20px;
-          height:20px;
-          ${position}
-          z-index:20;
-          touch-action:none;
-        `;
+  position:absolute;
+  width:20px;
+  height:20px;
+  ${position}
+  z-index:20;
+  touch-action:none;
+  pointer-events:auto;
+`;
 
         cropFrame.appendChild(
           handle
