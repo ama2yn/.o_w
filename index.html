@@ -3627,44 +3627,63 @@ const profileFields = [
 
   }
   
-    profileOrder.length = 0;
+        profileOrder.length = 0;
 
-  if (Array.isArray(customFields.profile_order)) {
-    profileOrder.push(...customFields.profile_order);
-  }
+    const defaultProfileOrder = [
+      "birthday",
+      "height",
+      "weight",
+      "personality",
+      "first_person",
+      "second_person",
+      "likes",
+      "dislikes",
+      "description"
+    ];
 
-  const firstPerson =
-    typeof customFields.first_person === "string"
-      ? customFields.first_person
-      : "";
+    if (Array.isArray(customFields.profile_order)) {
+      customFields.profile_order.forEach(key => {
 
-  const secondPerson =
-    typeof customFields.second_person === "string"
-      ? customFields.second_person
-      : "";
+        if (!profileOrder.includes(key)) {
+          profileOrder.push(key);
+        }
 
-  Object.entries(customFields).forEach(
-    ([key, field]) => {
-
-      if (
-        key === "first_person" ||
-        key === "second_person"
-      ) {
-        return;
-      }
-
-      if (
-        !field ||
-        typeof field !== "object" ||
-        !field.label
-      ) {
-        return;
-      }
-
-      profileOrder.push(key);
-
+      });
     }
-  );
+
+    defaultProfileOrder.forEach(key => {
+
+      if (!profileOrder.includes(key)) {
+        profileOrder.push(key);
+      }
+
+    });
+
+    Object.entries(customFields).forEach(
+      ([key, field]) => {
+
+        if (
+          key === "first_person" ||
+          key === "second_person" ||
+          key === "profile_order"
+        ) {
+          return;
+        }
+
+        if (
+          !field ||
+          typeof field !== "object" ||
+          !field.label
+        ) {
+          return;
+        }
+
+        if (!profileOrder.includes(key)) {
+          profileOrder.push(key);
+        }
+
+      }
+    );
 
   content.innerHTML =
     `
