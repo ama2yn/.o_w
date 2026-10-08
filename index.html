@@ -4565,20 +4565,20 @@ async function saveCharacterEdit() {
     }
   );
 
-  existingCustomFields = {
-  first_person:
-    existingCustomFields.first_person || "",
+    existingCustomFields = {
+    first_person:
+      existingCustomFields.first_person || "",
 
-  second_person:
-    existingCustomFields.second_person || "",
+    second_person:
+      existingCustomFields.second_person || "",
 
-  profile_order:
-    Array.isArray(profileOrder)
-      ? profileOrder
-      : [],
+    profile_order:
+      Array.isArray(profileOrder)
+        ? profileOrder
+        : [],
 
-  ...newCustomFields
-};
+    ...newCustomFields
+  };
 
 
   const updates = {
