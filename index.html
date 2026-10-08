@@ -3629,7 +3629,11 @@ const profileFields = [
   
         profileOrder.length = 0;
 
-    
+    const firstPerson =
+  customFields.first_person || "";
+
+const secondPerson =
+  customFields.second_person || "";
 
     if (Array.isArray(customFields.profile_order)) {
       customFields.profile_order.forEach(key => {
