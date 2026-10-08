@@ -6964,6 +6964,7 @@ function setupCharacterAlbumCropDrag(
 function setCharacterAlbumCropRatio(
   ratio
 ) {
+
   const state =
     window.characterAlbumCropState;
 
@@ -6973,6 +6974,22 @@ function setCharacterAlbumCropRatio(
 
   state.ratio =
     ratio;
+
+  /*
+   * 比率を変更したら、
+   * トリミング枠を新しい比率で作り直す
+   */
+  state.frameWidth =
+    null;
+
+  state.frameHeight =
+    null;
+
+  state.frameX =
+    null;
+
+  state.frameY =
+    null;
 
   state.x = 0;
   state.y = 0;
