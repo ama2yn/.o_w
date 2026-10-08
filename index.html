@@ -6212,6 +6212,419 @@ function updateCharacterAlbumCrop() {
     state.frameHeight + "px";
 }
 
+function setupCharacterAlbumCropResize(cropFrame) {
+
+  if (
+    cropFrame.dataset.resizeReady ===
+    "true"
+  ) {
+    return;
+  }
+
+  cropFrame.dataset.resizeReady =
+    "true";
+
+  const preview =
+    document.getElementById(
+      "characterAlbumCropPreview"
+    );
+
+  if (!preview) return;
+
+  let resizing = false;
+  let direction = "";
+  let startX = 0;
+  let startY = 0;
+
+  let startFrameX = 0;
+  let startFrameY = 0;
+  let startFrameWidth = 0;
+  let startFrameHeight = 0;
+
+  function startResize(
+    event
+  ) {
+
+    const handle =
+      event.target.closest(
+        "[data-direction]"
+      );
+
+    if (!handle) {
+      return;
+    }
+
+    const state =
+      window.characterAlbumCropState;
+
+    if (!state) return;
+
+    resizing = true;
+
+    direction =
+      handle.dataset.direction;
+
+    startX =
+      event.clientX;
+
+    startY =
+      event.clientY;
+
+    startFrameX =
+      state.frameX;
+
+    startFrameY =
+      state.frameY;
+
+    startFrameWidth =
+      state.frameWidth;
+
+    startFrameHeight =
+      state.frameHeight;
+
+    event.preventDefault();
+
+    event.stopPropagation();
+  }
+
+  function moveResize(
+    event
+  ) {
+
+    if (!resizing) return;
+
+    const state =
+      window.characterAlbumCropState;
+
+    if (!state) return;
+
+    const dx =
+      event.clientX -
+      startX;
+
+    const dy =
+      event.clientY -
+      startY;
+
+    let newX =
+      startFrameX;
+
+    let newY =
+      startFrameY;
+
+    let newWidth =
+      startFrameWidth;
+
+    let newHeight =
+      startFrameHeight;
+
+    const minSize = 60;
+
+    /*
+     * 左側
+     */
+    if (
+      direction === "w" ||
+      direction === "nw" ||
+      direction === "sw"
+    ) {
+
+      newX =
+        startFrameX + dx;
+
+      newWidth =
+        startFrameWidth - dx;
+
+      if (
+        newWidth < minSize
+      ) {
+
+        newWidth =
+          minSize;
+
+        newX =
+          startFrameX +
+          startFrameWidth -
+          minSize;
+      }
+    }
+
+    /*
+     * 右側
+     */
+    if (
+      direction === "e" ||
+      direction === "ne" ||
+      direction === "se"
+    ) {
+
+      newWidth =
+        startFrameWidth + dx;
+
+      if (
+        newWidth < minSize
+      ) {
+        newWidth =
+          minSize;
+      }
+    }
+
+    /*
+     * 上側
+     */
+    if (
+      direction === "n" ||
+      direction === "nw" ||
+      direction === "ne"
+    ) {
+
+      newY =
+        startFrameY + dy;
+
+      newHeight =
+        startFrameHeight - dy;
+
+      if (
+        newHeight < minSize
+      ) {
+
+        newHeight =
+          minSize;
+
+        newY =
+          startFrameY +
+          startFrameHeight -
+          minSize;
+      }
+    }
+
+    /*
+     * 下側
+     */
+    if (
+      direction === "s" ||
+      direction === "sw" ||
+      direction === "se"
+    ) {
+
+      newHeight =
+        startFrameHeight + dy;
+
+      if (
+        newHeight < minSize
+      ) {
+        newHeight =
+          minSize;
+      }
+    }
+
+    /*
+     * 比率固定
+     */
+    const ratio =
+      state.ratio;
+
+    if (
+      ratio &&
+      ratio !== "free"
+    ) {
+
+      let ratioValue = 1;
+
+      if (ratio === "1:1") {
+        ratioValue = 1;
+      }
+
+      if (ratio === "4:3") {
+        ratioValue = 4 / 3;
+      }
+
+      if (ratio === "3:4") {
+        ratioValue = 3 / 4;
+      }
+
+      if (ratio === "16:9") {
+        ratioValue = 16 / 9;
+      }
+
+      if (ratio === "9:16") {
+        ratioValue = 9 / 16;
+      }
+
+      /*
+       * コーナーは、
+       * 横方向の変化を基準にする
+       */
+      if (
+        direction === "nw" ||
+        direction === "ne" ||
+        direction === "sw" ||
+        direction === "se"
+      ) {
+
+        newHeight =
+          newWidth /
+          ratioValue;
+
+      } else {
+
+        /*
+         * 上下辺を動かした場合
+         */
+        if (
+          direction === "n" ||
+          direction === "s"
+        ) {
+
+          newWidth =
+            newHeight *
+            ratioValue;
+
+        } else {
+
+          newHeight =
+            newWidth /
+            ratioValue;
+        }
+      }
+
+      /*
+       * 左上・左下の位置を補正
+       */
+      if (
+        direction === "nw"
+      ) {
+
+        newX =
+          startFrameX +
+          startFrameWidth -
+          newWidth;
+
+        newY =
+          startFrameY +
+          startFrameHeight -
+          newHeight;
+      }
+
+      if (
+        direction === "sw"
+      ) {
+
+        newX =
+          startFrameX +
+          startFrameWidth -
+          newWidth;
+      }
+
+      if (
+        direction === "ne"
+      ) {
+
+        newY =
+          startFrameY +
+          startFrameHeight -
+          newHeight;
+      }
+    }
+
+    /*
+     * プレビュー範囲内に収める
+     */
+    const previewWidth =
+      preview.clientWidth;
+
+    const previewHeight =
+      preview.clientHeight;
+
+    if (
+      newX < 0
+    ) {
+
+      newWidth +=
+        newX;
+
+      newX = 0;
+    }
+
+    if (
+      newY < 0
+    ) {
+
+      newHeight +=
+        newY;
+
+      newY = 0;
+    }
+
+    if (
+      newX +
+      newWidth >
+      previewWidth
+    ) {
+
+      newWidth =
+        previewWidth -
+        newX;
+    }
+
+    if (
+      newY +
+      newHeight >
+      previewHeight
+    ) {
+
+      newHeight =
+        previewHeight -
+        newY;
+    }
+
+    if (
+      newWidth < minSize ||
+      newHeight < minSize
+    ) {
+      return;
+    }
+
+    state.frameX =
+      newX;
+
+    state.frameY =
+      newY;
+
+    state.frameWidth =
+      newWidth;
+
+    state.frameHeight =
+      newHeight;
+
+    updateCharacterAlbumCrop();
+
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  function endResize() {
+
+    resizing = false;
+    direction = "";
+  }
+
+  cropFrame.addEventListener(
+    "pointerdown",
+    startResize
+  );
+
+  window.addEventListener(
+    "pointermove",
+    moveResize
+  );
+
+  window.addEventListener(
+    "pointerup",
+    endResize
+  );
+}
+
 
 function setupCharacterAlbumCropDrag(
   imageElement
