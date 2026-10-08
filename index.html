@@ -6255,11 +6255,17 @@ function setupCharacterAlbumCropResize(cropFrame) {
     }
 
     const state =
-      window.characterAlbumCropState;
+  window.characterAlbumCropState;
 
-    if (!state) return;
+if (!state) return;
 
-    resizing = true;
+/*
+ * 枠を直接操作したら、
+ * その時点から自由変形にする
+ */
+state.ratio = "free";
+
+resizing = true;
 
     direction =
       handle.dataset.direction;
