@@ -5490,10 +5490,9 @@ async function loadCharacterAlbumGallery(category) {
 
   mediaListContainer.innerHTML = `
     <div style="
-      display:grid;
-      grid-template-columns:repeat(2, 1fr);
-      gap:12px;
-    ">
+  column-count:2;
+  column-gap:12px;
+">
       ${mediaList.map(media => {
 
         if (media.media_type === "video") {
@@ -5505,6 +5504,8 @@ async function loadCharacterAlbumGallery(category) {
                 border-radius:16px;
                 overflow:hidden;
                 background:#111;
+                break-inside:avoid;
+margin-bottom:12px;
               "
             >
               <video
