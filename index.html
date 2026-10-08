@@ -5654,10 +5654,49 @@ function showCharacterAlbumUpload() {
       "
     >
 
+    <div
+      id="characterAlbumCropArea"
+      style="
+        display:none;
+        margin-top:20px;
+      "
+    >
+
+      <p style="
+        margin:0 0 10px;
+        font-weight:600;
+      ">
+        サムネイル調整
+      </p>
+
+      <div
+        id="characterAlbumCropPreview"
+        style="
+          position:relative;
+          width:100%;
+          overflow:hidden;
+          border-radius:16px;
+          background:#111;
+        "
+      ></div>
+
+      <p style="
+        margin:10px 0 0;
+        font-size:13px;
+        opacity:.75;
+      ">
+        ※ 一覧用サムネイルだけを調整します。
+        元画像はそのまま保存します。
+      </p>
+    </div>
+
     <button
+      id="characterAlbumUploadButton"
       type="button"
       onclick="uploadCharacterAlbumMedia()"
-      style="margin-top:15px;"
+      style="
+        margin-top:15px;
+      "
     >
       アップロード
     </button>
@@ -5675,6 +5714,85 @@ function showCharacterAlbumUpload() {
   uploadArea.insertAdjacentElement(
     "afterend",
     form
+  );
+
+  const fileInput =
+    document.getElementById(
+      "characterAlbumFile"
+    );
+
+  fileInput.addEventListener(
+    "change",
+    () => {
+
+      const file =
+        fileInput.files &&
+        fileInput.files[0];
+
+      if (!file) {
+        return;
+      }
+
+      const cropArea =
+        document.getElementById(
+          "characterAlbumCropArea"
+        );
+
+      const preview =
+        document.getElementById(
+          "characterAlbumCropPreview"
+        );
+
+      if (
+        !cropArea ||
+        !preview
+      ) {
+        return;
+      }
+
+      if (
+        file.type.startsWith(
+          "image/"
+        )
+      ) {
+
+        const imageUrl =
+          URL.createObjectURL(file);
+
+        preview.innerHTML = `
+          <img
+            src="${imageUrl}"
+            style="
+              width:100%;
+              height:auto;
+              display:block;
+            "
+          >
+        `;
+
+        cropArea.style.display =
+          "block";
+
+        window.characterAlbumCropImage =
+          imageUrl;
+
+      } else {
+
+        preview.innerHTML = `
+          <video
+            src="${URL.createObjectURL(file)}"
+            controls
+            style="
+              width:100%;
+              display:block;
+            "
+          ></video>
+        `;
+
+        cropArea.style.display =
+          "block";
+      }
+    }
   );
 }
 
