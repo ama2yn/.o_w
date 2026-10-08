@@ -4573,9 +4573,10 @@ async function saveCharacterEdit() {
       existingCustomFields.second_person || "",
 
     profile_order:
-      Array.isArray(profileOrder)
-        ? profileOrder
-        : [],
+  typeof profileOrder !== "undefined" &&
+  Array.isArray(profileOrder)
+    ? profileOrder
+    : [],
 
     ...newCustomFields
   };
