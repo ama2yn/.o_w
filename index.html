@@ -5963,12 +5963,11 @@ function showCharacterAlbumUpload() {
 }
 
 function updateCharacterAlbumCrop() {
+
   const state =
     window.characterAlbumCropState;
 
-  if (!state) {
-    return;
-  }
+  if (!state) return;
 
   const {
     image,
@@ -5988,10 +5987,6 @@ function updateCharacterAlbumCrop() {
     return;
   }
 
-  /*
-   * 編集画面のサイズは固定。
-   * 比率変更でここ自体を伸縮させない。
-   */
   const previewWidth =
     preview.clientWidth;
 
@@ -6002,13 +5997,14 @@ function updateCharacterAlbumCrop() {
     previewHeight + "px";
 
   /*
-   * 画像は編集画面いっぱいを
-   * 常に覆う。
+   * 画像の表示サイズ
    */
   const baseScale =
     Math.max(
-      previewWidth / image.naturalWidth,
-      previewHeight / image.naturalHeight
+      previewWidth /
+        image.naturalWidth,
+      previewHeight /
+        image.naturalHeight
     );
 
   const scale =
@@ -6016,19 +6012,20 @@ function updateCharacterAlbumCrop() {
     (Number(zoom) || 1);
 
   const imageWidth =
-    image.naturalWidth * scale;
+    image.naturalWidth *
+    scale;
 
   const imageHeight =
-    image.naturalHeight * scale;
+    image.naturalHeight *
+    scale;
 
-  /*
-   * 画像中央配置
-   */
   const baseLeft =
-    (previewWidth - imageWidth) / 2;
+    (previewWidth -
+      imageWidth) / 2;
 
   const baseTop =
-    (previewHeight - imageHeight) / 2;
+    (previewHeight -
+      imageHeight) / 2;
 
   imageElement.style.width =
     imageWidth + "px";
@@ -6042,9 +6039,91 @@ function updateCharacterAlbumCrop() {
   imageElement.style.top =
     (baseTop + y) + "px";
 
+  /*
+   * 初回だけトリミング枠の大きさを決める
+   */
+  if (
+    !state.frameWidth ||
+    !state.frameHeight
+  ) {
+
+    let frameWidth =
+      previewWidth * 0.82;
+
+    let frameHeight =
+      previewHeight * 0.82;
+
+    if (ratio === "1:1") {
+
+      const size =
+        Math.min(
+          frameWidth,
+          frameHeight
+        );
+
+      frameWidth = size;
+      frameHeight = size;
+
+    } else if (ratio === "4:3") {
+
+      frameHeight =
+        frameWidth * 3 / 4;
+
+    } else if (ratio === "3:4") {
+
+      frameHeight =
+        frameWidth * 4 / 3;
+
+      if (
+        frameHeight >
+        previewHeight * 0.82
+      ) {
+        frameHeight =
+          previewHeight * 0.82;
+
+        frameWidth =
+          frameHeight * 3 / 4;
+      }
+
+    } else if (ratio === "16:9") {
+
+      frameHeight =
+        frameWidth * 9 / 16;
+
+    } else if (ratio === "9:16") {
+
+      frameHeight =
+        frameWidth * 16 / 9;
+
+      if (
+        frameHeight >
+        previewHeight * 0.82
+      ) {
+        frameHeight =
+          previewHeight * 0.82;
+
+        frameWidth =
+          frameHeight * 9 / 16;
+      }
+    }
+
+    state.frameWidth =
+      frameWidth;
+
+    state.frameHeight =
+      frameHeight;
+
+    state.frameX =
+      (previewWidth -
+        frameWidth) / 2;
+
+    state.frameY =
+      (previewHeight -
+        frameHeight) / 2;
+  }
 
   /*
-   * 既存のクロップ枠を削除
+   * トリミング枠
    */
   let cropFrame =
     preview.querySelector(
@@ -6054,116 +6133,83 @@ function updateCharacterAlbumCrop() {
   if (!cropFrame) {
 
     cropFrame =
-      document.createElement("div");
+      document.createElement(
+        "div"
+      );
 
     cropFrame.className =
       "character-album-crop-frame";
 
     cropFrame.style.cssText = `
       position:absolute;
-      left:50%;
-      top:50%;
-      transform:translate(-50%, -50%);
       border:2px solid white;
       box-shadow:
         0 0 0 9999px rgba(0,0,0,.55);
-      pointer-events:none;
       z-index:10;
       box-sizing:border-box;
+      touch-action:none;
     `;
 
     preview.appendChild(
       cropFrame
     );
-  }
-
-
-  /*
-   * トリミング枠の比率
-   */
-  let frameWidth =
-    previewWidth * 0.82;
-
-  let frameHeight =
-    previewHeight * 0.82;
-
-
-  if (ratio === "1:1") {
-
-    const size =
-      Math.min(
-        frameWidth,
-        frameHeight
-      );
-
-    frameWidth =
-      size;
-
-    frameHeight =
-      size;
-
-  } else if (ratio === "4:3") {
-
-    frameHeight =
-      frameWidth * 3 / 4;
-
-  } else if (ratio === "3:4") {
-
-    frameHeight =
-      frameWidth * 4 / 3;
-
-    if (
-      frameHeight >
-      previewHeight * 0.82
-    ) {
-
-      frameHeight =
-        previewHeight * 0.82;
-
-      frameWidth =
-        frameHeight * 3 / 4;
-    }
-
-  } else if (ratio === "16:9") {
-
-    frameHeight =
-      frameWidth * 9 / 16;
-
-  } else if (ratio === "9:16") {
-
-    frameHeight =
-      frameWidth * 16 / 9;
-
-    if (
-      frameHeight >
-      previewHeight * 0.82
-    ) {
-
-      frameHeight =
-        previewHeight * 0.82;
-
-      frameWidth =
-        frameHeight * 9 / 16;
-    }
-
-  } else {
 
     /*
-     * 自由
+     * 四隅・四辺のハンドル
      */
-    frameWidth =
-      previewWidth * 0.82;
+    const handles = [
+      ["nw", "top:0;left:0;cursor:nwse-resize;"],
+      ["n",  "top:0;left:50%;transform:translateX(-50%);cursor:ns-resize;"],
+      ["ne", "top:0;right:0;cursor:nesw-resize;"],
+      ["w",  "top:50%;left:0;transform:translateY(-50%);cursor:ew-resize;"],
+      ["e",  "top:50%;right:0;transform:translateY(-50%);cursor:ew-resize;"],
+      ["sw", "bottom:0;left:0;cursor:nesw-resize;"],
+      ["s",  "bottom:0;left:50%;transform:translateX(-50%);cursor:ns-resize;"],
+      ["se", "bottom:0;right:0;cursor:nwse-resize;"]
+    ];
 
-    frameHeight =
-      previewHeight * 0.82;
+    handles.forEach(
+      ([direction, position]) => {
+
+        const handle =
+          document.createElement(
+            "div"
+          );
+
+        handle.dataset.direction =
+          direction;
+
+        handle.style.cssText = `
+          position:absolute;
+          width:20px;
+          height:20px;
+          ${position}
+          z-index:20;
+          touch-action:none;
+        `;
+
+        cropFrame.appendChild(
+          handle
+        );
+      }
+    );
+
+    setupCharacterAlbumCropResize(
+      cropFrame
+    );
   }
 
+  cropFrame.style.left =
+    state.frameX + "px";
+
+  cropFrame.style.top =
+    state.frameY + "px";
 
   cropFrame.style.width =
-    frameWidth + "px";
+    state.frameWidth + "px";
 
   cropFrame.style.height =
-    frameHeight + "px";
+    state.frameHeight + "px";
 }
 
 
