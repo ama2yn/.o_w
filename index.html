@@ -5663,11 +5663,18 @@ function showCharacterAlbumUpload() {
     </button>
   `;
 
-  gallery.insertBefore(
-    form,
+  const uploadArea =
     document.getElementById(
-      "characterAlbumGallery"
-    ).querySelector("p")
+      "characterAlbumUploadArea"
+    );
+
+  if (!uploadArea) {
+    return;
+  }
+
+  uploadArea.insertAdjacentElement(
+    "afterend",
+    form
   );
 }
 
