@@ -5979,6 +5979,216 @@ function showCharacterAlbumUpload() {
   );
 }
 
+function updateCharacterAlbumCrop() {
+  const state =
+    window.characterAlbumCropState;
+
+  if (!state) {
+    return;
+  }
+
+  const {
+    image,
+    imageElement,
+    preview,
+    zoom,
+    x,
+    y,
+    ratio
+  } = state;
+
+  if (!imageElement || !preview) {
+    return;
+  }
+
+  const previewWidth =
+    preview.clientWidth;
+
+  if (!previewWidth) {
+    return;
+  }
+
+  let previewHeight;
+
+  if (ratio === "1:1") {
+    previewHeight = previewWidth;
+  } else if (ratio === "4:3") {
+    previewHeight = previewWidth * 3 / 4;
+  } else if (ratio === "3:4") {
+    previewHeight = previewWidth * 4 / 3;
+  } else if (ratio === "16:9") {
+    previewHeight = previewWidth * 9 / 16;
+  } else if (ratio === "9:16") {
+    previewHeight = previewWidth * 16 / 9;
+  } else {
+    previewHeight =
+      previewWidth *
+      image.naturalHeight /
+      image.naturalWidth;
+  }
+
+  preview.style.height =
+    previewHeight + "px";
+
+  const scale =
+    Math.max(
+      previewWidth / image.naturalWidth,
+      previewHeight / image.naturalHeight
+    ) * zoom;
+
+  const width =
+    image.naturalWidth * scale;
+
+  const height =
+    image.naturalHeight * scale;
+
+  const centerX =
+    (previewWidth - width) / 2;
+
+  const centerY =
+    (previewHeight - height) / 2;
+
+  imageElement.style.width =
+    width + "px";
+
+  imageElement.style.height =
+    height + "px";
+
+  imageElement.style.left =
+    (centerX + x) + "px";
+
+  imageElement.style.top =
+    (centerY + y) + "px";
+}
+
+
+function setupCharacterAlbumCropDrag(
+  imageElement
+) {
+  const preview =
+    document.getElementById(
+      "characterAlbumCropPreview"
+    );
+
+  if (!preview) {
+    return;
+  }
+
+  let dragging = false;
+  let lastX = 0;
+  let lastY = 0;
+
+  preview.addEventListener(
+    "pointerdown",
+    (event) => {
+
+      event.preventDefault();
+
+      dragging = true;
+
+      lastX =
+        event.clientX;
+
+      lastY =
+        event.clientY;
+
+      preview.setPointerCapture(
+        event.pointerId
+      );
+    }
+  );
+
+  preview.addEventListener(
+    "pointermove",
+    (event) => {
+
+      if (!dragging) {
+        return;
+      }
+
+      event.preventDefault();
+
+      const state =
+        window.characterAlbumCropState;
+
+      if (!state) {
+        return;
+      }
+
+      const dx =
+        event.clientX - lastX;
+
+      const dy =
+        event.clientY - lastY;
+
+      state.x += dx;
+      state.y += dy;
+
+      lastX =
+        event.clientX;
+
+      lastY =
+        event.clientY;
+
+      updateCharacterAlbumCrop();
+    }
+  );
+
+  const stopDragging =
+    (event) => {
+
+      dragging = false;
+
+      if (
+        event.pointerId !== undefined &&
+        preview.hasPointerCapture(
+          event.pointerId
+        )
+      ) {
+        preview.releasePointerCapture(
+          event.pointerId
+        );
+      }
+    };
+
+  preview.addEventListener(
+    "pointerup",
+    stopDragging
+  );
+
+  preview.addEventListener(
+    "pointercancel",
+    stopDragging
+  );
+
+  preview.addEventListener(
+    "pointerleave",
+    () => {
+      dragging = false;
+    }
+  );
+}
+
+
+function setCharacterAlbumCropRatio(
+  ratio
+) {
+  const state =
+    window.characterAlbumCropState;
+
+  if (!state) {
+    return;
+  }
+
+  state.ratio =
+    ratio;
+
+  state.x = 0;
+  state.y = 0;
+
+  updateCharacterAlbumCrop();
+}
+
 async function uploadCharacterAlbumMedia() {
 
   const fileInput =
