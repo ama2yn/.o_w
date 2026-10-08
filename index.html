@@ -6246,13 +6246,59 @@ function setupCharacterAlbumCropResize(cropFrame) {
   ) {
 
     const handle =
-      event.target.closest(
-        "[data-direction]"
-      );
+  event.target.closest(
+    "[data-direction]"
+  );
 
-    if (!handle) {
-      return;
-    }
+if (!handle) {
+
+  /*
+   * 枠そのものを押した場合は、
+   * 押した位置から一番近い辺を判定する
+   */
+  const rect =
+    cropFrame.getBoundingClientRect();
+
+  const x =
+    event.clientX -
+    rect.left;
+
+  const y =
+    event.clientY -
+    rect.top;
+
+  const edge = 18;
+
+  if (
+    x <= edge
+  ) {
+    direction = "w";
+
+  } else if (
+    x >= rect.width - edge
+  ) {
+    direction = "e";
+
+  } else if (
+    y <= edge
+  ) {
+    direction = "n";
+
+  } else if (
+    y >= rect.height - edge
+  ) {
+    direction = "s";
+
+  } else {
+    return;
+  }
+
+} else {
+
+  direction =
+    handle.dataset.direction;
+}
+      
 
     const state =
   window.characterAlbumCropState;
