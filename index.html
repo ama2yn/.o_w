@@ -6671,6 +6671,12 @@ function setupCharacterAlbumCropDrag(
     (event) => {
 
       event.preventDefault();
+      
+      if (
+  event.target.closest(".character-album-crop-frame")
+) {
+  return;
+}
 
       const state =
         window.characterAlbumCropState;
