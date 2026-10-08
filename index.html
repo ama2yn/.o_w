@@ -6075,12 +6075,54 @@ function setupCharacterAlbumCropDrag(
   }
 
   let dragging = false;
+
   let lastX = 0;
   let lastY = 0;
 
+  let pinchDistance = 0;
+  let pinchZoom = 1;
+
+  function getDistance(touch1, touch2) {
+    const dx =
+      touch2.clientX -
+      touch1.clientX;
+
+    const dy =
+      touch2.clientY -
+      touch1.clientY;
+
+    return Math.sqrt(
+      dx * dx +
+      dy * dy
+    );
+  }
+
+  function getCenter(touch1, touch2) {
+    return {
+      x:
+        (touch1.clientX +
+          touch2.clientX) / 2,
+
+      y:
+        (touch1.clientY +
+          touch2.clientY) / 2
+    };
+  }
+
+  /*
+   * 1本指：
+   * 画像をドラッグ
+   */
   preview.addEventListener(
     "pointerdown",
     (event) => {
+
+      if (
+        event.pointerType === "mouse" &&
+        event.button !== 0
+      ) {
+        return;
+      }
 
       event.preventDefault();
 
@@ -6116,10 +6158,12 @@ function setupCharacterAlbumCropDrag(
       }
 
       const dx =
-        event.clientX - lastX;
+        event.clientX -
+        lastX;
 
       const dy =
-        event.clientY - lastY;
+        event.clientY -
+        lastY;
 
       state.x += dx;
       state.y += dy;
@@ -6134,13 +6178,13 @@ function setupCharacterAlbumCropDrag(
     }
   );
 
-  const stopDragging =
+  preview.addEventListener(
+    "pointerup",
     (event) => {
 
       dragging = false;
 
       if (
-        event.pointerId !== undefined &&
         preview.hasPointerCapture(
           event.pointerId
         )
@@ -6149,22 +6193,112 @@ function setupCharacterAlbumCropDrag(
           event.pointerId
         );
       }
-    };
-
-  preview.addEventListener(
-    "pointerup",
-    stopDragging
+    }
   );
 
   preview.addEventListener(
     "pointercancel",
-    stopDragging
+    () => {
+      dragging = false;
+    }
+  );
+
+  /*
+   * 2本指：
+   * ピンチで拡大・縮小
+   */
+  preview.addEventListener(
+    "touchstart",
+    (event) => {
+
+      if (event.touches.length !== 2) {
+        return;
+      }
+
+      event.preventDefault();
+
+      pinchDistance =
+        getDistance(
+          event.touches[0],
+          event.touches[1]
+        );
+
+      const state =
+        window.characterAlbumCropState;
+
+      if (state) {
+        pinchZoom =
+          state.zoom || 1;
+      }
+    },
+    {
+      passive:false
+    }
   );
 
   preview.addEventListener(
-    "pointerleave",
-    () => {
-      dragging = false;
+    "touchmove",
+    (event) => {
+
+      if (event.touches.length !== 2) {
+        return;
+      }
+
+      event.preventDefault();
+
+      const state =
+        window.characterAlbumCropState;
+
+      if (!state) {
+        return;
+      }
+
+      const currentDistance =
+        getDistance(
+          event.touches[0],
+          event.touches[1]
+        );
+
+      if (!pinchDistance) {
+        pinchDistance =
+          currentDistance;
+
+        return;
+      }
+
+      const scale =
+        currentDistance /
+        pinchDistance;
+
+      let newZoom =
+        pinchZoom * scale;
+
+      newZoom =
+        Math.max(
+          1,
+          Math.min(
+            5,
+            newZoom
+          )
+        );
+
+      state.zoom =
+        newZoom;
+
+      updateCharacterAlbumCrop();
+    },
+    {
+      passive:false
+    }
+  );
+
+  preview.addEventListener(
+    "touchend",
+    (event) => {
+
+      if (event.touches.length < 2) {
+        pinchDistance = 0;
+      }
     }
   );
 }
