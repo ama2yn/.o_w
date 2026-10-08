@@ -5479,11 +5479,20 @@ async function loadCharacterAlbumGallery(category) {
   return;
 }
 
-  gallery.innerHTML = `
+    const mediaListContainer =
+    document.getElementById(
+      "characterAlbumMediaList"
+    );
+
+  if (!mediaListContainer) {
+    return;
+  }
+
+  mediaListContainer.innerHTML = `
     <div style="
       display:grid;
-      grid-template-columns:repeat(3, 1fr);
-      gap:8px;
+      grid-template-columns:repeat(2, 1fr);
+      gap:12px;
     ">
       ${mediaList.map(media => {
 
@@ -5493,9 +5502,8 @@ async function loadCharacterAlbumGallery(category) {
             <div
               style="
                 position:relative;
-                aspect-ratio:1;
+                border-radius:16px;
                 overflow:hidden;
-                border-radius:12px;
                 background:#111;
               "
             >
@@ -5503,22 +5511,56 @@ async function loadCharacterAlbumGallery(category) {
                 src="${escapeHtml(media.file_url)}"
                 style="
                   width:100%;
-                  height:100%;
-                  object-fit:cover;
+                  height:auto;
+                  max-height:420px;
+                  display:block;
+                  object-fit:contain;
+                  background:#111;
                 "
                 controls
               ></video>
 
               <div style="
                 position:absolute;
-                top:8px;
-                left:8px;
+                top:10px;
+                left:10px;
+                padding:4px 8px;
+                border-radius:10px;
+                background:rgba(0,0,0,.65);
                 pointer-events:none;
               ">
                 ▶
               </div>
             </div>
           `;
+
+        }
+
+        return `
+          <div
+            style="
+              border-radius:16px;
+              overflow:hidden;
+              background:#111;
+            "
+          >
+            <img
+              src="${escapeHtml(media.file_url)}"
+              style="
+                width:100%;
+                height:auto;
+                max-height:420px;
+                display:block;
+                object-fit:contain;
+                background:#111;
+              "
+            >
+          </div>
+        `;
+
+      }).join("")}
+    </div>
+  `;
 
         }
 
