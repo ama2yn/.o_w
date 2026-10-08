@@ -6924,15 +6924,7 @@ async function uploadCharacterAlbumMedia() {
     form.remove();
   }
 
-  if (
-    typeof loadCharacterAlbum ===
-    "function"
-  ) {
-    loadCharacterAlbum(
-      characterId,
-      category
-    );
-  }
+  loadCharacterAlbumGallery(category);
 }
 
 </script>
