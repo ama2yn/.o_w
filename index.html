@@ -6074,22 +6074,23 @@ function setupCharacterAlbumCropDrag(
     return;
   }
 
-  let dragging = false;
+  let mode = "none";
 
   let lastX = 0;
   let lastY = 0;
 
-  let pinchDistance = 0;
-  let pinchZoom = 1;
+  let startDistance = 0;
+  let startZoom = 1;
 
-  function getDistance(touch1, touch2) {
+  function getDistance(touches) {
+
     const dx =
-      touch2.clientX -
-      touch1.clientX;
+      touches[1].clientX -
+      touches[0].clientX;
 
     const dy =
-      touch2.clientY -
-      touch1.clientY;
+      touches[1].clientY -
+      touches[0].clientY;
 
     return Math.sqrt(
       dx * dx +
@@ -6097,56 +6098,13 @@ function setupCharacterAlbumCropDrag(
     );
   }
 
-  function getCenter(touch1, touch2) {
-    return {
-      x:
-        (touch1.clientX +
-          touch2.clientX) / 2,
-
-      y:
-        (touch1.clientY +
-          touch2.clientY) / 2
-    };
-  }
-
   /*
-   * 1本指：
-   * 画像をドラッグ
+   * 1本指
+   * → 画像を移動
    */
   preview.addEventListener(
-    "pointerdown",
+    "touchstart",
     (event) => {
-
-      if (
-        event.pointerType === "mouse" &&
-        event.button !== 0
-      ) {
-        return;
-      }
-
-      event.preventDefault();
-
-      dragging = true;
-
-      lastX =
-        event.clientX;
-
-      lastY =
-        event.clientY;
-
-      preview.setPointerCapture(
-        event.pointerId
-      );
-    }
-  );
-
-  preview.addEventListener(
-    "pointermove",
-    (event) => {
-
-      if (!dragging) {
-        return;
-      }
 
       event.preventDefault();
 
@@ -6157,13 +6115,240 @@ function setupCharacterAlbumCropDrag(
         return;
       }
 
+      if (event.touches.length === 1) {
+
+        mode = "pan";
+
+        lastX =
+          event.touches[0].clientX;
+
+        lastY =
+          event.touches[0].clientY;
+
+      } else if (
+        event.touches.length === 2
+      ) {
+
+        mode = "pinch";
+
+        startDistance =
+          getDistance(
+            event.touches
+          );
+
+        startZoom =
+          state.zoom || 1;
+      }
+
+    },
+    {
+      passive:false
+    }
+  );
+
+
+  /*
+   * 指を動かす
+   */
+  preview.addEventListener(
+    "touchmove",
+    (event) => {
+
+      event.preventDefault();
+
+      const state =
+        window.characterAlbumCropState;
+
+      if (!state) {
+        return;
+      }
+
+
+      /*
+       * 1本指：移動
+       */
+      if (
+        mode === "pan" &&
+        event.touches.length === 1
+      ) {
+
+        const currentX =
+          event.touches[0].clientX;
+
+        const currentY =
+          event.touches[0].clientY;
+
+        const dx =
+          currentX - lastX;
+
+        const dy =
+          currentY - lastY;
+
+        state.x += dx;
+        state.y += dy;
+
+        lastX =
+          currentX;
+
+        lastY =
+          currentY;
+
+        updateCharacterAlbumCrop();
+
+        return;
+      }
+
+
+      /*
+       * 2本指：ピンチ
+       */
+      if (
+        event.touches.length === 2
+      ) {
+
+        if (
+          !startDistance
+        ) {
+          startDistance =
+            getDistance(
+              event.touches
+            );
+
+          startZoom =
+            state.zoom || 1;
+
+          return;
+        }
+
+        const currentDistance =
+          getDistance(
+            event.touches
+          );
+
+        const scale =
+          currentDistance /
+          startDistance;
+
+        let newZoom =
+          startZoom * scale;
+
+        newZoom =
+          Math.max(
+            1,
+            Math.min(
+              5,
+              newZoom
+            )
+          );
+
+        state.zoom =
+          newZoom;
+
+        updateCharacterAlbumCrop();
+      }
+
+    },
+    {
+      passive:false
+    }
+  );
+
+
+  /*
+   * 指を離す
+   */
+  preview.addEventListener(
+    "touchend",
+    (event) => {
+
+      if (
+        event.touches.length === 0
+      ) {
+
+        mode = "none";
+        startDistance = 0;
+
+      } else if (
+        event.touches.length === 1
+      ) {
+
+        /*
+         * ピンチ終了後、
+         * 残った1本指でそのまま
+         * ドラッグできるようにする
+         */
+        mode = "pan";
+
+        lastX =
+          event.touches[0].clientX;
+
+        lastY =
+          event.touches[0].clientY;
+      }
+
+    }
+  );
+
+
+  preview.addEventListener(
+    "touchcancel",
+    () => {
+
+      mode = "none";
+      startDistance = 0;
+
+    }
+  );
+
+
+  /*
+   * マウス操作も残す
+   * PCでは左ドラッグで移動
+   */
+  let mouseDragging = false;
+
+  preview.addEventListener(
+    "mousedown",
+    (event) => {
+
+      if (
+        event.button !== 0
+      ) {
+        return;
+      }
+
+      mouseDragging = true;
+
+      lastX =
+        event.clientX;
+
+      lastY =
+        event.clientY;
+
+      event.preventDefault();
+    }
+  );
+
+  preview.addEventListener(
+    "mousemove",
+    (event) => {
+
+      if (!mouseDragging) {
+        return;
+      }
+
+      const state =
+        window.characterAlbumCropState;
+
+      if (!state) {
+        return;
+      }
+
       const dx =
-        event.clientX -
-        lastX;
+        event.clientX - lastX;
 
       const dy =
-        event.clientY -
-        lastY;
+        event.clientY - lastY;
 
       state.x += dx;
       state.y += dy;
@@ -6175,130 +6360,22 @@ function setupCharacterAlbumCropDrag(
         event.clientY;
 
       updateCharacterAlbumCrop();
+
+      event.preventDefault();
     }
   );
 
   preview.addEventListener(
-    "pointerup",
-    (event) => {
-
-      dragging = false;
-
-      if (
-        preview.hasPointerCapture(
-          event.pointerId
-        )
-      ) {
-        preview.releasePointerCapture(
-          event.pointerId
-        );
-      }
-    }
-  );
-
-  preview.addEventListener(
-    "pointercancel",
+    "mouseup",
     () => {
-      dragging = false;
-    }
-  );
-
-  /*
-   * 2本指：
-   * ピンチで拡大・縮小
-   */
-  preview.addEventListener(
-    "touchstart",
-    (event) => {
-
-      if (event.touches.length !== 2) {
-        return;
-      }
-
-      event.preventDefault();
-
-      pinchDistance =
-        getDistance(
-          event.touches[0],
-          event.touches[1]
-        );
-
-      const state =
-        window.characterAlbumCropState;
-
-      if (state) {
-        pinchZoom =
-          state.zoom || 1;
-      }
-    },
-    {
-      passive:false
+      mouseDragging = false;
     }
   );
 
   preview.addEventListener(
-    "touchmove",
-    (event) => {
-
-      if (event.touches.length !== 2) {
-        return;
-      }
-
-      event.preventDefault();
-
-      const state =
-        window.characterAlbumCropState;
-
-      if (!state) {
-        return;
-      }
-
-      const currentDistance =
-        getDistance(
-          event.touches[0],
-          event.touches[1]
-        );
-
-      if (!pinchDistance) {
-        pinchDistance =
-          currentDistance;
-
-        return;
-      }
-
-      const scale =
-        currentDistance /
-        pinchDistance;
-
-      let newZoom =
-        pinchZoom * scale;
-
-      newZoom =
-        Math.max(
-          1,
-          Math.min(
-            5,
-            newZoom
-          )
-        );
-
-      state.zoom =
-        newZoom;
-
-      updateCharacterAlbumCrop();
-    },
-    {
-      passive:false
-    }
-  );
-
-  preview.addEventListener(
-    "touchend",
-    (event) => {
-
-      if (event.touches.length < 2) {
-        pinchDistance = 0;
-      }
+    "mouseleave",
+    () => {
+      mouseDragging = false;
     }
   );
 }
