@@ -3612,6 +3612,10 @@ const profileFields = [
     customFields = {};
 
   }
+  
+  profileOrder = Array.isArray(customFields.profile_order)
+  ? [...customFields.profile_order]
+  : [];
 
   const firstPerson =
     typeof customFields.first_person === "string"
