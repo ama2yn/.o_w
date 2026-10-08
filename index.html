@@ -5823,10 +5823,11 @@ if (!response.ok) {
   return;
 }
 
+await loadCharacterAlbumGallery(category);
+
 alert(
   "アルバムに追加しました。"
 );
-  await loadCharacterAlbumGallery(category);
 }
 
 </script>
