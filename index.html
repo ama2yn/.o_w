@@ -3711,6 +3711,20 @@ const profileFields = [
     ">
 
     <h3>PROFILE</h3>
+    
+    <div style="
+  display:flex;
+  justify-content:flex-end;
+  margin:10px 0 15px;
+">
+  <button
+    type="button"
+    id="profileSortToggle"
+    onclick="toggleProfileSortMode()"
+  >
+    並べ替え
+  </button>
+</div>
 
     <div id="profileFieldsContainer"></div>
 
@@ -4005,16 +4019,7 @@ const profileFields = [
 
 <div style="text-align:center; margin-top:25px;">
 
-<button
-  type="button"
-  id="profileSortToggle"
-  onclick="toggleProfileSortMode()"
-  style="
-    margin-bottom:20px;
-  "
->
-  並べ替え
-</button>
+
 
   <div id="customFieldsContainer"></div>
 
