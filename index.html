@@ -3523,10 +3523,16 @@ const profileFields = [
   function renderProfileFields() {
 
   const container =
-    document.getElementById("profileFieldsContainer");
+    document.getElementById(
+      "profileFieldsContainer"
+    );
 
   if (!container) {
     return;
+  }
+
+  if (!Array.isArray(profileOrder)) {
+    profileOrder = [];
   }
 
   profileOrder.forEach(key => {
@@ -4785,6 +4791,10 @@ function addCustomField() {
 
   const container =
     document.getElementById("profileFieldsContainer");
+
+  if (!Array.isArray(profileOrder)) {
+    profileOrder = [];
+  }
 
   if (!container) {
     return;
