@@ -1665,7 +1665,11 @@ profileDisplayOrder.forEach(key => {
     }
   }
 
-  value = String(value).replace(/^\s+/, "");
+    value = String(value).replace(/^\s+/, "");
+
+  if (!value.trim()) {
+    return;
+  }
 
   const isLongValue =
     value.length > 30 ||
