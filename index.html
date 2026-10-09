@@ -1553,66 +1553,158 @@ async function openCharacter(characterId) {
   const secondPerson =
     customFields.second_person || "";
 
-  let customFieldsHtml = "";
+  
+const defaultProfileDisplayOrder = [
+  "birthday",
+  "height",
+  "weight",
+  "personality",
+  "first_person",
+  "second_person",
+  "likes",
+  "dislikes",
+  "description"
+];
 
-Object.entries(customFields).forEach(
-  ([key, field]) => {
+const profileDisplayOrder =
+  Array.isArray(customFields.profile_order)
+    ? [...customFields.profile_order]
+    : [];
 
-    if (
-      key === "first_person" ||
-      key === "second_person" ||
-      key === "profile_order"
-    ) {
+defaultProfileDisplayOrder.forEach(key => {
+  if (!profileDisplayOrder.includes(key)) {
+    profileDisplayOrder.push(key);
+  }
+});
+
+Object.keys(customFields).forEach(key => {
+  const field = customFields[key];
+
+  if (
+    key !== "first_person" &&
+    key !== "second_person" &&
+    key !== "profile_order" &&
+    field &&
+    typeof field === "object" &&
+    field.label &&
+    !profileDisplayOrder.includes(key)
+  ) {
+    profileDisplayOrder.push(key);
+  }
+});
+
+let profileHtml = "";
+
+profileDisplayOrder.forEach(key => {
+  let label = "";
+  let value = "";
+
+  switch (key) {
+    case "birthday":
+      label = "誕生日";
+      value = character.birthday || "";
+      break;
+    case "height":
+      label = "身長";
+      value = character.height || "";
+      break;
+    case "weight":
+      label = "体重";
+      value = character.weight || "";
+      break;
+    case "personality":
+      label = "性格";
+      value = character.personality || "";
+      break;
+    case "first_person":
+      label = "一人称";
+      value = firstPerson;
+      break;
+    case "second_person":
+      label = "二人称";
+      value = secondPerson;
+      break;
+    case "likes":
+      label = "好き";
+      value = character.likes || "";
+      break;
+    case "dislikes":
+      label = "嫌い";
+      value = character.dislikes || "";
+      break;
+    case "description":
+      if (character.description) {
+        profileHtml += `
+          <div style="
+            margin-top:20px;
+            padding:18px;
+            border-radius:18px;
+            background:rgba(255,255,255,.08);
+          ">
+            <h3>PROFILE</h3>
+            <p style="white-space:pre-wrap;">${escapeHtml(
+              character.description
+            )}</p>
+          </div>
+        `;
+      }
       return;
+    default: {
+      const field = customFields[key];
+
+      if (
+        !field ||
+        typeof field !== "object" ||
+        !field.label
+      ) {
+        return;
+      }
+
+      label = field.label;
+      value = field.value || "";
     }
+  }
 
-    if (
-      !field ||
-      typeof field !== "object" ||
-      !field.label
-    ) {
-      return;
-    }
+  value = String(value).replace(/^\s+/, "");
 
-    const customValue =
-      (field.value || "").replace(/^\s+/, "");
+  const isLongValue =
+    value.length > 30 ||
+    value.includes("\n");
 
-    const isLongCustomValue =
-      customValue.length > 30 ||
-      customValue.includes("\n");
+  if (!label) return;
 
-    customFieldsHtml += `
-      <div style="margin-top:15px;">
-        ${
-          customValue
-            ? isLongCustomValue
-              ? `
-                <p style="margin:0;font-weight:normal;">
-                  ${escapeHtml(field.label)}
-                </p>
-                <p style="white-space:pre-wrap;line-height:1.8;margin:5px 0 0;">${escapeHtml(
-                  customValue
-                    .split("\n")
-                    .map(line => line.trimStart())
-                    .join("\n")
-                )}</p>
-              `
-              : `
-                <p style="margin:0;line-height:1.8;font-weight:normal;">
-                  ${escapeHtml(field.label)}:
-                  ${escapeHtml(customValue)}
-                </p>
-              `
-            : `
+  profileHtml += `
+    <div style="margin-top:15px;">
+      ${
+        value
+          ? isLongValue
+            ? `
               <p style="margin:0;font-weight:normal;">
-                ${escapeHtml(field.label)}
+                ${escapeHtml(label)}
+              </p>
+              <p style="white-space:pre-wrap;line-height:1.8;margin:5px 0 0;">${escapeHtml(
+                value
+                  .split("\n")
+                  .map(line => line.trimStart())
+                  .join("\n")
+              )}</p>
+            `
+            : `
+              <p style="margin:0;line-height:1.8;font-weight:normal;">
+                ${escapeHtml(label)}:
+                ${escapeHtml(value)}
               </p>
             `
-        }
-      </div>
-    `;
-  }
-);
+          : `
+            <p style="margin:0;font-weight:normal;">
+              ${escapeHtml(label)}
+            </p>
+          `
+      }
+    </div>
+  `;
+});
+
   
   content.innerHTML =
   `
@@ -1655,61 +1747,15 @@ Object.entries(customFields).forEach(
       : ""
   }
 
-  ${
-    character.birthday
-      ? `<p>誕生日：${escapeHtml(character.birthday)}</p>`
-      : ""
-  }
-
-  ${
-    character.height
-      ? `<p>身長：${escapeHtml(character.height)}</p>`
-      : ""
-  }
-
-  ${
-    character.weight
-      ? `<p>体重：${escapeHtml(character.weight)}</p>`
-      : ""
-  }
-
-  ${
-    character.personality
-      ? `<p>性格：${escapeHtml(character.personality)}</p>`
-      : ""
-  }
-
-  ${
-    firstPerson
-      ? `<p>一人称：${escapeHtml(firstPerson)}</p>`
-      : ""
-  }
-
-  ${
-    secondPerson
-      ? `<p>二人称：${escapeHtml(secondPerson)}</p>`
-      : ""
-  }
-
-  ${
-    character.likes
-      ? `<p>好き：${escapeHtml(character.likes)}</p>`
-      : ""
-  }
-
-  ${
-    character.dislikes
-      ? `<p>嫌い：${escapeHtml(character.dislikes)}</p>`
-      : ""
-  }
-
-    ${
-    customFieldsHtml
-  }
   
-    ${
+  ${
+    profileHtml
+  }
+
+  ${
     characterMusicHtml
   }
+
 
   ${
     character.description
