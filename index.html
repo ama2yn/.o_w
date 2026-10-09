@@ -1560,7 +1560,8 @@ Object.entries(customFields).forEach(
 
     if (
       key === "first_person" ||
-      key === "second_person"
+      key === "second_person" ||
+      key === "profile_order"
     ) {
       return;
     }
@@ -1573,61 +1574,43 @@ Object.entries(customFields).forEach(
       return;
     }
 
-   const customValue =
-  (field.value || "").replace(/^\s+/, "");
-const isLongCustomValue =
-  customValue.length > 30 ||
-  customValue.includes("\n");
+    const customValue =
+      (field.value || "").replace(/^\s+/, "");
 
-customFieldsHtml += `
-  <div style="
-    margin-top:15px;
-  ">
+    const isLongCustomValue =
+      customValue.length > 30 ||
+      customValue.includes("\n");
 
-    ${
-      customValue
-        ? isLongCustomValue
-          ? `
-            <p style="
-              margin:0;
-              font-weight:normal;
-            ">
-              ${escapeHtml(field.label)}
-            </p>
-
-          <p style="
-  white-space:pre-wrap;
-  line-height:1.8;
-  margin:5px 0 0;
-">${escapeHtml(
-  customValue
-    .split("\n")
-    .map(line => line.trimStart())
-    .join("\n")
-)}</p>
-          `
-          : `
-            <p style="
-              margin:0;
-              line-height:1.8;
-              font-weight:normal;
-            ">
-              ${escapeHtml(field.label)}:
-              ${escapeHtml(customValue)}
-            </p>
-          `
-        : `
-          <p style="
-            margin:0;
-            font-weight:normal;
-          ">
-            ${escapeHtml(field.label)}
-          </p>
-        `
-    }
-
-  </div>
-`;
+    customFieldsHtml += `
+      <div style="margin-top:15px;">
+        ${
+          customValue
+            ? isLongCustomValue
+              ? `
+                <p style="margin:0;font-weight:normal;">
+                  ${escapeHtml(field.label)}
+                </p>
+                <p style="white-space:pre-wrap;line-height:1.8;margin:5px 0 0;">${escapeHtml(
+                  customValue
+                    .split("\n")
+                    .map(line => line.trimStart())
+                    .join("\n")
+                )}</p>
+              `
+              : `
+                <p style="margin:0;line-height:1.8;font-weight:normal;">
+                  ${escapeHtml(field.label)}:
+                  ${escapeHtml(customValue)}
+                </p>
+              `
+            : `
+              <p style="margin:0;font-weight:normal;">
+                ${escapeHtml(field.label)}
+              </p>
+            `
+        }
+      </div>
+    `;
   }
 );
   
