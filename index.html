@@ -4484,6 +4484,11 @@ async function saveCharacterEdit() {
     return;
   }
 
+profileOrder = Array.from(
+  document.querySelectorAll(
+    "#profileFieldsContainer > .profile-item"
+  )
+).map(item => item.dataset.profileKey);
   let existingCustomFields = {};
 
   const getResponse = await fetch(
