@@ -4258,7 +4258,7 @@ const secondPerson =
 
     const container =
       document.getElementById(
-        "customFieldsContainer"
+        "profileFieldsContainer"
       );
 
     if (!container) {
@@ -4320,9 +4320,10 @@ customField.innerHTML = `
 
     container.appendChild(customField);
 
-  }
+    }
 );
 
+  renderProfileFields();
   setupAutoResize();
 }
 
