@@ -936,12 +936,13 @@ const fileName =
           "return=representation"
       },
 
-      body: JSON.stringify({
+            body: JSON.stringify({
         name: name,
         reading: reading || null,
         gender: gender || null,
         age: age || null,
-        main_image: imageUrl
+        main_image: imageUrl,
+        sort_order: Date.now()
       })
     }
   );
