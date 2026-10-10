@@ -5557,11 +5557,16 @@ async function loadCharacterAlbumGallery(category) {
 
   gallery.innerHTML = `
     <div id="characterAlbumUploadArea"
-      style="margin-bottom:25px;text-align:center;">
-      <button type="button" onclick="showCharacterAlbumUpload()">
-        ＋ 作品を追加
-      </button>
-    </div>
+  style="margin-bottom:25px;display:flex;justify-content:center;gap:10px;">
+  <button type="button" onclick="showCharacterAlbumUpload()">
+    ＋ 作品を追加
+  </button>
+  <button
+    type="button"
+    id="characterAlbumEditButton"
+    onclick="toggleCharacterAlbumEdit()"
+  >編集</button>
+</div>
     <div id="characterAlbumMediaList">
       <p>アルバムを読み込んでいます……</p>
     </div>
