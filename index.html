@@ -5543,197 +5543,129 @@ window.currentCharacterAlbumCategory = category;
   await loadCharacterAlbumGallery(category);
 }
 
+
 async function loadCharacterAlbumGallery(category) {
+  const gallery = document.getElementById("characterAlbumGallery");
+  if (!gallery) return;
 
-  const gallery =
-    document.getElementById(
-      "characterAlbumGallery"
-    );
-
-  if (!gallery) {
-    return;
-  }
-
-  const characterId =
-    window.currentCharacterId;
+  const characterId = window.currentCharacterId;
 
   if (!characterId) {
-
-    gallery.innerHTML =
-      "<p>Character情報を取得できませんでした。</p>";
-
+    gallery.innerHTML = "<p>Character情報を取得できませんでした。</p>";
     return;
   }
 
   gallery.innerHTML = `
-    <div
-      id="characterAlbumUploadArea"
-      style="
-        margin-bottom:25px;
-        text-align:center;
-      "
-    >
-      <button
-        type="button"
-        onclick="showCharacterAlbumUpload()"
-      >
+    <div id="characterAlbumUploadArea"
+      style="margin-bottom:25px;text-align:center;">
+      <button type="button" onclick="showCharacterAlbumUpload()">
         ＋ 作品を追加
       </button>
     </div>
-
     <div id="characterAlbumMediaList">
       <p>アルバムを読み込んでいます……</p>
     </div>
   `;
 
-  const response =
-    await fetch(
-      SUPABASE_URL +
-      "/rest/v1/character_media" +
-      "?character_id=eq." +
-      encodeURIComponent(characterId) +
-      "&category=eq." +
-      encodeURIComponent(category) +
-      "&select=*" +
-      "&order=sort_order.asc,created_at.asc",
-      {
-        headers: {
-          "apikey":
-            SUPABASE_PUBLISHABLE_KEY,
-
-          "Authorization":
-            "Bearer " +
-            SUPABASE_PUBLISHABLE_KEY
-        }
+  const response = await fetch(
+    SUPABASE_URL +
+    "/rest/v1/character_media" +
+    "?character_id=eq." + encodeURIComponent(characterId) +
+    "&category=eq." + encodeURIComponent(category) +
+    "&select=*" +
+    "&order=sort_order.asc,created_at.asc",
+    {
+      headers: {
+        "apikey": SUPABASE_PUBLISHABLE_KEY,
+        "Authorization": "Bearer " + SUPABASE_PUBLISHABLE_KEY
       }
-    );
-
-  if (!response.ok) {
-
-    const errorText =
-      await response.text();
-
-    const mediaListContainer =
-      document.getElementById(
-        "characterAlbumMediaList"
-      );
-
-    if (mediaListContainer) {
-
-      mediaListContainer.innerHTML =
-        "<p>アルバムの読み込みに失敗しました。</p>";
-
     }
-
-    alert(
-      "アルバムの読み込みに失敗しました。\n\n" +
-      errorText
-    );
-
-    return;
-  }
-
-  const mediaList =
-    await response.json();
+  );
 
   const mediaListContainer =
-    document.getElementById(
-      "characterAlbumMediaList"
-    );
+    document.getElementById("characterAlbumMediaList");
 
-  if (!mediaListContainer) {
+  if (!response.ok) {
+    const errorText = await response.text();
+    if (mediaListContainer) {
+      mediaListContainer.innerHTML =
+        "<p>アルバムの読み込みに失敗しました。</p>";
+    }
+    alert("アルバムの読み込みに失敗しました。\n\n" + errorText);
     return;
   }
 
-  if (mediaList.length === 0) {
+  const mediaList = await response.json();
 
+  if (!mediaListContainer) return;
+
+  if (mediaList.length === 0) {
     mediaListContainer.innerHTML = `
-      <div style="
-        text-align:center;
-        padding:30px 10px;
-      ">
+      <div style="text-align:center;padding:30px 10px;">
         まだ作品がありません。
       </div>
     `;
-
     return;
   }
 
   mediaListContainer.innerHTML = `
-    <div style="
-  column-count:2;
-  column-gap:12px;
-">
+    <div style="column-count:2;column-gap:12px;">
       ${mediaList.map(media => {
-
-        if (media.media_type === "video") {
-
-          return `
-            <div
-  style="
-    display:inline-block;
-    width:100%;
-    border-radius:16px;
-    overflow:hidden;
-    background:#111;
-    break-inside:avoid;
-    margin-bottom:12px;
-  "
->
-              <video
-                src="${escapeHtml(media.file_url)}"
-                style="
-  width:100%;
-  height:auto;
-  display:block;
-"
-                controls
-              ></video>
-
-              <div style="
-                position:absolute;
-                top:10px;
-                left:10px;
-                padding:4px 8px;
-                border-radius:10px;
-                background:rgba(0,0,0,.65);
-                pointer-events:none;
-              ">
-                ▶
-              </div>
-            </div>
-          `;
-
-        }
+        const isVideo = media.media_type === "video";
 
         return `
-          <div
-  style="
-    display:inline-block;
-    width:100%;
-    position:relative;
-    border-radius:16px;
-    overflow:hidden;
-    background:#111;
-    break-inside:avoid;
-    margin-bottom:12px;
-  "
->
-            <img
-  src="${escapeHtml(media.file_url)}"
-  style="
-    width:100%;
-    height:auto;
-    display:block;
-  "
->
+          <div style="
+            display:inline-block;
+            width:100%;
+            position:relative;
+            border-radius:16px;
+            overflow:hidden;
+            background:#111;
+            break-inside:avoid;
+            margin-bottom:12px;
+          ">
+            ${isVideo ? `
+              <video
+                src="${escapeHtml(media.file_url)}"
+                style="width:100%;height:auto;display:block;"
+                controls
+              ></video>
+            ` : `
+              <img
+                src="${escapeHtml(media.file_url)}"
+                style="width:100%;height:auto;display:block;"
+              >
+            `}
+
+            <button
+              type="button"
+              data-media-id="${escapeHtml(media.id)}"
+              data-file-url="${escapeHtml(media.file_url)}"
+              data-category="${escapeHtml(category)}"
+              onclick="deleteCharacterAlbumMedia(this)"
+              aria-label="作品を削除"
+              style="
+                position:absolute;
+                top:8px;
+                right:8px;
+                z-index:2;
+                width:34px;
+                height:34px;
+                border:0;
+                border-radius:50%;
+                background:rgba(0,0,0,.75);
+                color:white;
+                font-size:20px;
+                cursor:pointer;
+              "
+            >×</button>
           </div>
         `;
-
       }).join("")}
     </div>
   `;
 }
+
 
 function backToCharacterAlbum() {
 
