@@ -5695,6 +5695,81 @@ function toggleCharacterAlbumEdit() {
   });
 }
 
+async function deleteCharacterAlbumMedia(button) {
+  if (!button) return;
+
+  const mediaId = button.dataset.mediaId;
+  const fileUrl = button.dataset.fileUrl;
+  const category = button.dataset.category || "character";
+
+  if (!mediaId || !fileUrl) {
+    alert("削除する作品の情報を取得できませんでした。");
+    return;
+  }
+
+  if (!window.confirm("この作品を削除しますか？")) {
+    return;
+  }
+
+  const marker = "/storage/v1/object/public/character-images/";
+  const markerIndex = fileUrl.indexOf(marker);
+
+  if (markerIndex === -1) {
+    alert("作品の保存先を特定できませんでした。削除は行っていません。");
+    return;
+  }
+
+  const filePath = fileUrl.substring(markerIndex + marker.length);
+
+  try {
+    const dbResponse = await fetch(
+      SUPABASE_URL +
+        "/rest/v1/character_media?id=eq." +
+        encodeURIComponent(mediaId),
+      {
+        method: "DELETE",
+        headers: {
+          apikey: SUPABASE_PUBLISHABLE_KEY,
+          Authorization: "Bearer " + SUPABASE_PUBLISHABLE_KEY
+        }
+      }
+    );
+
+    if (!dbResponse.ok) {
+      const errorText = await dbResponse.text();
+      alert("アルバム情報を削除できませんでした。\n\n" + errorText);
+      return;
+    }
+
+    const storageResponse = await fetch(
+      SUPABASE_URL + "/storage/v1/object/character-images",
+      {
+        method: "DELETE",
+        headers: {
+          apikey: SUPABASE_PUBLISHABLE_KEY,
+          Authorization: "Bearer " + SUPABASE_PUBLISHABLE_KEY,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          prefixes: [filePath]
+        })
+      }
+    );
+
+    if (!storageResponse.ok) {
+      const errorText = await storageResponse.text();
+      alert(
+        "アルバム情報は削除しましたが、画像ファイルの削除に失敗しました。\n\n" +
+          errorText
+      );
+    }
+
+    await loadCharacterAlbumGallery(category);
+  } catch (error) {
+    alert("削除中にエラーが発生しました。\n\n" + error.message);
+  }
+}
+
 function backToCharacterAlbum() {
 
   const galleryPage =
