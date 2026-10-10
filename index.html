@@ -5639,10 +5639,11 @@ async function loadCharacterAlbumGallery(category) {
               ></video>
             ` : `
               <img
-                src="${escapeHtml(media.file_url)}"
-                style="width:100%;height:auto;display:block;"
-                loading="lazy"
-              >
+  src="${escapeHtml(media.file_url)}"
+  style="width:100%;height:auto;display:block;object-fit:contain;"
+  loading="lazy"
+  onload="this.parentElement.style.height='auto'"
+>
             `}
 
             <button
