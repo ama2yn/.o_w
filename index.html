@@ -5675,20 +5675,20 @@ async function loadCharacterAlbumGallery(category) {
 }
 
 function toggleCharacterAlbumEdit() {
-const editButton = document.getElementById(“characterAlbumEditButton”);
-const mediaList = document.getElementById(“characterAlbumMediaList”);
+  const editButton = document.getElementById("characterAlbumEditButton");
+  const mediaList = document.getElementById("characterAlbumMediaList");
 
-if (!editButton || !mediaList) return;
+  if (!editButton || !mediaList) return;
 
-const isEditing = editButton.dataset.editing === “true”;
+  const isEditing = editButton.dataset.editing === "true";
 
-editButton.dataset.editing = String(!isEditing);
-editButton.textContent = isEditing ? “編集” : “完了”;
+  editButton.dataset.editing = String(!isEditing);
+  editButton.textContent = isEditing ? "編集" : "完了";
 
-mediaList.querySelectorAll(‘button[aria-label=“作品を削除”]’).forEach(button => {
-button.style.opacity = isEditing ? “0” : “1”;
-button.style.pointerEvents = isEditing ? “none” : “auto”;
-});
+  mediaList.querySelectorAll('button[aria-label="作品を削除"]').forEach(button => {
+    button.style.opacity = isEditing ? "0" : "1";
+    button.style.pointerEvents = isEditing ? "none" : "auto";
+  });
 }
 
 function backToCharacterAlbum() {
