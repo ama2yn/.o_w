@@ -5635,12 +5635,10 @@ async function loadCharacterAlbumGallery(category) {
             margin-bottom:12px;
           ">
             ${isVideo ? `
-                            <video
+              <video
                 src="${escapeHtml(media.file_url)}"
-                style="width:100%;height:auto;display:block;background:transparent;"
+                style="width:100%;height:auto;display:block;"
                 controls
-                preload="metadata"
-                playsinline
               ></video>
             ` : `
               <img
