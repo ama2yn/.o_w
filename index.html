@@ -921,7 +921,7 @@ async function createCharacter() {
           gender: gender || null,
           age: age || null,
           main_image: imageUrl,
-          sort_order: Date.now()
+          sort_order: Math.floor(Date.now() / 1000)
         })
       }
     );
