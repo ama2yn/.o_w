@@ -5624,14 +5624,15 @@ async function loadCharacterAlbumGallery(category) {
         const isVideo = media.media_type === "video";
 
         return `
-                    <div style="
+                      <div style="
             display:inline-block;
+            vertical-align:top;
             width:100%;
             position:relative;
             border-radius:16px;
             overflow:hidden;
-            background:#111;
-            break-inside:avoid;
+            background:transparent;
+            break-inside:avoid-column;
             margin-bottom:12px;
           ">
             ${isVideo ? `
