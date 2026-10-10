@@ -4603,8 +4603,11 @@ profileOrder = Array.from(
       }
 
       newCustomFields[
-        "custom_" + index
+        field.dataset.profileKey
       ] = {
+        label: fieldName,
+        value: fieldValue
+      };
         label: fieldName,
         value: fieldValue
       };
