@@ -5615,21 +5615,23 @@ async function loadCharacterAlbumGallery(category) {
     return;
   }
 
-  mediaListContainer.innerHTML = `
-    <div style="column-count:2;column-gap:12px;">
+    mediaListContainer.innerHTML = `
+    <div style="
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:12px;
+      align-items:start;
+    ">
       ${mediaList.map(media => {
         const isVideo = media.media_type === "video";
 
         return `
           <div style="
-            display:inline-block;
-            width:100%;
+            min-width:0;
             position:relative;
             border-radius:16px;
             overflow:hidden;
             background:#111;
-            break-inside:avoid;
-            margin-bottom:12px;
           ">
             ${isVideo ? `
               <video
@@ -5641,34 +5643,35 @@ async function loadCharacterAlbumGallery(category) {
               <img
                 src="${escapeHtml(media.file_url)}"
                 style="width:100%;height:auto;display:block;"
+                loading="lazy"
               >
             `}
 
-                    <button
-          type="button"
-          data-media-id="${escapeHtml(media.id)}"
-          data-file-url="${escapeHtml(media.file_url)}"
-          data-category="${escapeHtml(category)}"
-          onclick="deleteCharacterAlbumMedia(this)"
-          aria-label="作品を削除"
-          style="
-            position:absolute;
-            top:8px;
-            right:8px;
-            z-index:2;
-            width:34px;
-            height:34px;
-            border:0;
-            border-radius:50%;
-            background:rgba(0,0,0,.75);
-            color:white;
-            font-size:20px;
-            cursor:pointer;
-            opacity:0;
-            pointer-events:none;
-            transition:opacity .2s;
-          "
-        >×</button>
+            <button
+              type="button"
+              data-media-id="${escapeHtml(media.id)}"
+              data-file-url="${escapeHtml(media.file_url)}"
+              data-category="${escapeHtml(category)}"
+              onclick="deleteCharacterAlbumMedia(this)"
+              aria-label="作品を削除"
+              style="
+                position:absolute;
+                top:8px;
+                right:8px;
+                z-index:2;
+                width:34px;
+                height:34px;
+                border:0;
+                border-radius:50%;
+                background:rgba(0,0,0,.75);
+                color:white;
+                font-size:20px;
+                cursor:pointer;
+                opacity:0;
+                pointer-events:none;
+                transition:opacity .2s;
+              "
+            >×</button>
           </div>
         `;
       }).join("")}
