@@ -5546,6 +5546,7 @@ window.currentCharacterAlbumCategory = category;
 
 async function loadCharacterAlbumGallery(category) {
   const gallery = document.getElementById("characterAlbumGallery");
+  window.characterAlbumEditMode = false;
   if (!gallery) return;
 
   const characterId = window.currentCharacterId;
@@ -5675,20 +5676,23 @@ async function loadCharacterAlbumGallery(category) {
 }
 
 function toggleCharacterAlbumEdit() {
-  const editButton = document.getElementById("characterAlbumEditButton");
-  const mediaList = document.getElementById("characterAlbumMediaList");
+const editButton = document.getElementById(“characterAlbumEditButton”);
+const mediaList = document.getElementById(“characterAlbumMediaList”);
 
-  if (!editButton || !mediaList) return;
+if (!editButton || !mediaList) return;
 
-  const isEditing = editButton.dataset.editing === "true";
+window.characterAlbumEditMode =
+!window.characterAlbumEditMode;
 
-  editButton.dataset.editing = String(!isEditing);
-  editButton.textContent = isEditing ? "編集" : "完了";
+const isEditing = window.characterAlbumEditMode;
 
-  mediaList.querySelectorAll('button[aria-label="作品を削除"]').forEach(button => {
-    button.style.opacity = isEditing ? "0" : "1";
-    button.style.pointerEvents = isEditing ? "none" : "auto";
-  });
+editButton.dataset.editing = String(isEditing);
+editButton.textContent = isEditing ? “完了” : “編集”;
+
+mediaList.querySelectorAll(‘button[aria-label=“作品を削除”]’).forEach(button => {
+button.style.opacity = isEditing ? “1” : “0”;
+button.style.pointerEvents = isEditing ? “auto” : “none”;
+});
 }
 
 function backToCharacterAlbum() {
