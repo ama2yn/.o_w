@@ -843,145 +843,118 @@ function hideCreateCharacter() {
   ).style.display = "none";
 }
 
-
 async function createCharacter() {
+  if (window.isCreatingCharacter) {
+    return;
+  }
 
-  const name =
-    document.getElementById("characterName").value.trim();
+  window.isCreatingCharacter = true;
 
-  const reading =
-    document.getElementById("characterReading").value.trim();
+  try {
+    const name =
+      document.getElementById("characterName").value.trim();
 
-  const gender =
-    document.getElementById("characterGender").value.trim();
+    const reading =
+      document.getElementById("characterReading").value.trim();
 
-  const age =
-    document.getElementById("characterAge").value.trim();
+    const gender =
+      document.getElementById("characterGender").value.trim();
 
-  const imageFile =
-    document.getElementById("characterImage").files[0];
+    const age =
+      document.getElementById("characterAge").value.trim();
 
-  let imageUrl = null;
+    const imageFile =
+      document.getElementById("characterImage").files[0];
 
-  if (imageFile) {
+    if (!name) {
+      alert("名前を入力してください。");
+      return;
+    }
 
-    const extension =
-  imageFile.name.includes(".")
-    ? imageFile.name
-        .split(".")
-        .pop()
-        .toLowerCase()
-    : "bin";
+    let imageUrl = null;
 
-const fileName =
-  crypto.randomUUID() +
-  "." +
-  extension;
+    if (imageFile) {
+      const extension = imageFile.name.includes(".")
+        ? imageFile.name.split(".").pop().toLowerCase()
+        : "bin";
 
-    const uploadResponse = await fetch(
-      SUPABASE_URL +
-      "/storage/v1/object/character-images/" +
-      fileName,
+      const fileName = crypto.randomUUID() + "." + extension;
+
+      const uploadResponse = await fetch(
+        SUPABASE_URL + "/storage/v1/object/character-images/" + fileName,
+        {
+          method: "POST",
+          headers: {
+            "apikey": SUPABASE_PUBLISHABLE_KEY,
+            "Authorization": "Bearer " + SUPABASE_PUBLISHABLE_KEY,
+            "Content-Type": imageFile.type
+          },
+          body: imageFile
+        }
+      );
+
+      if (!uploadResponse.ok) {
+        const errorText = await uploadResponse.text();
+        alert("画像のアップロードに失敗しました。\n\n" + errorText);
+        return;
+      }
+
+      imageUrl =
+        SUPABASE_URL +
+        "/storage/v1/object/public/character-images/" +
+        fileName;
+    }
+
+    const response = await fetch(
+      SUPABASE_URL + "/rest/v1/characters",
       {
         method: "POST",
         headers: {
           "apikey": SUPABASE_PUBLISHABLE_KEY,
-          "Authorization":
-            "Bearer " + SUPABASE_PUBLISHABLE_KEY,
-          "Content-Type":
-            imageFile.type
+          "Authorization": "Bearer " + SUPABASE_PUBLISHABLE_KEY,
+          "Content-Type": "application/json",
+          "Prefer": "return=representation"
         },
-        body: imageFile
+        body: JSON.stringify({
+          name: name,
+          reading: reading || null,
+          gender: gender || null,
+          age: age || null,
+          main_image: imageUrl,
+          sort_order: Date.now()
+        })
       }
     );
 
-    if (!uploadResponse.ok) {
-
-      const errorText =
-        await uploadResponse.text();
-
+    if (!response.ok) {
+      const errorText = await response.text();
       alert(
-        "画像のアップロードに失敗しました。\n\n" +
+        "Characterの作成に失敗しました。\n\n" +
+        "Status: " + response.status + "\n\n" +
         errorText
       );
-
       return;
     }
 
-    imageUrl =
-      SUPABASE_URL +
-      "/storage/v1/object/public/character-images/" +
-      fileName;
+    document.getElementById("characterName").value = "";
+    document.getElementById("characterReading").value = "";
+    document.getElementById("characterGender").value = "";
+    document.getElementById("characterAge").value = "";
+    document.getElementById("characterImage").value = "";
+
+    document.getElementById("createCharacterSection").style.display = "none";
+
+    await loadCharacters();
+
+    document.getElementById("characterSection").scrollIntoView({
+      behavior: "smooth"
+    });
+  } catch (error) {
+    alert("Characterの作成中にエラーが発生しました。\n\n" + error.message);
+  } finally {
+    window.isCreatingCharacter = false;
   }
-
-  if (!name) {
-
-    alert("名前を入力してください。");
-
-    return;
-  }
-
-  const response = await fetch(
-    SUPABASE_URL + "/rest/v1/characters",
-    {
-      method: "POST",
-
-      headers: {
-        "apikey": SUPABASE_PUBLISHABLE_KEY,
-        "Authorization":
-          "Bearer " + SUPABASE_PUBLISHABLE_KEY,
-        "Content-Type":
-          "application/json",
-        "Prefer":
-          "return=representation"
-      },
-
-            body: JSON.stringify({
-        name: name,
-        reading: reading || null,
-        gender: gender || null,
-        age: age || null,
-        main_image: imageUrl,
-        sort_order: Date.now()
-      })
-    }
-  );
-
-  if (!response.ok) {
-
-    const errorText =
-      await response.text();
-
-    alert(
-      "Characterの作成に失敗しました。\n\n" +
-      "Status: " +
-      response.status +
-      "\n\n" +
-      errorText
-    );
-
-    return;
-  }
-
-  document.getElementById("characterName").value = "";
-  document.getElementById("characterReading").value = "";
-  document.getElementById("characterGender").value = "";
-  document.getElementById("characterAge").value = "";
-  document.getElementById("characterImage").value = "";
-
-  document.getElementById(
-    "createCharacterSection"
-  ).style.display = "none";
-
-  await loadCharacters();
-
-  document.getElementById(
-    "characterSection"
-  ).scrollIntoView({
-    behavior: "smooth"
-  });
 }
-
 
 async function loadCharacters() {
 
