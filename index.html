@@ -3156,8 +3156,7 @@ const endY =
    * 関係名と半透明の背景
    */
 
-      
-  const labelRatio =
+    const labelRatio =
     direction === "a_to_b"
       ? 0.70
       : direction === "b_to_a"
@@ -3169,14 +3168,6 @@ const endY =
 
   const labelY =
     startY + (endY - startY) * labelRatio;
-
-  const labelX = isVertical
-    ? (startX + endX) / 2 + (offset >= 0 ? 18 : -18)
-    : (startX + endX) / 2;
-  const labelY = isVertical
-    ? (startY + endY) / 2
-    : (startY + endY) / 2 +
-      (offset === 0 ? -12 : (offset > 0 ? 12 : -12));
 
   const labelGroup =
     document.createElementNS(
