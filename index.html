@@ -3231,11 +3231,17 @@ function drawRelationshipLine(
         ? 0.30
         : 0.70;
 
+    const labelOffset = 22;
+
   const labelX =
-    startX + (endX - startX) * labelRatio;
+    startX +
+    (endX - startX) * labelRatio +
+    nx * labelOffset;
 
   const labelY =
-    startY + (endY - startY) * labelRatio;
+    startY +
+    (endY - startY) * labelRatio +
+    ny * labelOffset;
 
   const labelGroup =
     document.createElementNS(
