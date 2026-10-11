@@ -3069,11 +3069,17 @@ function drawRelationshipLine(
     (dy / length) * nodeRadius +
     ny * offset;
 
-  const line =
+    const line =
     document.createElementNS(
       "http://www.w3.org/2000/svg",
       "line"
     );
+
+  line.dataset.fromX = String(from.x);
+  line.dataset.fromY = String(from.y);
+  line.dataset.toX = String(to.x);
+  line.dataset.toY = String(to.y);
+  line.dataset.offset = String(offset);
 
   line.setAttribute(
     "x1",
