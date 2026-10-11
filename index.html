@@ -3224,12 +3224,12 @@ function drawRelationshipLine(
    * 関係名と半透明の背景
    */
 
-    const labelRatio =
+      const labelRatio =
     direction === "a_to_b"
       ? 0.70
       : direction === "b_to_a"
         ? 0.30
-        : 0.50;
+        : 0.70;
 
   const labelX =
     startX + (endX - startX) * labelRatio;
