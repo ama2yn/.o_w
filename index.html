@@ -3152,69 +3152,92 @@ const endY =
       "text"
     );
 
-  /*
-   * 線から少し上にずらす
+    /*
+   * 関係名と半透明の背景
    */
 
-      const labelX =
-    (
-      startX +
-      endX
-    ) / 2;
+  const labelX =
+    (startX + endX) / 2;
 
   const labelY =
-    (
-      startY +
-      endY
-    ) / 2 -
-    8;
+    (startY + endY) / 2 - 8;
 
-  label.setAttribute(
-    "x",
-    labelX
-  );
+  const labelGroup =
+    document.createElementNS(
+      "http://www.w3.org/2000/svg",
+      "g"
+    );
 
-  label.setAttribute(
-    "y",
-    labelY
-  );
+  labelGroup.style.cursor = "pointer";
+  labelGroup.style.pointerEvents = "auto";
 
-  label.setAttribute(
-    "text-anchor",
-    "middle"
-  );
+  const label =
+    document.createElementNS(
+      "http://www.w3.org/2000/svg",
+      "text"
+    );
 
-  label.setAttribute(
-    "fill",
-    "rgba(255,255,255,.85)"
-  );
-
-  label.setAttribute(
-    "font-size",
-    "12"
-  );
-
+  label.setAttribute("x", labelX);
+  label.setAttribute("y", labelY);
+  label.setAttribute("text-anchor", "middle");
+  label.setAttribute("fill", "rgba(255,255,255,.95)");
+  label.setAttribute("font-size", "12");
   label.textContent =
-    relationship.relationship_name ||
-    "";
+    relationship.relationship_name || "";
 
-  label.style.pointerEvents =
-    "auto";
+  labelGroup.appendChild(label);
+  svg.appendChild(labelGroup);
 
-  label.style.cursor =
-    "pointer";
+  const textBox =
+    label.getBBox();
 
-  label.onclick =
-    () => {
+  const labelBackground =
+    document.createElementNS(
+      "http://www.w3.org/2000/svg",
+      "rect"
+    );
 
-      openRelationshipDetail(
-        relationship.id
-      );
+  labelBackground.setAttribute(
+    "x",
+    textBox.x - 5
+  );
 
-    };
+  labelBackground.setAttribute(
+    "y",
+    textBox.y - 3
+  );
 
-  svg.appendChild(label);
+  labelBackground.setAttribute(
+    "width",
+    textBox.width + 10
+  );
 
+  labelBackground.setAttribute(
+    "height",
+    textBox.height + 6
+  );
+
+  labelBackground.setAttribute("rx", "4");
+  labelBackground.setAttribute(
+    "fill",
+    "rgba(25,25,35,.78)"
+  );
+
+  labelBackground.setAttribute(
+    "stroke",
+    "rgba(255,255,255,.15)"
+  );
+
+  labelBackground.setAttribute("stroke-width", "1");
+
+  labelGroup.insertBefore(
+    labelBackground,
+    label
+  );
+
+  labelGroup.onclick = () => {
+    openRelationshipDetail(relationship.id);
+  };
 }
 
 
