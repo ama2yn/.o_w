@@ -2952,17 +2952,31 @@ function enableRelationshipPinchZoom() {
     }
 
     canvas.querySelectorAll("#relationshipLines > g").forEach(labelGroup => {
-      const label = labelGroup.querySelector("text");
-      if (!label) return;
+  const label = labelGroup.querySelector("text");
+  if (!label) return;
 
-      const x = Number(label.getAttribute("x"));
-      const y = Number(label.getAttribute("y"));
+  const baseX = Number(labelGroup.dataset.baseX);
+  const baseY = Number(labelGroup.dataset.baseY);
+  const direction = labelGroup.dataset.direction;
 
-      labelGroup.setAttribute(
-        "transform",
-        `translate(${x} ${y}) scale(${1 / scale}) translate(${-x} ${-y})`
-      );
-    });
+  const shift =
+    direction === "a_to_b"
+      ? 12 * (1 - 1 / scale)
+      : direction === "b_to_a"
+        ? -12 * (1 - 1 / scale)
+        : 0;
+
+  const x = baseX + shift;
+  const y = baseY;
+
+  label.setAttribute("x", x);
+  label.setAttribute("y", y);
+
+  labelGroup.setAttribute(
+    "transform",
+    `translate(${x} ${y}) scale(${1 / scale}) translate(${-x} ${-y})`
+  );
+});
   };
 
   const startPan = touch => {
@@ -3231,17 +3245,11 @@ function drawRelationshipLine(
         ? 0.30
         : 0.70;
 
-    const labelOffset = 22;
-
-  const labelX =
-    startX +
-    (endX - startX) * labelRatio +
-    nx * labelOffset;
+      const labelX =
+    startX + (endX - startX) * labelRatio;
 
   const labelY =
-    startY +
-    (endY - startY) * labelRatio +
-    ny * labelOffset;
+    startY + (endY - startY) * labelRatio;
 
   const labelGroup =
     document.createElementNS(
@@ -3251,6 +3259,10 @@ function drawRelationshipLine(
 
   labelGroup.style.cursor = "pointer";
   labelGroup.style.pointerEvents = "auto";
+
+  labelGroup.dataset.direction = direction;
+  labelGroup.dataset.baseX = String(labelX);
+  labelGroup.dataset.baseY = String(labelY);
 
   label.setAttribute("x", labelX);
   label.setAttribute("y", labelY);
