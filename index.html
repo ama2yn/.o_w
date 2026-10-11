@@ -2853,6 +2853,16 @@ Object.values(relationshipGroups).forEach(group => {
   enableRelationshipPinchZoom();
 
   requestAnimationFrame(() => {
+    const viewport = document.getElementById("relationshipViewport");
+    const canvas = document.getElementById("relationshipCanvas");
+
+    if (viewport && canvas) {
+      viewport.scrollLeft = Math.max(
+        0,
+        (canvas.offsetWidth - viewport.clientWidth) / 2
+      );
+    }
+
     document.getElementById("characterPage")?.style.setProperty("transform", "translateZ(0)");
   });
 }
