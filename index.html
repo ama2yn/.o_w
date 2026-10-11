@@ -3171,12 +3171,6 @@ const endY =
   labelGroup.style.cursor = "pointer";
   labelGroup.style.pointerEvents = "auto";
 
-  const label =
-    document.createElementNS(
-      "http://www.w3.org/2000/svg",
-      "text"
-    );
-
   label.setAttribute("x", labelX);
   label.setAttribute("y", labelY);
   label.setAttribute("text-anchor", "middle");
@@ -3239,8 +3233,6 @@ const endY =
     openRelationshipDetail(relationship.id);
   };
 }
-
-
 
   async function openRelationshipDetail(
   relationshipId
