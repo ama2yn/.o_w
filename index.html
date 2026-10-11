@@ -2909,8 +2909,41 @@ function enableRelationshipPinchZoom() {
     });
 
     canvas.querySelectorAll("#relationshipLines > line").forEach(line => {
-      line.setAttribute("stroke-width", String(2 / scale));
-    });
+  const fromX = Number(line.dataset.fromX);
+  const fromY = Number(line.dataset.fromY);
+  const toX = Number(line.dataset.toX);
+  const toY = Number(line.dataset.toY);
+  const offset = Number(line.dataset.offset || 0);
+
+  const dx = toX - fromX;
+  const dy = toY - fromY;
+  const length = Math.hypot(dx, dy);
+
+  if (length) {
+    const nx = -dy / length;
+    const ny = dx / length;
+    const radius = 45 / scale;
+
+    line.setAttribute(
+      "x1",
+      fromX + (dx / length) * radius + nx * offset
+    );
+    line.setAttribute(
+      "y1",
+      fromY + (dy / length) * radius + ny * offset
+    );
+    line.setAttribute(
+      "x2",
+      toX - (dx / length) * radius + nx * offset
+    );
+    line.setAttribute(
+      "y2",
+      toY - (dy / length) * radius + ny * offset
+    );
+  }
+
+  line.setAttribute("stroke-width", String(2 / scale));
+});
 
     const marker = canvas.querySelector("#relationshipArrow");
     if (marker) {
