@@ -2901,7 +2901,8 @@ function enableRelationshipPinchZoom() {
       const applyTransform = () => {
     canvas.style.transform =
       `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
-
+    window.relationshipZoomScale = scale;
+    
     canvas.querySelectorAll("#relationshipNodes > div").forEach(node => {
       node.style.transform = `scale(${1 / scale})`;
       node.style.transformOrigin = "center";
@@ -3045,7 +3046,7 @@ function drawRelationshipLine(
   const nx = -dy / length;
   const ny = dx / length;
 
-  const nodeRadius = 45;
+    const nodeRadius = 45 / (window.relationshipZoomScale || 1);
 
 const startX =
     from.x +
