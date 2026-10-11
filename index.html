@@ -2898,9 +2898,31 @@ function enableRelationshipPinchZoom() {
   canvas.style.transformOrigin = "0 0";
   canvas.style.touchAction = "none";
 
-  const applyTransform = () => {
+    const applyTransform = () => {
     canvas.style.transform =
       `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
+
+    canvas.querySelectorAll("#relationshipNodes > div").forEach(node => {
+      node.style.transform = `scale(${1 / scale})`;
+      node.style.transformOrigin = "center";
+    });
+
+    canvas.querySelectorAll("#relationshipLines > line").forEach(line => {
+      line.setAttribute("stroke-width", String(2 / scale));
+    });
+
+    canvas.querySelectorAll("#relationshipLines > g").forEach(labelGroup => {
+      const label = labelGroup.querySelector("text");
+      if (!label) return;
+
+      const x = Number(label.getAttribute("x"));
+      const y = Number(label.getAttribute("y"));
+
+      labelGroup.setAttribute(
+        "transform",
+        `translate(${x} ${y}) scale(${1 / scale}) translate(${-x} ${-y})`
+      );
+    });
   };
 
   const startPan = touch => {
