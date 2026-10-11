@@ -2959,31 +2959,8 @@ function enableRelationshipPinchZoom() {
   const baseY = Number(labelGroup.dataset.baseY);
   const direction = labelGroup.dataset.direction;
 
-    const ratio =
-    direction === "a_to_b"
-      ? 0.70 + 0.15 * (1 - 1 / scale)
-      : direction === "b_to_a"
-        ? 0.30 - 0.15 * (1 - 1 / scale)
-        : 0.50;
-
-  const line = labelGroup.previousElementSibling;
-
-  let x = baseX;
-  let y = baseY;
-
-  if (line && line.tagName.toLowerCase() === "line" && direction !== "both") {
-    const x1 = Number(line.getAttribute("x1"));
-    const y1 = Number(line.getAttribute("y1"));
-    const x2 = Number(line.getAttribute("x2"));
-    const y2 = Number(line.getAttribute("y2"));
-
-    x = x1 + (x2 - x1) * ratio;
-    y = y1 + (y2 - y1) * ratio;
-  }
-
-  label.setAttribute("x", x);
-  label.setAttribute("y", y);
-
+      const x = Number(label.getAttribute("x"));
+  const y = Number(label.getAttribute("y"));
   labelGroup.setAttribute(
     "transform",
     `translate(${x} ${y}) scale(${1 / scale}) translate(${-x} ${-y})`
