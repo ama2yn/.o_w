@@ -2836,17 +2836,35 @@ function enableRelationshipPinchZoom() {
   let startDistance = 0;
   let startScale = 1;
   let scale = 1;
+  let offsetX = 0;
+  let offsetY = 0;
+  let startOffsetX = 0;
+  let startOffsetY = 0;
+  let startMidX = 0;
+  let startMidY = 0;
 
-  canvas.style.transformOrigin = "top left";
+  const applyTransform = () => {
+    canvas.style.transformOrigin = "0 0";
+    canvas.style.transform =
+      `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
+  };
 
   viewport.addEventListener("touchstart", event => {
     if (event.touches.length !== 2) return;
 
-    const dx = event.touches[0].clientX - event.touches[1].clientX;
-    const dy = event.touches[0].clientY - event.touches[1].clientY;
+    const a = event.touches[0];
+    const b = event.touches[1];
 
-    startDistance = Math.hypot(dx, dy);
+    startDistance = Math.hypot(
+      a.clientX - b.clientX,
+      a.clientY - b.clientY
+    );
+
     startScale = scale;
+    startOffsetX = offsetX;
+    startOffsetY = offsetY;
+    startMidX = (a.clientX + b.clientX) / 2;
+    startMidY = (a.clientY + b.clientY) / 2;
   }, { passive: true });
 
   viewport.addEventListener("touchmove", event => {
@@ -2854,13 +2872,36 @@ function enableRelationshipPinchZoom() {
 
     event.preventDefault();
 
-    const dx = event.touches[0].clientX - event.touches[1].clientX;
-    const dy = event.touches[0].clientY - event.touches[1].clientY;
-    const distance = Math.hypot(dx, dy);
+    const a = event.touches[0];
+    const b = event.touches[1];
 
-    scale = Math.max(0.5, Math.min(2.5, startScale * distance / startDistance));
+    const distance = Math.hypot(
+      a.clientX - b.clientX,
+      a.clientY - b.clientY
+    );
 
-    canvas.style.transform = `scale(${scale})`;
+    const midX = (a.clientX + b.clientX) / 2;
+    const midY = (a.clientY + b.clientY) / 2;
+
+    const nextScale = Math.max(
+      0.5,
+      Math.min(2.5, startScale * distance / startDistance)
+    );
+
+    const rect = viewport.getBoundingClientRect();
+    const focalX = startMidX - rect.left;
+    const focalY = startMidY - rect.top;
+
+    offsetX =
+      midX - startMidX + focalX -
+      (focalX - startOffsetX) * nextScale / startScale;
+
+    offsetY =
+      midY - startMidY + focalY -
+      (focalY - startOffsetY) * nextScale / startScale;
+
+    scale = nextScale;
+    applyTransform();
   }, { passive: false });
 
   viewport.addEventListener("touchend", event => {
