@@ -2757,17 +2757,21 @@ Object.values(relationshipGroups).forEach(group => {
   normalizedRelationships.forEach(
     (item, index) => {
 
-      let offset = 0;
+            let offset = 0;
 
-            if (total > 1) {
+      if (total > 1) {
+        const spacing =
+          normalizedRelationships.every(
+            entry => entry.bothDirections
+          )
+            ? 24
+            : 8;
 
         offset =
           (index -
             (total - 1) / 2) *
-          24;
-
+          spacing;
       }
-
       drawRelationshipLine(
         svg,
         a,
