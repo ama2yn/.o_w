@@ -2908,6 +2908,16 @@ function enableRelationshipPinchZoom() {
     });
 
     canvas.querySelectorAll("#relationshipLines > line").forEach(line => {
+  line.setAttribute("stroke-width", String(2 / scale));
+
+  const markerSize = 8 / scale;
+  const marker = canvas.querySelector("#relationshipArrow");
+
+  if (marker) {
+    marker.setAttribute("markerWidth", String(markerSize));
+    marker.setAttribute("markerHeight", String(markerSize));
+  }
+});
       line.setAttribute("stroke-width", String(2 / scale));
     });
 
