@@ -2346,7 +2346,14 @@ async function openRelationshipEditor(
     element.style.display = "none";
   });
 
-  characterPage.style.display = "block";
+    characterPage.style.display = "block";
+
+  requestAnimationFrame(() => {
+    characterPage.scrollIntoView({
+      behavior: "auto",
+      block: "start"
+    });
+  });
 
   const content =
     document.getElementById(
