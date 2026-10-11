@@ -2830,10 +2830,14 @@ Object.values(relationshipGroups).forEach(group => {
         character.name || "";
     }
 
-    nodes.appendChild(node);
+      nodes.appendChild(node);
+});
+
+  // enableRelationshipPinchZoom();
+
+  requestAnimationFrame(() => {
+    document.getElementById("characterPage")?.style.setProperty("transform", "translateZ(0)");
   });
-  
-        // enableRelationshipPinchZoom();
 }
 
 function enableRelationshipPinchZoom() {
