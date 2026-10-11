@@ -2821,7 +2821,11 @@ Object.values(relationshipGroups).forEach(group => {
     nodes.appendChild(node);
   });
   
-    // enableRelationshipPinchZoom();
+        // enableRelationshipPinchZoom();
+
+  requestAnimationFrame(() => {
+    document.getElementById("characterPage")?.style.setProperty("transform", "translateZ(0)");
+  });
 }
 
 function enableRelationshipPinchZoom() {
