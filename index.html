@@ -2569,18 +2569,36 @@ async function openRelationshipEditor(
 
   if (!nodes || !svg) return;
 
-  const positions = {};
+    const positions = {};
 
   const centerX = 450;
   const centerY = 280;
-  const radius = 190;
 
-  characters.forEach((character, index) => {
+  positions[String(currentCharacterId)] = {
+    x: centerX,
+    y: centerY
+  };
+
+  characters.forEach(character => {
+    const id = String(character.id);
+
+    if (id === String(currentCharacterId)) {
+      return;
+    }
+
+    let hash = 0;
+
+    for (let i = 0; i < id.length; i++) {
+      hash = (hash * 31 + id.charCodeAt(i)) >>> 0;
+    }
+
     const angle =
-      (Math.PI * 2 * index / characters.length) -
-      Math.PI / 2;
+      (hash % 360) * Math.PI / 180;
 
-    positions[String(character.id)] = {
+    const radius =
+      150 + ((hash >>> 9) % 2) * 35;
+
+    positions[id] = {
       x: centerX + Math.cos(angle) * radius,
       y: centerY + Math.sin(angle) * radius
     };
