@@ -2951,21 +2951,42 @@ function enableRelationshipPinchZoom() {
       marker.setAttribute("markerHeight", String(8 / scale));
     }
 
-    canvas.querySelectorAll("#relationshipLines > g").forEach(labelGroup => {
-  const label = labelGroup.querySelector("text");
-  if (!label) return;
+        canvas.querySelectorAll("#relationshipLines > g").forEach(labelGroup => {
+      const label = labelGroup.querySelector("text");
+      if (!label) return;
 
-  const baseX = Number(labelGroup.dataset.baseX);
-  const baseY = Number(labelGroup.dataset.baseY);
-  const direction = labelGroup.dataset.direction;
+      const baseX = Number(labelGroup.dataset.baseX);
+      const baseY = Number(labelGroup.dataset.baseY);
+      const direction = labelGroup.dataset.direction;
 
-      const x = Number(label.getAttribute("x"));
-  const y = Number(label.getAttribute("y"));
-  labelGroup.setAttribute(
-    "transform",
-    `translate(${x} ${y}) scale(${1 / scale}) translate(${-x} ${-y})`
-  );
-});
+      let x = baseX;
+      let y = baseY;
+
+      if (direction === "a_to_b" || direction === "b_to_a") {
+        const line = labelGroup.previousElementSibling;
+
+        if (line && line.tagName.toLowerCase() === "line") {
+          const x1 = Number(line.getAttribute("x1"));
+          const y1 = Number(line.getAttribute("y1"));
+          const x2 = Number(line.getAttribute("x2"));
+          const y2 = Number(line.getAttribute("y2"));
+
+          const baseRatio = direction === "a_to_b" ? 0.70 : 0.30;
+          const zoomAmount = 1 - 1 / scale;
+          const ratio = direction === "a_to_b"
+            ? baseRatio + 0.15 * zoomAmount
+            : baseRatio - 0.15 * zoomAmount;
+
+          x = x1 + (x2 - x1) * ratio;
+          y = y1 + (y2 - y1) * ratio;
+        }
+      }
+
+      labelGroup.setAttribute(
+        "transform",
+        `translate(${x} ${y}) scale(${1 / scale}) translate(${-baseX} ${-baseY})`
+      );
+    });
   };
 
   const startPan = touch => {
