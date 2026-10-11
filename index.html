@@ -3156,8 +3156,20 @@ const endY =
    * 関係名と半透明の背景
    */
 
-      const isVertical =
-    Math.abs(dx) < Math.abs(dy) * 0.2;
+      
+  const labelRatio =
+    direction === "a_to_b"
+      ? 0.70
+      : direction === "b_to_a"
+        ? 0.30
+        : 0.50;
+
+  const labelX =
+    startX + (endX - startX) * labelRatio;
+
+  const labelY =
+    startY + (endY - startY) * labelRatio;
+
   const labelX = isVertical
     ? (startX + endX) / 2 + (offset >= 0 ? 18 : -18)
     : (startX + endX) / 2;
