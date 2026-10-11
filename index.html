@@ -3156,11 +3156,11 @@ const endY =
    * 関係名と半透明の背景
    */
 
-  const labelX =
+    const labelX =
     (startX + endX) / 2;
-
   const labelY =
-    (startY + endY) / 2 - 8;
+    (startY + endY) / 2 +
+    (offset === 0 ? -12 : (offset > 0 ? 12 : -12));
 
   const labelGroup =
     document.createElementNS(
