@@ -3048,26 +3048,25 @@ function drawRelationshipLine(
 
     const nodeRadius = 45 / (window.relationshipZoomScale || 1);
 
-const startX =
+  const startX =
     from.x +
     (dx / length) * nodeRadius +
     nx * offset;
 
-const startY =
+  const startY =
     from.y +
     (dy / length) * nodeRadius +
     ny * offset;
 
-const endX =
+  const endX =
     to.x -
     (dx / length) * nodeRadius +
     nx * offset;
 
-const endY =
+  const endY =
     to.y -
     (dy / length) * nodeRadius +
     ny * offset;
-
 
   const line =
     document.createElementNS(
