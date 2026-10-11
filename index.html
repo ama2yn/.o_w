@@ -2823,6 +2823,50 @@ Object.values(relationshipGroups).forEach(group => {
 }
 
 
+function enableRelationshipPinchZoom() {
+  const viewport = document.getElementById("relationshipList")
+    ?.querySelector('div[style*="overflow:auto"]');
+  const canvas = document.getElementById("relationshipCanvas");
+
+  if (!viewport || !canvas || viewport.dataset.pinchReady) return;
+  viewport.dataset.pinchReady = "true";
+
+  let startDistance = 0;
+  let startScale = 1;
+  let scale = 1;
+
+  canvas.style.transformOrigin = "top left";
+
+  viewport.addEventListener("touchstart", event => {
+    if (event.touches.length !== 2) return;
+
+    const dx = event.touches[0].clientX - event.touches[1].clientX;
+    const dy = event.touches[0].clientY - event.touches[1].clientY;
+
+    startDistance = Math.hypot(dx, dy);
+    startScale = scale;
+  }, { passive: true });
+
+  viewport.addEventListener("touchmove", event => {
+    if (event.touches.length !== 2 || !startDistance) return;
+
+    event.preventDefault();
+
+    const dx = event.touches[0].clientX - event.touches[1].clientX;
+    const dy = event.touches[0].clientY - event.touches[1].clientY;
+    const distance = Math.hypot(dx, dy);
+
+    scale = Math.max(0.5, Math.min(2.5, startScale * distance / startDistance));
+
+    canvas.style.transform = `scale(${scale})`;
+  }, { passive: false });
+
+  viewport.addEventListener("touchend", event => {
+    if (event.touches.length < 2) startDistance = 0;
+  }, { passive: true });
+}
+
+
 function drawRelationshipLine(
   svg,
   from,
