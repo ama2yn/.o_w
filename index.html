@@ -5720,7 +5720,14 @@ if (
   shareParams.get("view") === "public"
 ) {
 
-  window.characterViewOnly = true;
+    window.characterViewOnly = true;
+
+  const newCharacterButtonWrapper =
+    document.getElementById("newCharacterButtonWrapper");
+
+  if (newCharacterButtonWrapper) {
+    newCharacterButtonWrapper.style.display = "none";
+  }
 
   showCharacters();
 }
