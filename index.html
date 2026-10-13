@@ -3722,6 +3722,47 @@ function drawRelationshipLine(
   openCharacterRelationships();
 }
 
+async function deleteCharacter(characterId) {
+
+  const confirmed = confirm(
+    "このキャラクターを削除しますか？\n\nこの操作は取り消せません。"
+  );
+
+  if (!confirmed) {
+    return;
+  }
+
+  const response = await fetch(
+    SUPABASE_URL +
+    "/rest/v1/characters?id=eq." +
+    encodeURIComponent(characterId),
+    {
+      method: "DELETE",
+      headers: {
+        "apikey": SUPABASE_PUBLISHABLE_KEY,
+        "Authorization":
+          "Bearer " + SUPABASE_PUBLISHABLE_KEY,
+        "Prefer": "return=minimal"
+      }
+    }
+  );
+
+  if (!response.ok) {
+    const errorText = await response.text();
+
+    alert(
+      "キャラクターの削除に失敗しました。\n\n" +
+      errorText
+    );
+
+    return;
+  }
+
+  alert("キャラクターを削除しました。");
+
+  showCharacters();
+}
+
 let profileOrder = [];
 
 async function editCharacter() {
@@ -3732,10 +3773,6 @@ async function editCharacter() {
   const content =
     document.getElementById("characterPageContent");
 
-  
-
-
-  
   content.innerHTML =
     "<p>編集画面を読み込んでいます……</p>";
 
