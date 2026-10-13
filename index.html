@@ -7819,8 +7819,22 @@ async function uploadCharacterAlbumMedia() {
     return;
   }
 
-  const originalFile =
+    const originalFile =
     fileInput.files[0];
+
+  if (originalFile.type.startsWith("image/")) {
+    const sizeMB = originalFile.size / (1024 * 1024);
+
+    if (sizeMB > 10) {
+      const proceed = confirm(
+        `この画像は約${sizeMB.toFixed(1)}MBあります。\n` +
+        "容量が大きいため、アップロードに時間がかかる場合があります。\n\n" +
+        "このままアップロードしますか？"
+      );
+
+      if (!proceed) return;
+    }
+  }
 
   const cropCheckbox =
     document.getElementById(
