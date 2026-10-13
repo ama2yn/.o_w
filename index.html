@@ -8142,7 +8142,7 @@ async function uploadCharacterAlbumMedia() {
             "return=representation"
         },
 
-        body:
+                body:
           JSON.stringify({
             character_id:
               characterId,
@@ -8156,7 +8156,10 @@ async function uploadCharacterAlbumMedia() {
             file_url:
               fileUrl,
 
-                        sort_order:
+            thumbnail_url:
+              thumbnailUrl,
+
+            sort_order:
               await getNextCharacterAlbumSortOrder(
                 characterId,
                 category
