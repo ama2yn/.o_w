@@ -6033,10 +6033,12 @@ async function loadCharacterAlbumGallery(category) {
     return;
   }
 
-    mediaListContainer.innerHTML = `
+        mediaListContainer.innerHTML = `
         <div style="
-      column-count:2;
-      column-gap:12px;
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:12px;
+      align-items:start;
     ">
       ${mediaList.map(media => {
         const isVideo = media.media_type === "video";
