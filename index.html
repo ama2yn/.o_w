@@ -6100,6 +6100,103 @@ async function loadCharacterAlbumGallery(category) {
   `;
 }
 
+function openCharacterAlbumImage(imageUrl) {
+  const oldModal = document.getElementById("characterAlbumImageModal");
+  if (oldModal) oldModal.remove();
+
+  const modal = document.createElement("div");
+  modal.id = "characterAlbumImageModal";
+
+  modal.style.cssText = `
+    position:fixed;
+    inset:0;
+    z-index:99999;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    box-sizing:border-box;
+    background:rgba(0,0,0,.94);
+  `;
+
+  modal.innerHTML = `
+    <button
+      type="button"
+      aria-label="閉じる"
+      style="
+        position:absolute;
+        top:16px;
+        right:16px;
+        z-index:3;
+        width:44px;
+        height:44px;
+        border:0;
+        border-radius:50%;
+        background:rgba(255,255,255,.18);
+        color:white;
+        font-size:28px;
+        cursor:pointer;
+      "
+    >×</button>
+
+    <div style="
+      position:relative;
+      max-width:100%;
+      max-height:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    ">
+      <img
+        src="${escapeHtml(imageUrl)}"
+        alt="アルバム画像"
+        style="
+          display:block;
+          max-width:100%;
+          max-height:90vh;
+          width:auto;
+          height:auto;
+          object-fit:contain;
+          user-select:none;
+          -webkit-user-select:none;
+          -webkit-touch-callout:none;
+        "
+      >
+
+      <div style="
+        position:absolute;
+        inset:0;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        overflow:hidden;
+        pointer-events:none;
+      ">
+        <div style="
+          transform:rotate(-25deg);
+          color:rgba(255,255,255,.48);
+          font-size:clamp(18px,4vw,32px);
+          font-weight:bold;
+          letter-spacing:3px;
+          text-align:center;
+          text-shadow:0 1px 4px rgba(0,0,0,.5);
+          white-space:nowrap;
+        ">PRIVATE • PRIVATE • PRIVATE</div>
+      </div>
+    </div>
+  `;
+
+  modal.querySelector("button").addEventListener("click", () => {
+    modal.remove();
+  });
+
+  modal.addEventListener("click", (event) => {
+    if (event.target === modal) modal.remove();
+  });
+
+  document.body.appendChild(modal);
+}
+
 function toggleCharacterAlbumEdit() {
   const editButton = document.getElementById("characterAlbumEditButton");
   const mediaList = document.getElementById("characterAlbumMediaList");
