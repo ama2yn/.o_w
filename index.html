@@ -6490,7 +6490,7 @@ function showCharacterAlbumUpload() {
     <button
       id="characterAlbumUploadButton"
       type="button"
-      onclick="uploadCharacterAlbumMedia()"
+      onclick="uploadCharacterAlbumMediaMediaGuard()"
       style="
         margin-top:15px;
       "
@@ -7803,7 +7803,33 @@ function setCharacterAlbumCropRatio(
   updateCharacterAlbumCrop();
 }
 
-async function uploadCharacterAlbumMedia() {
+
+async function uploadCharacterAlbumMediaMediaGuard() {
+  const button = document.getElementById(
+    "characterAlbumUploadButton"
+  );
+
+  if (!button || button.disabled) {
+    return;
+  }
+
+  const originalText = button.textContent;
+  button.disabled = true;
+  button.textContent = "アップロード中…";
+
+  try {
+    await uploadCharacterAlbumMediaProcess();
+  } catch (error) {
+    alert("アップロードに失敗しました。\n\n" + error.message);
+  } finally {
+    if (button.isConnected) {
+      button.disabled = false;
+      button.textContent = originalText;
+    }
+  }
+}
+
+async function uploadCharacterAlbumMediaProcess() {
 
   const fileInput =
     document.getElementById(
