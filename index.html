@@ -8033,7 +8033,7 @@ async function uploadCharacterAlbumMedia() {
       return;
     }
 
-    uploadFile =
+        uploadFile =
       new File(
         [blob],
         "cropped.png",
@@ -8041,6 +8041,8 @@ async function uploadCharacterAlbumMedia() {
           type: "image/png"
         }
       );
+
+    var thumbnailFile = uploadFile;
   }
 
   /*
