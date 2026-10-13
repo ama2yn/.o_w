@@ -1796,7 +1796,7 @@ profileDisplayOrder.forEach(key => {
 
   content.appendChild(editButton);
 
-    if (!window.characterViewOnly) {
+      if (!window.characterViewOnly) {
 
     const deleteButton =
       document.createElement("button");
@@ -1813,26 +1813,25 @@ profileDisplayOrder.forEach(key => {
     };
 
     content.appendChild(deleteButton);
+
+    const shareButton =
+      document.createElement("div");
+
+    shareButton.style.cssText =
+      "margin-top:15px; text-align:center;";
+
+    shareButton.innerHTML =
+      `
+      <button
+        type="button"
+        onclick="copyCharacterShareUrl('${character.id}')"
+      >
+        🔗 閲覧用URLをコピー
+      </button>
+      `;
+
+    content.appendChild(shareButton);
   }
-
-  const shareButton =
-    document.createElement("div");
-
-  shareButton.style.cssText =
-    "margin-top:15px; text-align:center;";
-
-  shareButton.innerHTML =
-    `
-    <button
-      type="button"
-      onclick="copyCharacterShareUrl('${character.id}')"
-    >
-      🔗 閲覧用URLをコピー
-    </button>
-    `;
-
-  content.appendChild(shareButton);
-}
 }
 
   async function loadRelationshipCharacters() {
