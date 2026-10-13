@@ -2142,6 +2142,21 @@ async function openRelationshipEditor(
             )
           : ""
       }</textarea>
+      
+            <label>関係のMusic（YouTube URL・任意）</label>
+
+      <input
+        type="url"
+        id="relationshipMusicUrl"
+        placeholder="https://www.youtube.com/watch?v=..."
+        style="
+          width:100%;
+          box-sizing:border-box;
+          margin:8px 0 20px;
+          padding:12px;
+          border-radius:12px;
+        "
+      >
 
       <div style="text-align:center;">
 
@@ -2210,6 +2225,11 @@ async function openRelationshipEditor(
   const relationshipDescription =
     document.getElementById(
       "relationshipDescription"
+    ).value.trim();
+    
+      const relationshipMusicUrl =
+    document.getElementById(
+      "relationshipMusicUrl"
     ).value.trim();
 
   const relationshipDirection =
