@@ -2204,6 +2204,14 @@ async function openRelationshipEditor(
       "relationshipDirection"
     ).value =
       existingRelationship.direction;
+      
+          document.getElementById(
+      "relationshipMusicUrl"
+    ).value =
+      (
+        existingRelationship.details &&
+        existingRelationship.details.music_url
+      ) || "";
   }
 }
 
@@ -2279,7 +2287,9 @@ async function openRelationshipEditor(
     description:
       relationshipDescription,
 
-    details: {}
+        details: {
+      music_url: relationshipMusicUrl
+    }
   };
 
   let response;
