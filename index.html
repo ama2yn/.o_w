@@ -3697,6 +3697,45 @@ function drawRelationshipLine(
   margin-top:25px;
 ">
 
+      ${
+        relationshipMusicVideoId
+          ? `
+            <div style="
+              margin-top:25px;
+              padding:18px;
+              border-radius:18px;
+              background:rgba(255,255,255,.08);
+              border:1px solid rgba(255,255,255,.15);
+            ">
+              <h3 style="
+                text-align:center;
+                margin:0 0 15px;
+              ">
+                ♪ 関係のMusic
+              </h3>
+
+              <div style="
+                width:100%;
+                aspect-ratio:16 / 9;
+              ">
+                <iframe
+                  src="https://www.youtube.com/embed/${relationshipMusicVideoId}"
+                  title="関係のMusic"
+                  style="
+                    width:100%;
+                    height:100%;
+                    border:0;
+                    border-radius:12px;
+                  "
+                  allow="autoplay; encrypted-media; picture-in-picture"
+                  allowfullscreen
+                ></iframe>
+              </div>
+            </div>
+          `
+          : ""
+      }
+
  ${
   !window.characterViewOnly
     ? `
