@@ -1607,22 +1607,9 @@ profileDisplayOrder.forEach(key => {
       value = character.dislikes || "";
       break;
     case "description":
-      if (character.description) {
-        profileHtml += `
-          <div style="
-            margin-top:20px;
-            padding:18px;
-            border-radius:18px;
-            background:rgba(255,255,255,.08);
-          ">
-            <h3>PROFILE</h3>
-            <p style="white-space:pre-wrap;">${escapeHtml(
-              character.description
-            )}</p>
-          </div>
-        `;
-      }
-      return;
+      label = "自由記入";
+      value = character.description || "";
+      break;
     default: {
       const field = customFields[key];
 
