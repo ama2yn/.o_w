@@ -1707,24 +1707,23 @@ profileDisplayOrder.forEach(key => {
     🪽 ${escapeHtml(character.name)}
   </h2>
 
-  ${
+    ${
     character.reading
-      ? `<p>読み：${escapeHtml(character.reading)}</p>`
+      ? `<p><strong>読み：</strong>${escapeHtml(character.reading)}</p>`
       : ""
   }
 
   ${
     character.gender
-      ? `<p>性別：${escapeHtml(character.gender)}</p>`
+      ? `<p><strong>性別：</strong>${escapeHtml(character.gender)}</p>`
       : ""
   }
 
   ${
     character.age
-      ? `<p>年齢：${escapeHtml(character.age)}</p>`
+      ? `<p><strong>年齢：</strong>${escapeHtml(character.age)}</p>`
       : ""
   }
-
   
   ${
     profileHtml
