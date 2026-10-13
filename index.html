@@ -1728,27 +1728,9 @@ profileDisplayOrder.forEach(key => {
   ${
     profileHtml
   }
-
+  
   ${
     characterMusicHtml
-  }
-
-  ${
-    character.description
-      ? `
-        <div style="
-          margin-top:20px;
-          padding:18px;
-          border-radius:18px;
-          background:rgba(255,255,255,.08);
-        ">
-          <h3>PROFILE</h3>
-          <p style="white-space:pre-wrap;">
-            ${escapeHtml(character.description)}
-          </p>
-        </div>
-      `
-      : ""
   }
   `;
 
