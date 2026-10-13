@@ -8033,7 +8033,7 @@ async function uploadCharacterAlbumMedia() {
       return;
     }
 
-        uploadFile =
+          var thumbnailFile =
       new File(
         [blob],
         "cropped.png",
@@ -8041,81 +8041,63 @@ async function uploadCharacterAlbumMedia() {
           type: "image/png"
         }
       );
-
-    var thumbnailFile = uploadFile;
   }
 
-  /*
-   * ファイル名作成
+    /*
+   * 元画像とサムネイル画像を分けて保存
    */
-  const extension =
-    uploadFile.name.includes(".")
-      ? uploadFile.name
-          .split(".")
-          .pop()
-          .toLowerCase()
+  let fileUrl = "";
+  let thumbnailUrl = "";
+
+  async function uploadAlbumFile(file) {
+    const extension = file.name.includes(".")
+      ? file.name.split(".").pop().toLowerCase()
       : (
-          uploadFile.type === "image/png"
-            ? "png"
-            : uploadFile.type === "image/jpeg"
-              ? "jpg"
-              : "bin"
+          file.type === "image/png" ? "png" :
+          file.type === "image/jpeg" ? "jpg" :
+          file.type === "image/webp" ? "webp" :
+          file.type.startsWith("video/") ? "mp4" : "bin"
         );
 
-  const fileName =
-    crypto.randomUUID() +
-    "." +
-    extension;
+    const filePath =
+      "album/" + crypto.randomUUID() + "." + extension;
 
-  const filePath =
-    "album/" +
-    fileName;
-
-  /*
-   * Storageへアップロード
-   */
-  const uploadResponse =
-    await fetch(
+    const uploadResponse = await fetch(
       SUPABASE_URL +
       "/storage/v1/object/character-images/" +
       filePath,
       {
         method: "POST",
-
         headers: {
-          "apikey":
-            SUPABASE_PUBLISHABLE_KEY,
-
-          "Authorization":
-            "Bearer " +
-            SUPABASE_PUBLISHABLE_KEY,
-
-          "Content-Type":
-            uploadFile.type
+          "apikey": SUPABASE_PUBLISHABLE_KEY,
+          "Authorization": "Bearer " + SUPABASE_PUBLISHABLE_KEY,
+          "Content-Type": file.type || "application/octet-stream"
         },
-
-        body:
-          uploadFile
+        body: file
       }
     );
 
-  if (!uploadResponse.ok) {
+    if (!uploadResponse.ok) {
+      throw new Error(await uploadResponse.text());
+    }
 
-    const errorText =
-      await uploadResponse.text();
-
-    alert(
-      "アップロードに失敗しました。\n\n" +
-      errorText
-    );
-
-    return;
+    return SUPABASE_URL +
+      "/storage/v1/object/public/character-images/" +
+      filePath;
   }
 
-  const fileUrl =
-    SUPABASE_URL +
-    "/storage/v1/object/public/character-images/" +
-    filePath;
+  try {
+    fileUrl = await uploadAlbumFile(originalFile);
+
+    if (shouldCrop && typeof thumbnailFile !== "undefined" && thumbnailFile) {
+      thumbnailUrl = await uploadAlbumFile(thumbnailFile);
+    } else {
+      thumbnailUrl = fileUrl;
+    }
+  } catch (error) {
+    alert("アップロードに失敗しました。\n\n" + error.message);
+    return;
+  }
 
   const characterId =
     window.currentCharacterId;
