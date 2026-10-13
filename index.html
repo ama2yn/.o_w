@@ -8070,6 +8070,78 @@ async function uploadCharacterAlbumMedia() {
   let fileUrl = "";
   let thumbnailUrl = "";
 
+  async function optimizeAlbumImage(file) {
+    if (
+      !file ||
+      !["image/png", "image/jpeg", "image/webp"].includes(file.type)
+    ) {
+      return file;
+    }
+
+    const bitmap = await createImageBitmap(file);
+
+    try {
+      const maxSide = 2048;
+      const longestSide = Math.max(
+        bitmap.width,
+        bitmap.height
+      );
+
+      if (longestSide <= maxSide) {
+        return file;
+      }
+
+      const scale = maxSide / longestSide;
+
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.max(
+        1,
+        Math.round(bitmap.width * scale)
+      );
+      canvas.height = Math.max(
+        1,
+        Math.round(bitmap.height * scale)
+      );
+
+      const context = canvas.getContext("2d");
+
+      if (!context) {
+        return file;
+      }
+
+      context.drawImage(
+        bitmap,
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      );
+
+      const blob = await new Promise((resolve) => {
+        canvas.toBlob(
+          resolve,
+          file.type,
+          file.type === "image/jpeg" ? 0.86 : undefined
+        );
+      });
+
+      if (!blob || blob.size >= file.size) {
+        return file;
+      }
+
+      return new File(
+        [blob],
+        file.name,
+        {
+          type: file.type,
+          lastModified: file.lastModified
+        }
+      );
+    } finally {
+      bitmap.close();
+    }
+  }
+
   async function uploadAlbumFile(file) {
     const extension = file.name.includes(".")
       ? file.name.split(".").pop().toLowerCase()
