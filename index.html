@@ -3472,6 +3472,12 @@ function drawRelationshipLine(
 
   const relationship =
     relationships[0];
+    
+      const relationshipMusicUrl =
+    relationship.details &&
+    relationship.details.music_url
+      ? relationship.details.music_url.trim()
+      : "";
 
   const characterIds = [
     relationship.character_a_id,
