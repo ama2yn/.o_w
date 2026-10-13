@@ -1796,7 +1796,24 @@ profileDisplayOrder.forEach(key => {
 
   content.appendChild(editButton);
 
-  if (!window.characterViewOnly) {
+    if (!window.characterViewOnly) {
+
+    const deleteButton =
+      document.createElement("button");
+
+    deleteButton.type = "button";
+    deleteButton.textContent =
+      "🗑 キャラクターを削除";
+
+    deleteButton.style.cssText =
+      "display:block; width:100%; margin-top:15px;";
+
+    deleteButton.onclick = () => {
+      deleteCharacter(character.id);
+    };
+
+    content.appendChild(deleteButton);
+  }
 
   const shareButton =
     document.createElement("div");
