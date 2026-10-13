@@ -7978,11 +7978,17 @@ async function uploadCharacterAlbumMedia() {
      * 元画像の解像度を維持して
      * Canvasへ切り出す
      */
+        const thumbnailScale =
+      Math.min(
+        1,
+        1200 / Math.max(sourceWidth, sourceHeight)
+      );
+
     const outputWidth =
-      Math.round(sourceWidth);
+      Math.max(1, Math.round(sourceWidth * thumbnailScale));
 
     const outputHeight =
-      Math.round(sourceHeight);
+      Math.max(1, Math.round(sourceHeight * thumbnailScale));
 
     const canvas =
       document.createElement("canvas");
