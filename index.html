@@ -3478,6 +3478,20 @@ function drawRelationshipLine(
     relationship.details.music_url
       ? relationship.details.music_url.trim()
       : "";
+      
+        let relationshipMusicVideoId = "";
+
+  if (relationshipMusicUrl) {
+    const musicUrlMatch =
+      relationshipMusicUrl.match(
+        /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/
+      );
+
+    if (musicUrlMatch) {
+      relationshipMusicVideoId =
+        musicUrlMatch[1];
+    }
+  }
 
   const characterIds = [
     relationship.character_a_id,
