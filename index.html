@@ -6070,8 +6070,9 @@ async function loadCharacterAlbumGallery(category) {
 
             <button
               type="button"
-              data-media-id="${escapeHtml(media.id)}"
+             data-media-id="${escapeHtml(media.id)}"
               data-file-url="${escapeHtml(media.file_url)}"
+              data-thumbnail-url="${escapeHtml(media.thumbnail_url || "")}"
               data-category="${escapeHtml(category)}"
               onclick="deleteCharacterAlbumMedia(this)"
               aria-label="作品を削除"
