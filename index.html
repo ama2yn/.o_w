@@ -6060,8 +6060,8 @@ async function loadCharacterAlbumGallery(category) {
                 controls
               ></video>
             ` : `
-            <img
-  src="${escapeHtml(media.file_url)}"
+  <img
+  src="${escapeHtml(media.thumbnail_url || media.file_url)}"
   style="width:100%;height:auto;display:block;cursor:zoom-in;"
   loading="lazy"
   onclick="openCharacterAlbumImage('${escapeHtml(media.file_url)}')"
