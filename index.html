@@ -8180,7 +8180,10 @@ async function uploadCharacterAlbumMedia() {
   }
 
   try {
-    fileUrl = await uploadAlbumFile(originalFile);
+        const optimizedOriginalFile =
+      await optimizeAlbumImage(originalFile);
+
+    fileUrl = await uploadAlbumFile(optimizedOriginalFile);
 
     if (shouldCrop && typeof thumbnailFile !== "undefined" && thumbnailFile) {
       thumbnailUrl = await uploadAlbumFile(thumbnailFile);
