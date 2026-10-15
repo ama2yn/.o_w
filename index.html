@@ -3721,6 +3721,14 @@ function drawRelationshipLine(
       >
         🗑 削除
       </button>
+
+      <button
+        type="button"
+        onclick="shareRelationshipToCharacter('${relationship.id}')"
+        style="margin-left:10px;"
+      >
+        ↗ 他の相関図に追加
+      </button>
     `
     : ""
 }
