@@ -2665,27 +2665,106 @@ async function openRelationshipEditor(
   const centerY = 280;
   const radius = 190;
 
-  const otherCharacters = characters
-    .filter(character =>
+  
+  const otherCharacters = characters.filter(
+    character =>
       String(character.id) !== String(currentCharacterId)
-    );
+  );
 
   positions[String(currentCharacterId)] = {
     x: centerX,
     y: centerY
   };
 
-  otherCharacters.forEach((character, index) => {
-    const angle =
-      (Math.PI * 2 * index / otherCharacters.length) -
-      Math.PI / 2;
+  // 中央キャラ以外の、キャラ同士のつながりを集計
+  const otherIds = new Set(
+    otherCharacters.map(character => String(character.id))
+  );
 
-    positions[String(character.id)] = {
-      x: centerX + Math.cos(angle) * radius,
-      y: centerY + Math.sin(angle) * radius
-    };
+  const adjacency = new Map();
+
+  otherCharacters.forEach(character => {
+    adjacency.set(String(character.id), new Set());
   });
 
+  relationships.forEach(relationship => {
+    const a = String(relationship.character_a_id);
+    const b = String(relationship.character_b_id);
+
+    if (a === String(currentCharacterId) ||
+        b === String(currentCharacterId)) return;
+
+    if (!otherIds.has(a) || !otherIds.has(b)) return;
+
+    adjacency.get(a).add(b);
+    adjacency.get(b).add(a);
+  });
+
+  // つながりの多いキャラを優先
+  const originalOrder = new Map(
+    otherCharacters.map((character, index) => [
+      String(character.id), index
+    ])
+  );
+
+  const sortedCharacters = [...otherCharacters].sort((a, b) => {
+    const degreeB =
+      adjacency.get(String(b.id)).size;
+    const degreeA =
+      adjacency.get(String(a.id)).size;
+
+    return degreeB - degreeA ||
+      originalOrder.get(String(a.id)) -
+      originalOrder.get(String(b.id));
+  });
+
+  if (sortedCharacters.length > 0) {
+    const hub = sortedCharacters[0];
+    const hubId = String(hub.id);
+
+    const neighbors = sortedCharacters.filter(
+      character =>
+        String(character.id) !== hubId &&
+        adjacency.get(hubId).has(String(character.id))
+    );
+
+    const others = sortedCharacters.filter(
+      character =>
+        String(character.id) !== hubId &&
+        !adjacency.get(hubId).has(String(character.id))
+    );
+
+    const ordered = [hub];
+
+    // ハブとつながるキャラを左右に交互配置
+    let left = true;
+
+    while (neighbors.length > 0) {
+      const character = neighbors.shift();
+
+      if (left) {
+        ordered.splice(1, 0, character);
+      } else {
+        ordered.push(character);
+      }
+
+      left = !left;
+    }
+
+    ordered.push(...others);
+
+    // 最初のキャラを上に、残りを円周上に配置
+    ordered.forEach((character, index) => {
+      const count = ordered.length;
+      const angle =
+        -Math.PI / 2 + Math.PI * 2 * index / count;
+
+      positions[String(character.id)] = {
+        x: centerX + Math.cos(angle) * radius,
+        y: centerY + Math.sin(angle) * radius
+      };
+    });
+  }
 
   const defs = document.createElementNS(
     "http://www.w3.org/2000/svg",
