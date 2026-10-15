@@ -2945,7 +2945,6 @@ Object.values(relationshipGroups).forEach(group => {
             false
         }
       );
-
     }
 
   });
@@ -2976,13 +2975,15 @@ Object.values(relationshipGroups).forEach(group => {
         fixedB !== String(currentCharacterId)
           ? 36
           : 0;
-      drawRelationshipLine(
+            drawRelationshipLine(
         svg,
         a,
         b,
         item.relationship,
         offset + centerOffset,
-        item.bothDirections
+        item.bothDirections,
+        fixedA,
+        fixedB
       );
     }
   );
