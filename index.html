@@ -3879,53 +3879,39 @@ function drawRelationshipLine(
 
 async function shareRelationshipToCharacter(relationshipId) {
   const currentCharacterId = String(window.currentCharacterId);
-
+  const headers = {
+    "apikey": SUPABASE_PUBLISHABLE_KEY,
+    "Authorization": "Bearer " + SUPABASE_PUBLISHABLE_KEY
+  };
   const relationshipResponse = await fetch(
     SUPABASE_URL +
     "/rest/v1/character_relationships" +
     "?id=eq." + encodeURIComponent(relationshipId) +
     "&select=character_a_id,character_b_id,character_c_id,relationship_name",
-    {
-      headers: {
-        "apikey": SUPABASE_PUBLISHABLE_KEY,
-        "Authorization": "Bearer " + SUPABASE_PUBLISHABLE_KEY
-      }
-    }
+    { headers }
   );
-
   if (!relationshipResponse.ok) {
     alert("関係情報の読み込みに失敗しました。");
     return;
   }
-
   const relationships = await relationshipResponse.json();
   if (!relationships.length) {
     alert("関係情報が見つかりませんでした。");
     return;
   }
-
   const relationship = relationships[0];
-
   const characterResponse = await fetch(
     SUPABASE_URL +
     "/rest/v1/characters" +
     "?select=id,name,reading" +
     "&order=name.asc",
-    {
-      headers: {
-        "apikey": SUPABASE_PUBLISHABLE_KEY,
-        "Authorization": "Bearer " + SUPABASE_PUBLISHABLE_KEY
-      }
-    }
+    { headers }
   );
-
   if (!characterResponse.ok) {
     alert("キャラクター一覧の読み込みに失敗しました。");
     return;
   }
-
   const characters = await characterResponse.json();
-
   const relatedIds = [
     relationship.character_a_id,
     relationship.character_b_id,
@@ -3933,74 +3919,151 @@ async function shareRelationshipToCharacter(relationshipId) {
   ]
     .filter(id => id !== null && id !== undefined)
     .map(String);
-
   const availableCharacters = characters.filter(character =>
     String(character.id) !== currentCharacterId &&
     !relatedIds.includes(String(character.id))
   );
-
   if (!availableCharacters.length) {
     alert("共有先に選べるキャラクターがいません。");
     return;
   }
-
-  const options = availableCharacters
-    .map((character, index) =>
-      `${index + 1}. ${character.name || "名前未設定"}${
-        character.reading ? "（" + character.reading + "）" : ""
-      }`
-    )
-    .join("\n");
-
-  const answer = prompt(
-    "この関係を表示する相関図のキャラクター番号を入力してください。\n\n" +
-    options
-  );
-
-  if (answer === null) return;
-
-  const selectedIndex = Number(answer.trim()) - 1;
-
-  if (
-    !Number.isInteger(selectedIndex) ||
-    selectedIndex < 0 ||
-    selectedIndex >= availableCharacters.length
-  ) {
-    alert("一覧にある番号を入力してください。");
-    return;
-  }
-
-  const targetCharacter = availableCharacters[selectedIndex];
-
-  const shareResponse = await fetch(
-    SUPABASE_URL + "/rest/v1/character_relationship_shares",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "apikey": SUPABASE_PUBLISHABLE_KEY,
-        "Authorization": "Bearer " + SUPABASE_PUBLISHABLE_KEY,
-        "Prefer": "resolution=ignore-duplicates,return=minimal"
-      },
-      body: JSON.stringify({
-        relationship_id: relationshipId,
-        target_character_id: targetCharacter.id
-      })
+  const overlay = document.createElement("div");
+  overlay.style.cssText = `
+    position:fixed;
+    inset:0;
+    z-index:99999;
+    background:rgba(0,0,0,.72);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    box-sizing:border-box;
+  `;
+  const modal = document.createElement("div");
+  modal.style.cssText = `
+    width:100%;
+    max-width:420px;
+    max-height:80vh;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    background:#25212d;
+    color:#fff;
+    border:1px solid rgba(255,255,255,.18);
+    border-radius:20px;
+    box-shadow:0 15px 50px rgba(0,0,0,.4);
+  `;
+  const heading = document.createElement("div");
+  heading.style.cssText = `
+    padding:20px 20px 8px;
+    font-size:17px;
+    font-weight:700;
+  `;
+  heading.textContent = "追加先の相関図を選択";
+  const description = document.createElement("div");
+  description.style.cssText = `
+    padding:0 20px 14px;
+    font-size:13px;
+    opacity:.75;
+  `;
+  description.textContent =
+    "「" + (relationship.relationship_name || "この関係") +
+    "」を表示するキャラクターを選んでください。";
+  const characterList = document.createElement("div");
+  characterList.style.cssText = `
+    overflow-y:auto;
+    padding:0 12px;
+  `;
+  const closeModal = () => overlay.remove();
+  availableCharacters.forEach(character => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.style.cssText = `
+      display:block;
+      width:100%;
+      padding:14px 12px;
+      margin:0 0 6px;
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:12px;
+      background:rgba(255,255,255,.06);
+      color:#fff;
+      text-align:left;
+      font-size:15px;
+      cursor:pointer;
+    `;
+    button.textContent =
+      character.name || "名前未設定";
+    if (character.reading) {
+      button.textContent += "（" + character.reading + "）";
     }
-  );
-
-  if (!shareResponse.ok) {
-    const errorText = await shareResponse.text();
-    alert("共有先の登録に失敗しました。\n\n" + errorText);
-    return;
-  }
-
-  alert(
-    "「" + (relationship.relationship_name || "関係") +
-    "」を「" + (targetCharacter.name || "キャラクター") +
-    "」の相関図に追加しました。\n\n" +
-    "次に、相関図側へ共有関係を表示する処理を追加します。"
-  );
+    button.addEventListener("click", async () => {
+      if (button.disabled) return;
+      button.disabled = true;
+      button.textContent += "　登録中…";
+      const shareResponse = await fetch(
+        SUPABASE_URL + "/rest/v1/character_relationship_shares",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...headers,
+            "Prefer": "resolution=ignore-duplicates,return=minimal"
+          },
+          body: JSON.stringify({
+            relationship_id: relationshipId,
+            target_character_id: character.id
+          })
+        }
+      );
+      if (!shareResponse.ok) {
+        const errorText = await shareResponse.text();
+        button.disabled = false;
+        button.textContent =
+          character.name || "名前未設定";
+        if (character.reading) {
+          button.textContent += "（" + character.reading + "）";
+        }
+        alert("共有先の登録に失敗しました。\n\n" + errorText);
+        return;
+      }
+      closeModal();
+      alert(
+        "「" + (relationship.relationship_name || "関係") +
+        "」を「" + (character.name || "キャラクター") +
+        "」の相関図に追加しました。"
+      );
+    });
+    characterList.appendChild(button);
+  });
+  const footer = document.createElement("div");
+  footer.style.cssText = `
+    padding:12px 16px 16px;
+    border-top:1px solid rgba(255,255,255,.1);
+  `;
+  const cancelButton = document.createElement("button");
+  cancelButton.type = "button";
+  cancelButton.textContent = "キャンセル";
+  cancelButton.style.cssText = `
+    width:100%;
+    padding:12px;
+    border:0;
+    border-radius:12px;
+    background:rgba(255,255,255,.1);
+    color:#fff;
+    font-size:14px;
+    cursor:pointer;
+  `;
+  cancelButton.addEventListener("click", closeModal);
+  footer.appendChild(cancelButton);
+  modal.appendChild(heading);
+  modal.appendChild(description);
+  modal.appendChild(characterList);
+  modal.appendChild(footer);
+  overlay.appendChild(modal);
+  overlay.addEventListener("click", event => {
+    if (event.target === overlay) closeModal();
+  });
+  document.body.appendChild(overlay);
 }
 
 async function deleteCharacter(characterId) {
