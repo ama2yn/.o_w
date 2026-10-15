@@ -2665,6 +2665,35 @@ async function openRelationshipEditor(
 
   const characters = await characterResponse.json();
 
+  if (
+    !characters.some(
+      character =>
+        String(character.id) === String(currentCharacterId)
+    )
+  ) {
+    const currentCharacterResponse = await fetch(
+      SUPABASE_URL +
+      "/rest/v1/characters" +
+      "?id=eq." + encodeURIComponent(currentCharacterId) +
+      "&select=id,name,reading,main_image",
+      {
+        headers: {
+          "apikey": SUPABASE_PUBLISHABLE_KEY,
+          "Authorization": "Bearer " + SUPABASE_PUBLISHABLE_KEY
+        }
+      }
+    );
+
+    if (currentCharacterResponse.ok) {
+      const currentCharacterRows =
+        await currentCharacterResponse.json();
+
+      if (currentCharacterRows.length > 0) {
+        characters.push(currentCharacterRows[0]);
+      }
+    }
+  }
+
   const nodes = document.getElementById("relationshipNodes");
   const svg = document.getElementById("relationshipLines");
 
