@@ -2630,15 +2630,6 @@ async function openRelationshipEditor(
     relationshipGroups[key].push(relationship);
   });
 
-    const key = [a, b].sort().join("_");
-
-    if (!relationshipGroups[key]) {
-      relationshipGroups[key] = [];
-    }
-
-    relationshipGroups[key].push(relationship);
-  });
-
   const idList = Array.from(characterIds).join(",");
 
   const characterResponse = await fetch(
