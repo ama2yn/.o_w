@@ -2861,15 +2861,19 @@ Object.values(relationshipGroups).forEach(group => {
             (total - 1) / 2) *
           spacing;
       }
+            const centerOffset =
+        fixedA !== String(currentCharacterId) &&
+        fixedB !== String(currentCharacterId)
+          ? 36
+          : 0;
       drawRelationshipLine(
         svg,
         a,
         b,
         item.relationship,
-        offset,
+        offset + centerOffset,
         item.bothDirections
       );
-
     }
   );
 
