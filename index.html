@@ -2659,12 +2659,41 @@ async function openRelationshipEditor(
 
   if (!nodes || !svg) return;
 
+  
   const positions = {};
 
   const centerX = 450;
   const centerY = 280;
   const radius = 190;
 
+  // この相関図で保存済みのアイコン位置を読み込む
+  const positionResponse = await fetch(
+    `${SUPABASE_URL}/rest/v1/relationship_node_positions?chart_character_id=eq.${encodeURIComponent(currentCharacterId)}&select=node_character_id,x,y`,
+    {
+      headers: {
+        apikey: SUPABASE_ANON_KEY,
+        Authorization: `Bearer ${SUPABASE_ANON_KEY}`
+      }
+    }
+  );
+
+  let savedPositions = {};
+
+  if (positionResponse.ok) {
+    const savedRows = await positionResponse.json();
+
+    savedRows.forEach(row => {
+      savedPositions[String(row.node_character_id)] = {
+        x: Number(row.x),
+        y: Number(row.y)
+      };
+    });
+  } else {
+    console.error(
+      "相関図の保存位置を読み込めませんでした。",
+      await positionResponse.text()
+    );
+  }
   
   const otherCharacters = characters.filter(
     character =>
@@ -2754,12 +2783,14 @@ async function openRelationshipEditor(
     ordered.push(...others);
 
     // 最初のキャラを上に、残りを円周上に配置
+    
     ordered.forEach((character, index) => {
+      const characterId = String(character.id);
       const count = ordered.length;
       const angle =
         -Math.PI / 2 + Math.PI * 2 * index / count;
 
-      positions[String(character.id)] = {
+      positions[characterId] = savedPositions[characterId] || {
         x: centerX + Math.cos(angle) * radius,
         y: centerY + Math.sin(angle) * radius
       };
