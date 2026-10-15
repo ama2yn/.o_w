@@ -2523,6 +2523,75 @@ async function openRelationshipEditor(
 
   const relationships = await response.json();
 
+  // 他の相関図から共有された関係を読み込む
+  const sharesResponse = await fetch(
+    SUPABASE_URL +
+    "/rest/v1/character_relationship_shares" +
+    "?target_character_id=eq." +
+    encodeURIComponent(currentCharacterId) +
+    "&select=relationship_id",
+    {
+      headers: {
+        "apikey": SUPABASE_PUBLISHABLE_KEY,
+        "Authorization": "Bearer " + SUPABASE_PUBLISHABLE_KEY
+      }
+    }
+  );
+
+  if (!sharesResponse.ok) {
+    list.innerHTML = `
+      <p style="text-align:center; color:#ff8fa3;">
+        共有された関係の読み込みに失敗しました。
+      </p>
+    `;
+    return;
+  }
+
+  const sharedRows = await sharesResponse.json();
+
+  if (sharedRows.length > 0) {
+    const sharedIds = sharedRows
+      .map(row => row.relationship_id)
+      .filter(id => id !== null && id !== undefined);
+
+    if (sharedIds.length > 0) {
+      const sharedResponse = await fetch(
+        SUPABASE_URL +
+        "/rest/v1/character_relationships" +
+        "?id=in.(" + sharedIds.join(",") + ")" +
+        "&select=*",
+        {
+          headers: {
+            "apikey": SUPABASE_PUBLISHABLE_KEY,
+            "Authorization": "Bearer " + SUPABASE_PUBLISHABLE_KEY
+          }
+        }
+      );
+
+      if (!sharedResponse.ok) {
+        list.innerHTML = `
+          <p style="text-align:center; color:#ff8fa3;">
+            共有された関係情報の読み込みに失敗しました。
+          </p>
+        `;
+        return;
+      }
+
+      const sharedRelationships = await sharedResponse.json();
+
+      sharedRelationships.forEach(sharedRelationship => {
+        if (
+          !relationships.some(
+            relationship =>
+              String(relationship.id) === String(sharedRelationship.id)
+          )
+        ) {
+          relationships.push(sharedRelationship);
+        }
+      });
+    }
+  }
+
   if (relationships.length === 0) {
     list.innerHTML = `
       <div style="
@@ -3803,6 +3872,132 @@ function drawRelationshipLine(
   alert("関係を削除しました。");
 
   openCharacterRelationships();
+}
+
+async function shareRelationshipToCharacter(relationshipId) {
+  const currentCharacterId = String(window.currentCharacterId);
+
+  const relationshipResponse = await fetch(
+    SUPABASE_URL +
+    "/rest/v1/character_relationships" +
+    "?id=eq." + encodeURIComponent(relationshipId) +
+    "&select=character_a_id,character_b_id,character_c_id,relationship_name",
+    {
+      headers: {
+        "apikey": SUPABASE_PUBLISHABLE_KEY,
+        "Authorization": "Bearer " + SUPABASE_PUBLISHABLE_KEY
+      }
+    }
+  );
+
+  if (!relationshipResponse.ok) {
+    alert("関係情報の読み込みに失敗しました。");
+    return;
+  }
+
+  const relationships = await relationshipResponse.json();
+  if (!relationships.length) {
+    alert("関係情報が見つかりませんでした。");
+    return;
+  }
+
+  const relationship = relationships[0];
+
+  const characterResponse = await fetch(
+    SUPABASE_URL +
+    "/rest/v1/characters" +
+    "?select=id,name,reading" +
+    "&order=name.asc",
+    {
+      headers: {
+        "apikey": SUPABASE_PUBLISHABLE_KEY,
+        "Authorization": "Bearer " + SUPABASE_PUBLISHABLE_KEY
+      }
+    }
+  );
+
+  if (!characterResponse.ok) {
+    alert("キャラクター一覧の読み込みに失敗しました。");
+    return;
+  }
+
+  const characters = await characterResponse.json();
+
+  const relatedIds = [
+    relationship.character_a_id,
+    relationship.character_b_id,
+    relationship.character_c_id
+  ]
+    .filter(id => id !== null && id !== undefined)
+    .map(String);
+
+  const availableCharacters = characters.filter(character =>
+    String(character.id) !== currentCharacterId &&
+    !relatedIds.includes(String(character.id))
+  );
+
+  if (!availableCharacters.length) {
+    alert("共有先に選べるキャラクターがいません。");
+    return;
+  }
+
+  const options = availableCharacters
+    .map((character, index) =>
+      `${index + 1}. ${character.name || "名前未設定"}${
+        character.reading ? "（" + character.reading + "）" : ""
+      }`
+    )
+    .join("\n");
+
+  const answer = prompt(
+    "この関係を表示する相関図のキャラクター番号を入力してください。\n\n" +
+    options
+  );
+
+  if (answer === null) return;
+
+  const selectedIndex = Number(answer.trim()) - 1;
+
+  if (
+    !Number.isInteger(selectedIndex) ||
+    selectedIndex < 0 ||
+    selectedIndex >= availableCharacters.length
+  ) {
+    alert("一覧にある番号を入力してください。");
+    return;
+  }
+
+  const targetCharacter = availableCharacters[selectedIndex];
+
+  const shareResponse = await fetch(
+    SUPABASE_URL + "/rest/v1/character_relationship_shares",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "apikey": SUPABASE_PUBLISHABLE_KEY,
+        "Authorization": "Bearer " + SUPABASE_PUBLISHABLE_KEY,
+        "Prefer": "resolution=ignore-duplicates,return=minimal"
+      },
+      body: JSON.stringify({
+        relationship_id: relationshipId,
+        target_character_id: targetCharacter.id
+      })
+    }
+  );
+
+  if (!shareResponse.ok) {
+    const errorText = await shareResponse.text();
+    alert("共有先の登録に失敗しました。\n\n" + errorText);
+    return;
+  }
+
+  alert(
+    "「" + (relationship.relationship_name || "関係") +
+    "」を「" + (targetCharacter.name || "キャラクター") +
+    "」の相関図に追加しました。\n\n" +
+    "次に、相関図側へ共有関係を表示する処理を追加します。"
+  );
 }
 
 async function deleteCharacter(characterId) {
