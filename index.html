@@ -3707,39 +3707,50 @@ function drawRelationshipLine(
  ${
   !window.characterViewOnly
     ? `
-      <button
-        type="button"
-        onclick="openRelationshipEditor('${relationship.id}')"
-      >
-        ✎ 編集
-      </button>
+      <div style="
+        display:flex;
+        flex-wrap:wrap;
+        justify-content:center;
+        gap:10px;
+        margin:20px 0;
+      ">
+        <button
+          type="button"
+          onclick="openRelationshipEditor('${relationship.id}')"
+          style="margin:0; min-width:100px;"
+        >
+          ✎ 編集
+        </button>
 
-      <button
-        type="button"
-        onclick="deleteRelationship('${relationship.id}')"
-        style="margin-left:10px;"
-      >
-        🗑 削除
-      </button>
+        <button
+          type="button"
+          onclick="deleteRelationship('${relationship.id}')"
+          style="margin:0; min-width:100px;"
+        >
+          🗑 削除
+        </button>
 
-      <button
-        type="button"
-        onclick="shareRelationshipToCharacter('${relationship.id}')"
-        style="margin-left:10px;"
-      >
-        ↗ 他の相関図に追加
-      </button>
+        <button
+          type="button"
+          onclick="shareRelationshipToCharacter('${relationship.id}')"
+          style="margin:0; min-width:100px;"
+        >
+          ↗ 他の相関図に追加
+        </button>
+      </div>
     `
     : ""
 }
 
-<button
-  type="button"
-  onclick="openCharacterRelationships()"
-  style="margin-left:10px;"
->
-  ← 相関図に戻る
-</button>
+<div style="text-align:center; margin-top:10px;">
+  <button
+    type="button"
+    onclick="openCharacterRelationships()"
+    style="margin:0;"
+  >
+    ← 相関図に戻る
+  </button>
+</div>
 
 </div>
 
