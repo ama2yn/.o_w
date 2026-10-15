@@ -2605,7 +2605,8 @@ async function openRelationshipEditor(
     return;
   }
 
-    const characterIds = new Set();
+      const characterIds = new Set();
+  characterIds.add(String(currentCharacterId));
   const relationshipGroups = {};
 
   relationships.forEach(relationship => {
