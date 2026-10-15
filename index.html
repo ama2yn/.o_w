@@ -2605,7 +2605,7 @@ async function openRelationshipEditor(
     return;
   }
 
-  const characterIds = new Set();
+    const characterIds = new Set();
   const relationshipGroups = {};
 
   relationships.forEach(relationship => {
@@ -2614,6 +2614,20 @@ async function openRelationshipEditor(
 
     characterIds.add(a);
     characterIds.add(b);
+
+    if (String(relationship.character_a_id) !== String(currentCharacterId) &&
+        String(relationship.character_b_id) !== String(currentCharacterId)) {
+      characterIds.add(String(currentCharacterId));
+    }
+
+    const key = [a, b].sort().join("_");
+
+    if (!relationshipGroups[key]) {
+      relationshipGroups[key] = [];
+    }
+
+    relationshipGroups[key].push(relationship);
+  });
 
     const key = [a, b].sort().join("_");
 
