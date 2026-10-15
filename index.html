@@ -2538,17 +2538,15 @@ async function openRelationshipEditor(
     }
   );
 
-  if (!sharesResponse.ok) {
-    list.innerHTML = `
-      <p style="text-align:center; color:#ff8fa3;">
-        共有された関係の読み込みに失敗しました。
-      </p>
-    `;
-    return;
+    if (!sharesResponse.ok) {
+    console.error(
+      "共有された関係の読み込みに失敗しました:",
+      await sharesResponse.text()
+    );
   }
-
-  const sharedRows = await sharesResponse.json();
-
+  const sharedRows = sharesResponse.ok
+    ? await sharesResponse.json()
+    : [];
   if (sharedRows.length > 0) {
     const sharedIds = sharedRows
       .map(row => row.relationship_id)
