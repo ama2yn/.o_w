@@ -2453,7 +2453,18 @@ async function openRelationshipEditor(
   if (!list) return;
 
   list.innerHTML = `
-        <div id="relationshipViewport" style="
+  <button
+  type="button"
+  id="relationshipEditToggle"
+  onclick="
+    window.relationshipEditMode = !window.relationshipEditMode;
+    this.textContent = window.relationshipEditMode
+      ? '✓ 編集モード終了'
+      : '✎ アイコン位置を編集';
+  "
+  style="margin: 0 0 12px 0;"
+>✎ アイコン位置を編集</button>
+      <div id="relationshipViewport" style="
       position:relative;
       width:100%;
       height:600px;
