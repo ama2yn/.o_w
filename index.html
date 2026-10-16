@@ -3056,6 +3056,8 @@ Object.values(relationshipGroups).forEach(group => {
     }
 
       nodes.appendChild(node);
+      node.dataset.characterId = String(character.id);
+    node.style.touchAction = "none";
 });
 
   enableRelationshipPinchZoom();
