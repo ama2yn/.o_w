@@ -3701,7 +3701,10 @@ labelGroup.style.pointerEvents = "all";
 
     const rows = await response.json();
 
-    if (rows.length > 0) {
+    if (
+  rows.length > 0 &&
+  labelGroup.dataset.manualPosition !== "true"
+) {
       applyLabelPosition(
         Number(rows[0].x),
         Number(rows[0].y)
