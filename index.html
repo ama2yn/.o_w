@@ -3665,6 +3665,46 @@ function drawRelationshipLine(
   };
 
   applyLabelPosition(defaultX, defaultY);
+  
+    // 保存済みの関係名の位置を読み込む
+  (async () => {
+    const chartId = labelGroup.dataset.chartId;
+    const fromId = labelGroup.dataset.fromId;
+    const toId = labelGroup.dataset.toId;
+
+    const query =
+      `${SUPABASE_URL}/rest/v1/relationship_label_positions` +
+      `?chart_character_id=eq.${encodeURIComponent(chartId)}` +
+      `&from_character_id=eq.${encodeURIComponent(fromId)}` +
+      `&to_character_id=eq.${encodeURIComponent(toId)}` +
+      `&select=x,y`;
+
+    const response = await fetch(query, {
+      headers: {
+        "apikey": SUPABASE_PUBLISHABLE_KEY,
+        "Authorization": "Bearer " + SUPABASE_PUBLISHABLE_KEY
+      }
+    });
+
+    if (!response.ok) {
+      console.error(
+        "関係名の位置読み込みに失敗しました:",
+        await response.text()
+      );
+      return;
+    }
+
+    const rows = await response.json();
+
+    if (rows.length > 0) {
+      applyLabelPosition(
+        Number(rows[0].x),
+        Number(rows[0].y)
+      );
+
+      labelGroup.dataset.manualPosition = "true";
+    }
+  })();
 
   labelGroup.style.cursor = "grab";
   labelGroup.style.pointerEvents = "all";
