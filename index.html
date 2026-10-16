@@ -3584,6 +3584,8 @@ labelGroup.style.userSelect = "none";
 labelGroup.style.webkitUserSelect = "none";
 labelGroup.style.webkitTouchCallout = "none";
     
+labelGroup.querySelector("text").style.pointerEvents = "all";
+labelGroup.querySelector("rect").style.pointerEvents = "all";
 labelGroup.addEventListener("pointerdown", event => {
   if (!window.relationshipEditMode) return;
 
