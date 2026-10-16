@@ -3654,7 +3654,7 @@ labelGroup.style.pointerEvents = "all";
   background.setAttribute("stroke-width", "1");
 
   labelGroup.insertBefore(background, label);
-
+background.style.pointerEvents = "none";
   const applyLabelPosition = (x, y) => {
     label.setAttribute("x", x);
     label.setAttribute("y", y);
