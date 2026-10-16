@@ -3470,7 +3470,10 @@ function enableRelationshipPinchZoom() {
     if (
       window.relationshipEditMode &&
       event.touches.length === 1 &&
-      event.target.closest("#relationshipNodes > *")
+      (
+  event.target.closest("#relationshipNodes > *") ||
+  event.target.closest("#relationshipLines > g")
+)
     ) {
       gesture = "";
       return;
@@ -3727,6 +3730,7 @@ function drawRelationshipLine(
     const onMove = moveEvent => {
       moveEvent.preventDefault();
       moveEvent.stopPropagation();
+      window.relationshipLabelWasDragged = true;
 
       const x = startLabelX + (moveEvent.clientX - startClientX) / scale;
       const y = startLabelY + (moveEvent.clientY - startClientY) / scale;
