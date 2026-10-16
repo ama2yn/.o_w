@@ -3536,6 +3536,7 @@ function enableRelationshipPinchZoom() {
   }, { passive: true });
 }
 
+
 function drawRelationshipLine(
   svg,
   from,
@@ -3546,52 +3547,30 @@ function drawRelationshipLine(
   fixedA,
   fixedB
 ) {
-
   const dx = to.x - from.x;
   const dy = to.y - from.y;
+  const length = Math.hypot(dx, dy);
 
-  const length = Math.sqrt(
-    dx * dx +
-    dy * dy
-  );
-
-  if (!length) {
-    return;
-  }
+  if (!length) return;
 
   const nx = -dy / length;
   const ny = dx / length;
-
   const zoomScale = window.relationshipZoomScale || 1;
   const nodeRadius = 45 / zoomScale;
 
-  const startX =
-    from.x +
-    (dx / length) * nodeRadius +
-    nx * offset;
+  const startX = from.x + (dx / length) * nodeRadius + nx * offset;
+  const startY = from.y + (dy / length) * nodeRadius + ny * offset;
+  const endX = to.x - (dx / length) * nodeRadius + nx * offset;
+  const endY = to.y - (dy / length) * nodeRadius + ny * offset;
 
-  const startY =
-    from.y +
-    (dy / length) * nodeRadius +
-    ny * offset;
+  const direction = String(relationship.direction || "").trim();
 
-  const endX =
-    to.x -
-    (dx / length) * nodeRadius +
-    nx * offset;
+  const line = document.createElementNS(
+    "http://www.w3.org/2000/svg",
+    "line"
+  );
 
-  const endY =
-    to.y -
-    (dy / length) * nodeRadius +
-    ny * offset;
-
-    const line =
-    document.createElementNS(
-      "http://www.w3.org/2000/svg",
-      "line"
-    );
-
-    line.dataset.fromX = String(from.x);
+  line.dataset.fromX = String(from.x);
   line.dataset.fromY = String(from.y);
   line.dataset.toX = String(to.x);
   line.dataset.toY = String(to.y);
@@ -3599,203 +3578,170 @@ function drawRelationshipLine(
   line.dataset.fromId = String(fixedA);
   line.dataset.toId = String(fixedB);
 
-  line.setAttribute(
-    "x1",
-    startX
-  );
+  line.setAttribute("x1", startX);
+  line.setAttribute("y1", startY);
+  line.setAttribute("x2", endX);
+  line.setAttribute("y2", endY);
+  line.setAttribute("stroke", "rgba(255,255,255,.65)");
+  line.setAttribute("stroke-width", "2");
 
-  line.setAttribute(
-    "y1",
-    startY
-  );
-
-  line.setAttribute(
-    "x2",
-    endX
-  );
-
-  line.setAttribute(
-    "y2",
-    endY
-  );
-
-  line.setAttribute(
-    "stroke",
-    "rgba(255,255,255,.65)"
-  );
-
-  line.setAttribute(
-    "stroke-width",
-    "2"
-  );
-
-
-  /*
-   * A ⇔ B
-   */
-
-    const direction =
-    String(
-      relationship.direction || ""
-    ).trim();
-
-  if (
-    bothDirections ||
-    direction === "both"
-  ) {
-
-    line.setAttribute(
-      "marker-start",
-      "url(#relationshipArrow)"
-    );
-
-    line.setAttribute(
-      "marker-end",
-      "url(#relationshipArrow)"
-    );
-
-  }
-  else if (
-    direction === "a_to_b"
-  ) {
-
-    line.setAttribute(
-      "marker-end",
-      "url(#relationshipArrow)"
-    );
-
-  }
-  else if (
-    direction === "b_to_a"
-  ) {
-
-    line.setAttribute(
-      "marker-start",
-      "url(#relationshipArrow)"
-    );
-
+  if (bothDirections || direction === "both") {
+    line.setAttribute("marker-start", "url(#relationshipArrow)");
+    line.setAttribute("marker-end", "url(#relationshipArrow)");
+  } else if (direction === "a_to_b") {
+    line.setAttribute("marker-end", "url(#relationshipArrow)");
+  } else if (direction === "b_to_a") {
+    line.setAttribute("marker-start", "url(#relationshipArrow)");
   }
 
-  line.style.pointerEvents =
-    "stroke";
-
-  line.style.cursor =
-    "pointer";
-
-  line.onclick =
-    () => {
-
-      openRelationshipDetail(
-        relationship.id
-      );
-    };
-
+  line.style.pointerEvents = "stroke";
+  line.style.cursor = "pointer";
+  line.onclick = () => openRelationshipDetail(relationship.id);
   svg.appendChild(line);
 
-  /*
-   * 関係名
-   */
+  const labelGroup = document.createElementNS(
+    "http://www.w3.org/2000/svg",
+    "g"
+  );
 
-    const label =
-    document.createElementNS(
-      "http://www.w3.org/2000/svg",
-      "text"
-    );
+  const label = document.createElementNS(
+    "http://www.w3.org/2000/svg",
+    "text"
+  );
 
-    /*
-   * 関係名と半透明の背景
-   */
+  const labelRatio =
+    direction === "a_to_b" ? 0.5 :
+    direction === "b_to_a" ? 0.5 : 0.5;
 
-      const labelRatio =
-    direction === "a_to_b"
-      ? 0.70
-      : direction === "b_to_a"
-        ? 0.30
-        : 0.70;
-
-      const labelX =
-    startX + (endX - startX) * labelRatio;
-
-  const labelY =
-    startY + (endY - startY) * labelRatio;
-
-  const labelGroup =
-    document.createElementNS(
-      "http://www.w3.org/2000/svg",
-      "g"
-    );
-
-  labelGroup.style.cursor = "pointer";
-  labelGroup.style.pointerEvents = "auto";
+  const defaultX = startX + (endX - startX) * labelRatio;
+  const defaultY = startY + (endY - startY) * labelRatio;
 
   labelGroup.dataset.direction = direction;
-  labelGroup.dataset.baseX = String(labelX);
-  labelGroup.dataset.baseY = String(labelY);
+  labelGroup.dataset.baseX = String(defaultX);
+  labelGroup.dataset.baseY = String(defaultY);
   labelGroup.dataset.fromId = String(fixedA);
   labelGroup.dataset.toId = String(fixedB);
+  labelGroup.dataset.offset = String(offset);
+  labelGroup.dataset.chartId = String(window.currentCharacterId);
+  labelGroup.dataset.manualPosition = "false";
 
-  label.setAttribute("x", labelX);
-  label.setAttribute("y", labelY);
   label.setAttribute("text-anchor", "middle");
   label.setAttribute("fill", "rgba(255,255,255,.95)");
   label.setAttribute("font-size", "12");
-  label.textContent =
-    relationship.relationship_name || "";
+  label.textContent = relationship.relationship_name || "";
 
   labelGroup.appendChild(label);
   svg.appendChild(labelGroup);
 
-  const textBox =
-    label.getBBox();
-
-  const labelBackground =
-    document.createElementNS(
-      "http://www.w3.org/2000/svg",
-      "rect"
-    );
-
-  labelBackground.setAttribute(
-    "x",
-    textBox.x - 5
+  const textBox = label.getBBox();
+  const background = document.createElementNS(
+    "http://www.w3.org/2000/svg",
+    "rect"
   );
 
-  labelBackground.setAttribute(
-    "y",
-    textBox.y - 3
-  );
+  background.setAttribute("x", textBox.x - 5);
+  background.setAttribute("y", textBox.y - 3);
+  background.setAttribute("width", textBox.width + 10);
+  background.setAttribute("height", textBox.height + 6);
+  background.setAttribute("rx", "4");
+  background.setAttribute("fill", "rgba(25,25,35,.9)");
+  background.setAttribute("stroke", "rgba(255,255,255,.15)");
+  background.setAttribute("stroke-width", "1");
 
-  labelBackground.setAttribute(
-    "width",
-    textBox.width + 10
-  );
+  labelGroup.insertBefore(background, label);
 
-  labelBackground.setAttribute(
-    "height",
-    textBox.height + 6
-  );
+  const applyLabelPosition = (x, y) => {
+    label.setAttribute("x", x);
+    label.setAttribute("y", y);
 
-  labelBackground.setAttribute("rx", "4");
-  labelBackground.setAttribute(
-    "fill",
-    "rgba(25,25,35,.78)"
-  );
+    const box = label.getBBox();
+    background.setAttribute("x", box.x - 5);
+    background.setAttribute("y", box.y - 3);
+    background.setAttribute("width", box.width + 10);
+    background.setAttribute("height", box.height + 6);
 
-  labelBackground.setAttribute(
-    "stroke",
-    "rgba(255,255,255,.15)"
-  );
+    labelGroup.dataset.baseX = String(x);
+    labelGroup.dataset.baseY = String(y);
+  };
 
-  labelBackground.setAttribute("stroke-width", "1");
+  applyLabelPosition(defaultX, defaultY);
 
-  labelGroup.insertBefore(
-    labelBackground,
-    label
-  );
+  labelGroup.style.cursor = "grab";
+  labelGroup.style.pointerEvents = "all";
+
+  labelGroup.addEventListener("pointerdown", event => {
+    if (!window.relationshipEditMode) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    const startClientX = event.clientX;
+    const startClientY = event.clientY;
+    const startLabelX = Number(labelGroup.dataset.baseX);
+    const startLabelY = Number(labelGroup.dataset.baseY);
+    const scale = window.relationshipZoomScale || 1;
+
+    labelGroup.setPointerCapture(event.pointerId);
+    labelGroup.style.cursor = "grabbing";
+
+    const onMove = moveEvent => {
+      moveEvent.preventDefault();
+      moveEvent.stopPropagation();
+
+      const x = startLabelX + (moveEvent.clientX - startClientX) / scale;
+      const y = startLabelY + (moveEvent.clientY - startClientY) / scale;
+
+      applyLabelPosition(x, y);
+      labelGroup.dataset.manualPosition = "true";
+    };
+
+    const onUp = async () => {
+      labelGroup.removeEventListener("pointermove", onMove);
+      labelGroup.removeEventListener("pointerup", onUp);
+      labelGroup.removeEventListener("pointercancel", onUp);
+      labelGroup.style.cursor = "grab";
+
+      const response = await fetch(
+        `${SUPABASE_URL}/rest/v1/relationship_label_positions`,
+        {
+          method: "POST",
+          headers: {
+            apikey: SUPABASE_PUBLISHABLE_KEY,
+            Authorization: "Bearer " + SUPABASE_PUBLISHABLE_KEY,
+            "Content-Type": "application/json",
+            Prefer: "resolution=merge-duplicates"
+          },
+          body: JSON.stringify({
+            chart_character_id: Number(labelGroup.dataset.chartId),
+            from_character_id: Number(labelGroup.dataset.fromId),
+            to_character_id: Number(labelGroup.dataset.toId),
+            x: Number(labelGroup.dataset.baseX),
+            y: Number(labelGroup.dataset.baseY)
+          })
+        }
+      );
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("関係名の位置保存に失敗しました:", errorText);
+        alert("関係名の位置保存に失敗しました。\n" + errorText);
+      }
+    };
+
+    labelGroup.addEventListener("pointermove", onMove);
+    labelGroup.addEventListener("pointerup", onUp);
+    labelGroup.addEventListener("pointercancel", onUp);
+  });
 
   labelGroup.onclick = () => {
-    openRelationshipDetail(relationship.id);
+    if (window.relationshipLabelWasDragged) {
+      window.relationshipLabelWasDragged = false;
+      return;
+    }
+    if (!window.relationshipEditMode) {
+      openRelationshipDetail(relationship.id);
+    }
   };
-    labelGroup.dataset.offset = String(offset);
 }
 
   async function openRelationshipDetail(
