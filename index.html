@@ -3097,14 +3097,13 @@ Object.values(relationshipGroups).forEach(group => {
 
         node.style.left = `${positions[characterId].x - 45}px`;
         node.style.top = `${positions[characterId].y - 45}px`;
-        document.querySelectorAll(
+                const labelGroups = document.querySelectorAll(
           "#relationshipLines > g"
-        ).forEach(labelGroup => {
-          if (
-            labelGroup.dataset.fromId !== characterId &&
-            labelGroup.dataset.toId !== characterId
-          ) return;
+        );
 
+        const placedLabels = [];
+
+        labelGroups.forEach(labelGroup => {
           const from = positions[labelGroup.dataset.fromId];
           const to = positions[labelGroup.dataset.toId];
 
@@ -3120,31 +3119,98 @@ Object.values(relationshipGroups).forEach(group => {
           const ny = dx / length;
           const offset = Number(labelGroup.dataset.offset || 0);
           const radius = 45 / (window.relationshipZoomScale || 1);
-          const startX = from.x + dx / length * radius + nx * offset;
-          const startY = from.y + dy / length * radius + ny * offset;
-          const endX = to.x - dx / length * radius + nx * offset;
-          const endY = to.y - dy / length * radius + ny * offset;
-          const direction = labelGroup.dataset.direction;
-          const ratio = direction === "b_to_a" ? 0.30 : 0.70;
 
-          const labelX = startX + (endX - startX) * ratio;
-          const labelY = startY + (endY - startY) * ratio;
+          const startX =
+            from.x + (dx / length) * radius + nx * offset;
+          const startY =
+            from.y + (dy / length) * radius + ny * offset;
+          const endX =
+            to.x - (dx / length) * radius + nx * offset;
+          const endY =
+            to.y - (dy / length) * radius + ny * offset;
 
-          labelGroup.dataset.baseX = String(labelX);
-          labelGroup.dataset.baseY = String(labelY);
+          // 関係名の基準位置を矢印の中央にする
+          const centerX = (startX + endX) / 2;
+          const centerY = (startY + endY) / 2;
 
           const label = labelGroup.querySelector("text");
           const background = labelGroup.querySelector("rect");
 
-          if (label) {
-            label.setAttribute("x", labelX);
-            label.setAttribute("y", labelY);
+          if (!label) return;
+
+          // 中央から上下にずらし、既存ラベルとの重なりを避ける
+          const candidates = [
+            0, 18, -18, 36, -36, 54, -54,
+            72, -72, 90, -90
+          ];
+
+          let chosenX = centerX;
+          let chosenY = centerY;
+          let chosenBox = null;
+          let foundPosition = false;
+
+          candidates.some(distance => {
+            const x = centerX + nx * distance;
+            const y = centerY + ny * distance;
+
+            label.setAttribute("x", x);
+            label.setAttribute("y", y);
+
+            const box = label.getBBox();
+
+            const candidateBox = {
+              x: box.x - 6,
+              y: box.y - 4,
+              right: box.x + box.width + 6,
+              bottom: box.y + box.height + 4
+            };
+
+            const overlaps = placedLabels.some(existing => {
+              return !(
+                candidateBox.right < existing.x ||
+                candidateBox.x > existing.right ||
+                candidateBox.bottom < existing.y ||
+                candidateBox.y > existing.bottom
+              );
+            });
+
+            if (overlaps) return false;
+
+            chosenX = x;
+            chosenY = y;
+            chosenBox = candidateBox;
+            foundPosition = true;
+
+            return true;
+          });
+
+          // 候補が全部重なる場合も、最後に試した位置を使う
+          if (!foundPosition) {
+            label.setAttribute("x", chosenX);
+            label.setAttribute("y", chosenY);
+
+            const box = label.getBBox();
+
+            chosenBox = {
+              x: box.x - 6,
+              y: box.y - 4,
+              right: box.x + box.width + 6,
+              bottom: box.y + box.height + 4
+            };
           }
 
-          if (label && background) {
+          placedLabels.push(chosenBox);
+
+          labelGroup.dataset.baseX = String(chosenX);
+          labelGroup.dataset.baseY = String(chosenY);
+
+          if (background) {
             const box = label.getBBox();
+
             background.setAttribute("x", box.x - 5);
             background.setAttribute("y", box.y - 3);
+            background.setAttribute("width", box.width + 10);
+            background.setAttribute("height", box.height + 6);
           }
         });
 
