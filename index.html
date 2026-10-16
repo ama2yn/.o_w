@@ -3575,8 +3575,9 @@ background.style.pointerEvents = "none";
   })();
 
   labelGroup.style.cursor = "grab";
-  labelGroup.style.pointerEvents = "all";
-  labelGroup.style.touchAction = "none";
+labelGroup.style.pointerEvents = "all";
+labelGroup.style.touchAction = "none";
+labelGroup.style.userSelect = "none";
 
     labelGroup.addEventListener("pointerdown", event => {
     if (!window.relationshipEditMode) return;
