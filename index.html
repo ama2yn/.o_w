@@ -3634,6 +3634,8 @@ function drawRelationshipLine(
   label.textContent = relationship.relationship_name || "";
 
   labelGroup.appendChild(label);
+  label.style.pointerEvents = "all";
+labelGroup.style.pointerEvents = "all";
   svg.appendChild(labelGroup);
 
   const textBox = label.getBBox();
