@@ -3491,7 +3491,10 @@ function drawRelationshipLine(
   label.setAttribute("text-anchor", "middle");
   label.setAttribute("fill", "rgba(255,255,255,.95)");
   label.setAttribute("font-size", "12");
-  label.textContent = relationship.relationship_name || "";
+label.style.userSelect = "none";
+label.style.webkitUserSelect = "none";
+label.style.webkitTouchCallout = "none";
+label.textContent = relationship.relationship_name || "";
 
   labelGroup.appendChild(label);
   label.style.pointerEvents = "all";
