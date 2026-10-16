@@ -3582,77 +3582,78 @@ labelGroup.style.pointerEvents = "all";
 labelGroup.style.touchAction = "none";
 labelGroup.style.userSelect = "none";
 
-      labelGroup.addEventListener("touchstart", event => {
-    if (!window.relationshipEditMode) return;
+    
+labelGroup.addEventListener("pointerdown", event => {
+  if (!window.relationshipEditMode) return;
 
-    event.preventDefault();
-    event.stopPropagation();
+  event.preventDefault();
+  event.stopPropagation();
 
-    const touch = event.changedTouches[0];
-    const startX = touch.clientX;
-    const startY = touch.clientY;
-    const startLabelX = Number(labelGroup.dataset.baseX);
-    const startLabelY = Number(labelGroup.dataset.baseY);
-    const scale = window.relationshipZoomScale || 1;
+  labelGroup.setPointerCapture(event.pointerId);
 
-    let moved = false;
+  const startX = event.clientX;
+  const startY = event.clientY;
+  const startLabelX = Number(labelGroup.dataset.baseX);
+  const startLabelY = Number(labelGroup.dataset.baseY);
+  const scale = window.relationshipZoomScale || 1;
 
-    const onTouchMove = moveEvent => {
-      moveEvent.preventDefault();
-      moveEvent.stopPropagation();
+  let moved = false;
 
-      const currentTouch = moveEvent.changedTouches[0];
-      const dx = (currentTouch.clientX - startX) / scale;
-      const dy = (currentTouch.clientY - startY) / scale;
+  const onPointerMove = moveEvent => {
+    moveEvent.preventDefault();
+    moveEvent.stopPropagation();
 
-      if (Math.abs(dx) > 2 || Math.abs(dy) > 2) {
-        moved = true;
+    const dx = (moveEvent.clientX - startX) / scale;
+    const dy = (moveEvent.clientY - startY) / scale;
+
+    if (Math.abs(dx) > 2 || Math.abs(dy) > 2) {
+      moved = true;
+    }
+
+    if (!moved) return;
+
+    applyLabelPosition(startLabelX + dx, startLabelY + dy);
+    labelGroup.dataset.manualPosition = "true";
+  };
+
+  const onPointerEnd = async endEvent => {
+    labelGroup.removeEventListener("pointermove", onPointerMove);
+    labelGroup.removeEventListener("pointerup", onPointerEnd);
+    labelGroup.removeEventListener("pointercancel", onPointerEnd);
+
+    if (!moved) return;
+
+    window.relationshipLabelWasDragged = true;
+
+    const response = await fetch(
+      `${SUPABASE_URL}/rest/v1/relationship_label_positions`,
+      {
+        method: "POST",
+        headers: {
+          apikey: SUPABASE_PUBLISHABLE_KEY,
+          Authorization: "Bearer " + SUPABASE_PUBLISHABLE_KEY,
+          "Content-Type": "application/json",
+          Prefer: "resolution=merge-duplicates"
+        },
+        body: JSON.stringify({
+          chart_character_id: Number(labelGroup.dataset.chartId),
+          from_character_id: Number(labelGroup.dataset.fromId),
+          to_character_id: Number(labelGroup.dataset.toId),
+          x: Number(labelGroup.dataset.baseX),
+          y: Number(labelGroup.dataset.baseY)
+        })
       }
+    );
 
-      if (!moved) return;
+    if (!response.ok) {
+      alert("関係名の位置保存に失敗しました。\n" + await response.text());
+    }
+  };
 
-      applyLabelPosition(startLabelX + dx, startLabelY + dy);
-      labelGroup.dataset.manualPosition = "true";
-    };
-
-    const onTouchEnd = async endEvent => {
-      labelGroup.removeEventListener("touchmove", onTouchMove);
-      labelGroup.removeEventListener("touchend", onTouchEnd);
-      labelGroup.removeEventListener("touchcancel", onTouchEnd);
-
-      if (!moved) return;
-
-      window.relationshipLabelWasDragged = true;
-
-      const response = await fetch(
-        `${SUPABASE_URL}/rest/v1/relationship_label_positions`,
-        {
-          method: "POST",
-          headers: {
-            apikey: SUPABASE_PUBLISHABLE_KEY,
-            Authorization: "Bearer " + SUPABASE_PUBLISHABLE_KEY,
-            "Content-Type": "application/json",
-            Prefer: "resolution=merge-duplicates"
-          },
-          body: JSON.stringify({
-            chart_character_id: Number(labelGroup.dataset.chartId),
-            from_character_id: Number(labelGroup.dataset.fromId),
-            to_character_id: Number(labelGroup.dataset.toId),
-            x: Number(labelGroup.dataset.baseX),
-            y: Number(labelGroup.dataset.baseY)
-          })
-        }
-      );
-
-      if (!response.ok) {
-        alert("関係名の位置保存に失敗しました。\n" + await response.text());
-      }
-    };
-
-    labelGroup.addEventListener("touchmove", onTouchMove, { passive: false });
-    labelGroup.addEventListener("touchend", onTouchEnd);
-    labelGroup.addEventListener("touchcancel", onTouchEnd);
-  }, { passive: false });
+  labelGroup.addEventListener("pointermove", onPointerMove);
+  labelGroup.addEventListener("pointerup", onPointerEnd);
+  labelGroup.addEventListener("pointercancel", onPointerEnd);
+});
 
   labelGroup.onclick = () => {
     if (window.relationshipLabelWasDragged) {
