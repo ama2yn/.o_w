@@ -3423,7 +3423,6 @@ function drawRelationshipLine(
 
   }
 
-
   line.style.pointerEvents =
     "stroke";
 
@@ -3436,11 +3435,9 @@ function drawRelationshipLine(
       openRelationshipDetail(
         relationship.id
       );
-
     };
 
   svg.appendChild(line);
-
 
   /*
    * 関係名
@@ -3481,6 +3478,8 @@ function drawRelationshipLine(
   labelGroup.dataset.direction = direction;
   labelGroup.dataset.baseX = String(labelX);
   labelGroup.dataset.baseY = String(labelY);
+  labelGroup.dataset.fromId = String(fixedA);
+  labelGroup.dataset.toId = String(fixedB);
 
   label.setAttribute("x", labelX);
   label.setAttribute("y", labelY);
@@ -3543,6 +3542,7 @@ function drawRelationshipLine(
   labelGroup.onclick = () => {
     openRelationshipDetail(relationship.id);
   };
+    labelGroup.dataset.offset = String(offset);
 }
 
   async function openRelationshipDetail(
