@@ -3586,15 +3586,17 @@ labelGroup.style.webkitTouchCallout = "none";
     
 labelGroup.querySelector("text").style.pointerEvents = "all";
 labelGroup.querySelector("rect").style.pointerEvents = "all";
+
 labelGroup.addEventListener("pointerdown", event => {
   if (!window.relationshipEditMode) return;
+  if (event.button !== undefined && event.button !== 0) return;
 
   event.preventDefault();
   event.stopPropagation();
 
+  const pointerId = event.pointerId;
   const startX = event.clientX;
   const startY = event.clientY;
-
   const startLabelX = Number(labelGroup.dataset.baseX);
   const startLabelY = Number(labelGroup.dataset.baseY);
   const scale = window.relationshipZoomScale || 1;
@@ -3602,6 +3604,8 @@ labelGroup.addEventListener("pointerdown", event => {
   let moved = false;
 
   const onMove = moveEvent => {
+    if (moveEvent.pointerId !== pointerId) return;
+
     moveEvent.preventDefault();
 
     const dx = (moveEvent.clientX - startX) / scale;
@@ -3621,47 +3625,70 @@ labelGroup.addEventListener("pointerdown", event => {
     labelGroup.dataset.manualPosition = "true";
   };
 
-  const onUp = async () => {
-    labelGroup.removeEventListener("pointermove", onMove);
-    labelGroup.removeEventListener("pointerup", onUp);
-    labelGroup.removeEventListener("pointercancel", onUp);
+  const cleanup = () => {
+    window.removeEventListener("pointermove", onMove);
+    window.removeEventListener("pointerup", onUp);
+    window.removeEventListener("pointercancel", onUp);
+  };
+
+  const onUp = async upEvent => {
+    if (upEvent.pointerId !== pointerId) return;
+
+    cleanup();
 
     if (!moved) return;
 
     window.relationshipLabelWasDragged = true;
 
-    const response = await fetch(
-      `${SUPABASE_URL}/rest/v1/relationship_label_positions`,
-      {
-        method: "POST",
-        headers: {
-          apikey: SUPABASE_PUBLISHABLE_KEY,
-          Authorization: "Bearer " + SUPABASE_PUBLISHABLE_KEY,
-          "Content-Type": "application/json",
-          Prefer: "resolution=merge-duplicates"
-        },
-        body: JSON.stringify({
-          chart_character_id: Number(labelGroup.dataset.chartId),
-          from_character_id: Number(labelGroup.dataset.fromId),
-          to_character_id: Number(labelGroup.dataset.toId),
-          x: Number(labelGroup.dataset.baseX),
-          y: Number(labelGroup.dataset.baseY)
-        })
-      }
-    );
-
-    if (!response.ok) {
-      alert(
-        "関係名の位置保存に失敗しました。\n" +
-        await response.text()
+    try {
+      const response = await fetch(
+        `${SUPABASE_URL}/rest/v1/relationship_label_positions`,
+        {
+          method: "POST",
+          headers: {
+            apikey: SUPABASE_PUBLISHABLE_KEY,
+            Authorization: "Bearer " + SUPABASE_PUBLISHABLE_KEY,
+            "Content-Type": "application/json",
+            Prefer: "resolution=merge-duplicates"
+          },
+          body: JSON.stringify({
+            chart_character_id: Number(labelGroup.dataset.chartId),
+            from_character_id: Number(labelGroup.dataset.fromId),
+            to_character_id: Number(labelGroup.dataset.toId),
+            x: Number(labelGroup.dataset.baseX),
+            y: Number(labelGroup.dataset.baseY)
+          })
+        }
       );
+
+      if (!response.ok) {
+        alert(
+          "関係名の位置保存に失敗しました。\n" +
+          await response.text()
+        );
+      }
+    } catch (error) {
+      alert("関係名の位置保存に失敗しました。\n" + error.message);
     }
   };
 
-  labelGroup.addEventListener("pointermove", onMove);
-  labelGroup.addEventListener("pointerup", onUp);
-  labelGroup.addEventListener("pointercancel", onUp);
+  window.addEventListener("pointermove", onMove, {
+    passive: false
+  });
+  window.addEventListener("pointerup", onUp);
+  window.addEventListener("pointercancel", onUp);
 });
+
+labelGroup.onclick = () => {
+  if (window.relationshipLabelWasDragged) {
+    window.relationshipLabelWasDragged = false;
+    return;
+  }
+
+  if (!window.relationshipEditMode) {
+    openRelationshipDetail(relationship.id);
+  }
+};
 
   labelGroup.onclick = () => {
     if (window.relationshipLabelWasDragged) {
