@@ -3602,7 +3602,8 @@ if (labelText) {
 
 
 labelGroup.addEventListener("pointerdown", event => {
-  if (!window.relationshipEditMode) return;
+ alert("関係名ラベルにタッチが届いた");
+   if (!window.relationshipEditMode) return;
 
   event.preventDefault();
   event.stopPropagation();
