@@ -3289,7 +3289,9 @@ function drawRelationshipLine(
   to,
   relationship,
   offset,
-  bothDirections
+  bothDirections,
+  fixedA,
+  fixedB
 ) {
 
   const dx = to.x - from.x;
@@ -3336,11 +3338,13 @@ function drawRelationshipLine(
       "line"
     );
 
-  line.dataset.fromX = String(from.x);
+    line.dataset.fromX = String(from.x);
   line.dataset.fromY = String(from.y);
   line.dataset.toX = String(to.x);
   line.dataset.toY = String(to.y);
   line.dataset.offset = String(offset);
+  line.dataset.fromId = String(fixedA);
+  line.dataset.toId = String(fixedB);
 
   line.setAttribute(
     "x1",
