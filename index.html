@@ -3327,7 +3327,7 @@ function enableRelationshipPinchZoom() {
   };
 
     viewport.addEventListener("touchstart", event => {
-  alert("タッチ先：" + event.target.tagName + " / " + (event.target.id || event.target.parentElement?.id || "IDなし"));
+  
       if (
       window.relationshipEditMode &&
       event.touches.length === 1 &&
