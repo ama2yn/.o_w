@@ -3055,6 +3055,162 @@ Object.values(relationshipGroups).forEach(group => {
         character.name || "";
     }
 
+    node.addEventListener("pointerdown", event => {
+      if (!window.relationshipEditMode) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      const startX = event.clientX;
+      const startY = event.clientY;
+
+      const characterId = String(character.id);
+      const startPosition = positions[characterId];
+
+      if (!startPosition) return;
+
+      const initialX = startPosition.x;
+      const initialY = startPosition.y;
+      const zoomScale = window.relationshipZoomScale || 1;
+
+      node.setPointerCapture(event.pointerId);
+
+      const onMove = moveEvent => {
+        const dx = (moveEvent.clientX - startX) / zoomScale;
+        const dy = (moveEvent.clientY - startY) / zoomScale;
+
+        positions[characterId] = {
+          x: initialX + dx,
+          y: initialY + dy
+        };
+
+        node.style.left = `${positions[characterId].x - 45}px`;
+        node.style.top = `${positions[characterId].y - 45}px`;
+        document.querySelectorAll(
+          "#relationshipLines > g"
+        ).forEach(labelGroup => {
+          if (
+            labelGroup.dataset.fromId !== characterId &&
+            labelGroup.dataset.toId !== characterId
+          ) return;
+
+          const from = positions[labelGroup.dataset.fromId];
+          const to = positions[labelGroup.dataset.toId];
+
+          if (!from || !to) return;
+
+          const dx = to.x - from.x;
+          const dy = to.y - from.y;
+          const length = Math.hypot(dx, dy);
+
+          if (!length) return;
+
+          const nx = -dy / length;
+          const ny = dx / length;
+          const offset = Number(labelGroup.dataset.offset || 0);
+          const radius = 45 / (window.relationshipZoomScale || 1);
+          const startX = from.x + dx / length * radius + nx * offset;
+          const startY = from.y + dy / length * radius + ny * offset;
+          const endX = to.x - dx / length * radius + nx * offset;
+          const endY = to.y - dy / length * radius + ny * offset;
+          const direction = labelGroup.dataset.direction;
+          const ratio = direction === "b_to_a" ? 0.30 : 0.70;
+
+          const labelX = startX + (endX - startX) * ratio;
+          const labelY = startY + (endY - startY) * ratio;
+
+          labelGroup.dataset.baseX = String(labelX);
+          labelGroup.dataset.baseY = String(labelY);
+
+          const label = labelGroup.querySelector("text");
+          const background = labelGroup.querySelector("rect");
+
+          if (label) {
+            label.setAttribute("x", labelX);
+            label.setAttribute("y", labelY);
+          }
+
+          if (label && background) {
+            const box = label.getBBox();
+            background.setAttribute("x", box.x - 5);
+            background.setAttribute("y", box.y - 3);
+          }
+        });
+
+        const lines = document.querySelectorAll(
+          "#relationshipLines > line"
+        );
+
+        lines.forEach(line => {
+          const fromId = line.dataset.fromId;
+          const toId = line.dataset.toId;
+
+          if (fromId !== characterId && toId !== characterId) return;
+
+          const from = positions[fromId];
+          const to = positions[toId];
+
+          if (!from || !to) return;
+
+          const dxLine = to.x - from.x;
+          const dyLine = to.y - from.y;
+          const length = Math.hypot(dxLine, dyLine);
+
+          if (!length) return;
+
+          const nx = -dyLine / length;
+          const ny = dxLine / length;
+          const offset = Number(line.dataset.offset || 0);
+          const radius = 45 / (window.relationshipZoomScale || 1);
+
+          line.setAttribute("x1", from.x + (dxLine / length) * radius + nx * offset);
+          line.setAttribute("y1", from.y + (dyLine / length) * radius + ny * offset);
+          line.setAttribute("x2", to.x - (dxLine / length) * radius + nx * offset);
+          line.setAttribute("y2", to.y - (dyLine / length) * radius + ny * offset);
+        });
+      };
+
+            const onUp = async () => {
+        node.removeEventListener("pointermove", onMove);
+        node.removeEventListener("pointerup", onUp);
+        node.removeEventListener("pointercancel", onUp);
+
+        const position = positions[characterId];
+
+        if (!position) return;
+
+        const saveResponse = await fetch(
+          `${SUPABASE_URL}/rest/v1/relationship_node_positions`,
+          {
+            method: "POST",
+            headers: {
+              "apikey": SUPABASE_PUBLISHABLE_KEY,
+              "Authorization": "Bearer " + SUPABASE_PUBLISHABLE_KEY,
+              "Content-Type": "application/json",
+              "Prefer": "resolution=merge-duplicates"
+            },
+            body: JSON.stringify({
+              chart_character_id: String(window.currentCharacterId),
+              node_character_id: characterId,
+              x: position.x,
+              y: position.y
+            })
+          }
+        );
+
+        if (!saveResponse.ok) {
+          console.error(
+            "相関図の位置保存に失敗しました:",
+            await saveResponse.text()
+          );
+        }
+      };
+
+      node.addEventListener("pointermove", onMove);
+      node.addEventListener("pointerup", onUp);
+      node.addEventListener("pointercancel", onUp);
+    });
+
       nodes.appendChild(node);
       node.dataset.characterId = String(character.id);
     node.style.touchAction = "none";
