@@ -3214,11 +3214,15 @@ Object.values(relationshipGroups).forEach(group => {
           }
         );
 
-        if (!saveResponse.ok) {
+                if (!saveResponse.ok) {
+          const errorText = await saveResponse.text();
+
           console.error(
             "相関図の位置保存に失敗しました:",
-            await saveResponse.text()
+            errorText
           );
+
+          alert("位置保存に失敗しました。\n" + errorText);
         }
       };
 
