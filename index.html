@@ -3590,23 +3590,19 @@ labelGroup.addEventListener("pointerdown", event => {
   if (!window.relationshipEditMode) return;
 
   event.preventDefault();
-  labelGroup.style.touchAction = "none";
   event.stopPropagation();
-
-  labelGroup.setPointerCapture(event.pointerId);
-  labelGroup.style.cursor = "grabbing";
 
   const startX = event.clientX;
   const startY = event.clientY;
+
   const startLabelX = Number(labelGroup.dataset.baseX);
   const startLabelY = Number(labelGroup.dataset.baseY);
   const scale = window.relationshipZoomScale || 1;
 
   let moved = false;
 
-  const onPointerMove = moveEvent => {
+  const onMove = moveEvent => {
     moveEvent.preventDefault();
-    moveEvent.stopPropagation();
 
     const dx = (moveEvent.clientX - startX) / scale;
     const dy = (moveEvent.clientY - startY) / scale;
@@ -3617,15 +3613,18 @@ labelGroup.addEventListener("pointerdown", event => {
 
     if (!moved) return;
 
-    applyLabelPosition(startLabelX + dx, startLabelY + dy);
+    applyLabelPosition(
+      startLabelX + dx,
+      startLabelY + dy
+    );
+
     labelGroup.dataset.manualPosition = "true";
   };
 
-  const onPointerEnd = async endEvent => {
-    labelGroup.removeEventListener("pointermove", onPointerMove);
-    labelGroup.removeEventListener("pointerup", onPointerEnd);
-    labelGroup.removeEventListener("pointercancel", onPointerEnd);
-    labelGroup.style.cursor = "grab";
+  const onUp = async () => {
+    labelGroup.removeEventListener("pointermove", onMove);
+    labelGroup.removeEventListener("pointerup", onUp);
+    labelGroup.removeEventListener("pointercancel", onUp);
 
     if (!moved) return;
 
@@ -3652,13 +3651,16 @@ labelGroup.addEventListener("pointerdown", event => {
     );
 
     if (!response.ok) {
-      alert("関係名の位置保存に失敗しました。\n" + await response.text());
+      alert(
+        "関係名の位置保存に失敗しました。\n" +
+        await response.text()
+      );
     }
   };
 
-  labelGroup.addEventListener("pointermove", onPointerMove);
-  labelGroup.addEventListener("pointerup", onPointerEnd);
-  labelGroup.addEventListener("pointercancel", onPointerEnd);
+  labelGroup.addEventListener("pointermove", onMove);
+  labelGroup.addEventListener("pointerup", onUp);
+  labelGroup.addEventListener("pointercancel", onUp);
 });
 
   labelGroup.onclick = () => {
