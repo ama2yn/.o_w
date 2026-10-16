@@ -3399,40 +3399,16 @@ function enableRelationshipPinchZoom() {
       marker.setAttribute("markerHeight", String(8 / scale));
     }
 
-        canvas.querySelectorAll("#relationshipLines > g").forEach(labelGroup => {
+    canvas.querySelectorAll("#relationshipLines > g").forEach(labelGroup => {
       const label = labelGroup.querySelector("text");
       if (!label) return;
 
       const baseX = Number(labelGroup.dataset.baseX);
       const baseY = Number(labelGroup.dataset.baseY);
-      const direction = labelGroup.dataset.direction;
-
-      let x = baseX;
-      let y = baseY;
-
-      if (direction === "a_to_b" || direction === "b_to_a") {
-        const line = labelGroup.previousElementSibling;
-
-        if (line && line.tagName.toLowerCase() === "line") {
-          const x1 = Number(line.getAttribute("x1"));
-          const y1 = Number(line.getAttribute("y1"));
-          const x2 = Number(line.getAttribute("x2"));
-          const y2 = Number(line.getAttribute("y2"));
-
-          const baseRatio = direction === "a_to_b" ? 0.70 : 0.30;
-          const zoomAmount = 1 - 1 / scale;
-          const ratio = direction === "a_to_b"
-            ? baseRatio + 0.15 * zoomAmount
-            : baseRatio - 0.15 * zoomAmount;
-
-          x = x1 + (x2 - x1) * ratio;
-          y = y1 + (y2 - y1) * ratio;
-        }
-      }
 
       labelGroup.setAttribute(
         "transform",
-        `translate(${x} ${y}) scale(${1 / scale}) translate(${-baseX} ${-baseY})`
+        `translate(${baseX} ${baseY}) scale(${1 / scale}) translate(${-baseX} ${-baseY})`
       );
     });
   };
@@ -3716,8 +3692,9 @@ background.style.pointerEvents = "none";
 
   labelGroup.style.cursor = "grab";
   labelGroup.style.pointerEvents = "all";
+  labelGroup.style.touchAction = "none";
 
-  labelGroup.addEventListener("pointerdown", event => {
+    labelGroup.addEventListener("pointerdown", event => {
     if (!window.relationshipEditMode) return;
 
     event.preventDefault();
@@ -3728,6 +3705,7 @@ background.style.pointerEvents = "none";
     const startLabelX = Number(labelGroup.dataset.baseX);
     const startLabelY = Number(labelGroup.dataset.baseY);
     const scale = window.relationshipZoomScale || 1;
+    let moved = false;
 
     labelGroup.setPointerCapture(event.pointerId);
     labelGroup.style.cursor = "grabbing";
@@ -3735,12 +3713,22 @@ background.style.pointerEvents = "none";
     const onMove = moveEvent => {
       moveEvent.preventDefault();
       moveEvent.stopPropagation();
-      window.relationshipLabelWasDragged = true;
 
-      const x = startLabelX + (moveEvent.clientX - startClientX) / scale;
-      const y = startLabelY + (moveEvent.clientY - startClientY) / scale;
+      const deltaX = (moveEvent.clientX - startClientX) / scale;
+      const deltaY = (moveEvent.clientY - startClientY) / scale;
 
-      applyLabelPosition(x, y);
+      if (Math.abs(deltaX) > 2 || Math.abs(deltaY) > 2) {
+        moved = true;
+        window.relationshipLabelWasDragged = true;
+      }
+
+      if (!moved) return;
+
+      applyLabelPosition(
+        startLabelX + deltaX,
+        startLabelY + deltaY
+      );
+
       labelGroup.dataset.manualPosition = "true";
     };
 
@@ -3749,6 +3737,8 @@ background.style.pointerEvents = "none";
       labelGroup.removeEventListener("pointerup", onUp);
       labelGroup.removeEventListener("pointercancel", onUp);
       labelGroup.style.cursor = "grab";
+
+      if (!moved) return;
 
       const response = await fetch(
         `${SUPABASE_URL}/rest/v1/relationship_label_positions`,
