@@ -3588,9 +3588,11 @@ labelGroup.addEventListener("pointerdown", event => {
   if (!window.relationshipEditMode) return;
 
   event.preventDefault();
+  labelGroup.style.touchAction = "none";
   event.stopPropagation();
 
   labelGroup.setPointerCapture(event.pointerId);
+  labelGroup.style.cursor = "grabbing";
 
   const startX = event.clientX;
   const startY = event.clientY;
@@ -3621,6 +3623,7 @@ labelGroup.addEventListener("pointerdown", event => {
     labelGroup.removeEventListener("pointermove", onPointerMove);
     labelGroup.removeEventListener("pointerup", onPointerEnd);
     labelGroup.removeEventListener("pointercancel", onPointerEnd);
+    labelGroup.style.cursor = "grab";
 
     if (!moved) return;
 
