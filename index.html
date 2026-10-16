@@ -3494,6 +3494,7 @@ function drawRelationshipLine(
 label.style.userSelect = "none";
 label.style.webkitUserSelect = "none";
 label.style.webkitTouchCallout = "none";
+label.style.pointerEvents = "none";
 label.textContent = relationship.relationship_name || "";
 
   labelGroup.appendChild(label);
@@ -3582,51 +3583,47 @@ labelGroup.style.pointerEvents = "all";
 labelGroup.style.touchAction = "none";
 labelGroup.style.userSelect = "none";
 
-    labelGroup.addEventListener("pointerdown", event => {
+      labelGroup.addEventListener("touchstart", event => {
     if (!window.relationshipEditMode) return;
 
     event.preventDefault();
     event.stopPropagation();
 
-    const startClientX = event.clientX;
-    const startClientY = event.clientY;
+    const touch = event.changedTouches[0];
+    const startX = touch.clientX;
+    const startY = touch.clientY;
     const startLabelX = Number(labelGroup.dataset.baseX);
     const startLabelY = Number(labelGroup.dataset.baseY);
     const scale = window.relationshipZoomScale || 1;
+
     let moved = false;
 
-    labelGroup.setPointerCapture(event.pointerId);
-    labelGroup.style.cursor = "grabbing";
-
-    const onMove = moveEvent => {
+    const onTouchMove = moveEvent => {
       moveEvent.preventDefault();
       moveEvent.stopPropagation();
 
-      const deltaX = (moveEvent.clientX - startClientX) / scale;
-      const deltaY = (moveEvent.clientY - startClientY) / scale;
+      const currentTouch = moveEvent.changedTouches[0];
+      const dx = (currentTouch.clientX - startX) / scale;
+      const dy = (currentTouch.clientY - startY) / scale;
 
-      if (Math.abs(deltaX) > 2 || Math.abs(deltaY) > 2) {
+      if (Math.abs(dx) > 2 || Math.abs(dy) > 2) {
         moved = true;
-        window.relationshipLabelWasDragged = true;
       }
 
       if (!moved) return;
 
-      applyLabelPosition(
-        startLabelX + deltaX,
-        startLabelY + deltaY
-      );
-
+      applyLabelPosition(startLabelX + dx, startLabelY + dy);
       labelGroup.dataset.manualPosition = "true";
     };
 
-    const onUp = async () => {
-      labelGroup.removeEventListener("pointermove", onMove);
-      labelGroup.removeEventListener("pointerup", onUp);
-      labelGroup.removeEventListener("pointercancel", onUp);
-      labelGroup.style.cursor = "grab";
+    const onTouchEnd = async endEvent => {
+      labelGroup.removeEventListener("touchmove", onTouchMove);
+      labelGroup.removeEventListener("touchend", onTouchEnd);
+      labelGroup.removeEventListener("touchcancel", onTouchEnd);
 
       if (!moved) return;
+
+      window.relationshipLabelWasDragged = true;
 
       const response = await fetch(
         `${SUPABASE_URL}/rest/v1/relationship_label_positions`,
@@ -3649,16 +3646,14 @@ labelGroup.style.userSelect = "none";
       );
 
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error("関係名の位置保存に失敗しました:", errorText);
-        alert("関係名の位置保存に失敗しました。\n" + errorText);
+        alert("関係名の位置保存に失敗しました。\n" + await response.text());
       }
     };
 
-    labelGroup.addEventListener("pointermove", onMove);
-    labelGroup.addEventListener("pointerup", onUp);
-    labelGroup.addEventListener("pointercancel", onUp);
-  });
+    labelGroup.addEventListener("touchmove", onTouchMove, { passive: false });
+    labelGroup.addEventListener("touchend", onTouchEnd);
+    labelGroup.addEventListener("touchcancel", onTouchEnd);
+  }, { passive: false });
 
   labelGroup.onclick = () => {
     if (window.relationshipLabelWasDragged) {
