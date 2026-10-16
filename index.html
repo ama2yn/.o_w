@@ -3391,7 +3391,16 @@ function enableRelationshipPinchZoom() {
     focalY = (startMidY - rect.top - offsetY) / scale;
   };
 
-  viewport.addEventListener("touchstart", event => {
+    viewport.addEventListener("touchstart", event => {
+    if (
+      window.relationshipEditMode &&
+      event.touches.length === 1 &&
+      event.target.closest("#relationshipNodes > *")
+    ) {
+      gesture = "";
+      return;
+    }
+
     if (event.touches.length === 1) {
       startPan(event.touches[0]);
     } else if (event.touches.length === 2) {
