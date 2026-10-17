@@ -3496,9 +3496,13 @@ function drawRelationshipLine(
     "text"
   );
 
-  const labelRatio =
-    direction === "a_to_b" ? 0.5 :
-    direction === "b_to_a" ? 0.5 : 0.5;
+  const labelRatio = 0.5;
+
+const defaultX =
+  startX + (endX - startX) * labelRatio + nx * (offset >= 0 ? 12 : -12);
+
+const defaultY =
+  startY + (endY - startY) * labelRatio + ny * (offset >= 0 ? 12 : -12);
 
   const defaultX = startX + (endX - startX) * labelRatio;
   const defaultY = startY + (endY - startY) * labelRatio;
