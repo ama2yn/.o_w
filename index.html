@@ -3627,13 +3627,15 @@ if (labelText) {
   labelText.setAttribute("pointer-events", "all");
 }
 
-  labelGroup.addEventListener("touchstart", event => {
+    const startLabelDrag = event => {
     if (!window.relationshipEditMode) return;
 
     event.preventDefault();
     event.stopPropagation();
 
     const touch = event.touches[0];
+    if (!touch) return;
+
     const startX = touch.clientX;
     const startY = touch.clientY;
     const startLabelX = Number(labelGroup.dataset.baseX);
@@ -3651,8 +3653,8 @@ if (labelText) {
       const dy = (current.clientY - startY) / scale;
 
       if (Math.hypot(dx, dy) < 1) return;
-      moved = true;
 
+      moved = true;
       applyLabelPosition(startLabelX + dx, startLabelY + dy);
       labelGroup.dataset.manualPosition = "true";
     };
@@ -3665,15 +3667,23 @@ if (labelText) {
 
     const onEnd = () => {
       cleanup();
-      if (moved) {
-        window.relationshipLabelWasDragged = true;
-      }
+      if (moved) window.relationshipLabelWasDragged = true;
     };
 
     window.addEventListener("touchmove", onMove, { passive: false });
     window.addEventListener("touchend", onEnd);
     window.addEventListener("touchcancel", onEnd);
-  }, { passive: false });
+  };
+
+  labelGroup.addEventListener("touchstart", startLabelDrag, { passive: false });
+
+  if (labelRect) {
+    labelRect.addEventListener("touchstart", startLabelDrag, { passive: false });
+  }
+
+  if (labelText) {
+    labelText.addEventListener("touchstart", startLabelDrag, { passive: false });
+  }
 labelGroup.onclick = () => {
   if (window.relationshipLabelWasDragged) {
     window.relationshipLabelWasDragged = false;
