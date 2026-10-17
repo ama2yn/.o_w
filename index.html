@@ -3526,7 +3526,6 @@ label.textContent = relationship.relationship_name || "";
   labelGroup.appendChild(label);
   label.style.pointerEvents = "all";
 labelGroup.style.pointerEvents = "all";
-labelGroup.addEventListener("touchstart", () => alert("ラベルにタッチが届いた"), { passive: true });
   svg.appendChild(labelGroup);
 
   const textBox = label.getBBox();
