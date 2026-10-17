@@ -3628,57 +3628,53 @@ if (labelText) {
   labelText.setAttribute("pointer-events", "all");
 }
 
-labelGroup.addEventListener("pointerdown", event => {
-   if (!window.relationshipEditMode) return;
+  labelGroup.addEventListener("touchstart", event => {
+    if (!window.relationshipEditMode) return;
 
-labelGroup.setPointerCapture(event.pointerId);
+    event.preventDefault();
+    event.stopPropagation();
 
-  event.preventDefault();
-  event.stopPropagation();
+    const touch = event.touches[0];
+    const startX = touch.clientX;
+    const startY = touch.clientY;
+    const startLabelX = Number(labelGroup.dataset.baseX);
+    const startLabelY = Number(labelGroup.dataset.baseY);
+    const scale = window.relationshipZoomScale || 1;
 
-  const pointerId = event.pointerId;
-  const startX = event.clientX;
-  const startY = event.clientY;
-  const startLabelX = Number(labelGroup.dataset.baseX);
-  const startLabelY = Number(labelGroup.dataset.baseY);
-  const scale = window.relationshipZoomScale || 1;
+    let moved = false;
 
-  let moved = false;
+    const onMove = moveEvent => {
+      if (moveEvent.touches.length !== 1) return;
+      moveEvent.preventDefault();
 
-  const onMove = moveEvent => {
-    if (moveEvent.pointerId !== pointerId) return;
-    moveEvent.preventDefault();
+      const current = moveEvent.touches[0];
+      const dx = (current.clientX - startX) / scale;
+      const dy = (current.clientY - startY) / scale;
 
-    const dx = (moveEvent.clientX - startX) / scale;
-    const dy = (moveEvent.clientY - startY) / scale;
+      if (Math.hypot(dx, dy) < 1) return;
+      moved = true;
 
-    if (Math.hypot(dx, dy) < 1) return;
-    moved = true;
+      applyLabelPosition(startLabelX + dx, startLabelY + dy);
+      labelGroup.dataset.manualPosition = "true";
+    };
 
-    applyLabelPosition(startLabelX + dx, startLabelY + dy);
-    labelGroup.dataset.manualPosition = "true";
-  };
+    const cleanup = () => {
+      window.removeEventListener("touchmove", onMove);
+      window.removeEventListener("touchend", onEnd);
+      window.removeEventListener("touchcancel", onEnd);
+    };
 
-  const cleanup = () => {
-    window.removeEventListener("pointermove", onMove);
-    window.removeEventListener("pointerup", onUp);
-    window.removeEventListener("pointercancel", onUp);
-  };
+    const onEnd = () => {
+      cleanup();
+      if (moved) {
+        window.relationshipLabelWasDragged = true;
+      }
+    };
 
-  const onUp = async upEvent => {
-    if (upEvent.pointerId !== pointerId) return;
-    cleanup();
-
-    if (!moved) return;
-
-    window.relationshipLabelWasDragged = true;
-  };
-
-  window.addEventListener("pointermove", onMove, { passive: false });
-  window.addEventListener("pointerup", onUp);
-  window.addEventListener("pointercancel", onUp);
-});
-
+    window.addEventListener("touchmove", onMove, { passive: false });
+    window.addEventListener("touchend", onEnd);
+    window.addEventListener("touchcancel", onEnd);
+  }, { passive: false });
 labelGroup.onclick = () => {
   if (window.relationshipLabelWasDragged) {
     window.relationshipLabelWasDragged = false;
