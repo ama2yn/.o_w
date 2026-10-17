@@ -3544,6 +3544,7 @@ labelGroup.style.pointerEvents = "all";
   labelGroup.insertBefore(background, label);
 background.style.pointerEvents = "all";
   
+
 const applyLabelPosition = (x, y) => {
   label.setAttribute("x", x);
   label.setAttribute("y", y);
@@ -3556,12 +3557,6 @@ const applyLabelPosition = (x, y) => {
 
   labelGroup.dataset.baseX = String(x);
   labelGroup.dataset.baseY = String(y);
-
-  const scale = window.relationshipZoomScale || 1;
-  labelGroup.setAttribute(
-    "transform",
-    `translate(${x} ${y}) scale(${1 / scale}) translate(${-x} ${-y})`
-  );
 };
 
   applyLabelPosition(defaultX, defaultY);
