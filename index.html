@@ -3675,7 +3675,25 @@ if (labelText) {
     window.addEventListener("touchcancel", onEnd);
   };
 
-  labelGroup.addEventListener("touchstart", startLabelDrag, { passive: false });
+  labelGroup.addEventListener("touchstart", event => {
+  if (!window.relationshipEditMode) return;
+
+  event.preventDefault();
+  event.stopPropagation();
+
+  const target = event.target;
+  const hit = document.elementFromPoint(
+    event.touches[0].clientX,
+    event.touches[0].clientY
+  );
+
+  alert(
+    "ラベルのタッチ判定\n" +
+    "event.target: " + target.tagName + "\n" +
+    "elementFromPoint: " + (hit?.tagName || "なし") + "\n" +
+    "親要素: " + (hit?.parentElement?.id || hit?.parentElement?.tagName || "なし")
+  );
+}, { passive: false });
 
   if (labelRect) {
     labelRect.addEventListener("touchstart", startLabelDrag, { passive: false });
