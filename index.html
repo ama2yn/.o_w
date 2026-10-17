@@ -2666,7 +2666,8 @@ async function openRelationshipEditor(
 
   const characters = await characterResponse.json();
 
-  
+  const nodes = document.getElementById("relationshipNodes");
+const svg = document.getElementById("relationshipLines");
 
   if (!nodes || !svg) return;
 
