@@ -3496,16 +3496,15 @@ function drawRelationshipLine(
     "text"
   );
 
-  const labelRatio = 0.5;
+    const labelRatio = 0.5;
 
-const defaultX =
-  startX + (endX - startX) * labelRatio + nx * (offset >= 0 ? 12 : -12);
+  const defaultX =
+    startX + (endX - startX) * labelRatio +
+    nx * (offset !== 0 ? 12 : 0);
 
-const defaultY =
-  startY + (endY - startY) * labelRatio + ny * (offset >= 0 ? 12 : -12);
-
-  const defaultX = startX + (endX - startX) * labelRatio;
-  const defaultY = startY + (endY - startY) * labelRatio;
+  const defaultY =
+    startY + (endY - startY) * labelRatio +
+    ny * (offset !== 0 ? 12 : 0);
 
   labelGroup.dataset.direction = direction;
   labelGroup.dataset.baseX = String(defaultX);
