@@ -3572,22 +3572,14 @@ const applyLabelPosition = (x, y) => {
   applyLabelPosition(defaultX, defaultY);
   
     // 保存済みの関係名の位置を読み込む
-  (async () => {
-        const chartId = labelGroup.dataset.chartId;
+    (async () => {
+    const chartId = labelGroup.dataset.chartId;
     const relationshipId = labelGroup.dataset.relationshipId;
 
     const query =
       `${SUPABASE_URL}/rest/v1/relationship_label_positions` +
       `?chart_character_id=eq.${encodeURIComponent(chartId)}` +
       `&relationship_id=eq.${encodeURIComponent(relationshipId)}` +
-      `&select=x,y`;
-    const toId = labelGroup.dataset.toId;
-
-    const query =
-      `${SUPABASE_URL}/rest/v1/relationship_label_positions` +
-      `?chart_character_id=eq.${encodeURIComponent(chartId)}` +
-      `&from_character_id=eq.${encodeURIComponent(fromId)}` +
-      `&to_character_id=eq.${encodeURIComponent(toId)}` +
       `&select=x,y`;
 
     const response = await fetch(query, {
