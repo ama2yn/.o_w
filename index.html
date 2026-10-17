@@ -3687,8 +3687,10 @@ if (labelText) {
 
       window.relationshipLabelSuppressClickUntil = Date.now() + 500;
 
-            const chartId = labelGroup.dataset.chartId;
+          const chartId = labelGroup.dataset.chartId;
       const relationshipId = labelGroup.dataset.relationshipId;
+      const fromId = labelGroup.dataset.fromId;
+      const toId = labelGroup.dataset.toId;
 
       const url =
         `${SUPABASE_URL}/rest/v1/relationship_label_positions` +
@@ -3723,8 +3725,9 @@ if (labelText) {
               {
                 method: "POST",
                 headers,
-                body: JSON.stringify({
+                 body: JSON.stringify({
                   chart_character_id: chartId,
+                  relationship_id: relationshipId,
                   from_character_id: fromId,
                   to_character_id: toId,
                   ...position
