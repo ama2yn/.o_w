@@ -3308,6 +3308,7 @@ function enableRelationshipPinchZoom() {
         "transform",
         `translate(${baseX} ${baseY}) scale(${1 / scale}) translate(${-baseX} ${-baseY})`
       );
+            labelGroup.dataset.zoomTransformReady = "true";
     });
   };
 
