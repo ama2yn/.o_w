@@ -3125,15 +3125,30 @@ Object.values(relationshipGroups).forEach(group => {
 
           if (!length) return;
 
-          const nx = -dyLine / length;
+                    const nx = -dyLine / length;
           const ny = dxLine / length;
           const offset = Number(line.dataset.offset || 0);
           const radius = 45 / (window.relationshipZoomScale || 1);
 
-          line.setAttribute("x1", from.x + (dxLine / length) * radius + nx * offset);
-          line.setAttribute("y1", from.y + (dyLine / length) * radius + ny * offset);
-          line.setAttribute("x2", to.x - (dxLine / length) * radius + nx * offset);
-          line.setAttribute("y2", to.y - (dyLine / length) * radius + ny * offset);
+          const offsetX = nx * offset;
+          const offsetY = ny * offset;
+
+          line.setAttribute(
+            "x1",
+            from.x + (dxLine / length) * radius + offsetX
+          );
+          line.setAttribute(
+            "y1",
+            from.y + (dyLine / length) * radius + offsetY
+          );
+          line.setAttribute(
+            "x2",
+            to.x - (dxLine / length) * radius + offsetX
+          );
+          line.setAttribute(
+            "y2",
+            to.y - (dyLine / length) * radius + offsetY
+          );
         });
       };
 
