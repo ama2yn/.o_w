@@ -3628,9 +3628,10 @@ if (labelText) {
   labelText.setAttribute("pointer-events", "all");
 }
 
-
 labelGroup.addEventListener("pointerdown", event => {
    if (!window.relationshipEditMode) return;
+
+labelGroup.setPointerCapture(event.pointerId);
 
   event.preventDefault();
   event.stopPropagation();
