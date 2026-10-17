@@ -2666,22 +2666,7 @@ async function openRelationshipEditor(
 
   const characters = await characterResponse.json();
 
-  svg.addEventListener("touchstart", event => {
-  const touch = event.touches[0];
-  if (!touch) return;
-
-  const hit = document.elementFromPoint(
-    touch.clientX,
-    touch.clientY
-  );
-
-  alert(
-    "SVGのタッチ判定\n" +
-    "event.target: " + event.target.tagName + "\n" +
-    "判定された要素: " + (hit?.tagName || "なし") + "\n" +
-    "判定された要素のID: " + (hit?.id || "なし")
-  );
-}, { passive: true });
+  
 
   if (!nodes || !svg) return;
 
