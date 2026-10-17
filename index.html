@@ -3687,15 +3687,13 @@ if (labelText) {
 
       window.relationshipLabelSuppressClickUntil = Date.now() + 500;
 
-      const chartId = labelGroup.dataset.chartId;
-      const fromId = labelGroup.dataset.fromId;
-      const toId = labelGroup.dataset.toId;
+            const chartId = labelGroup.dataset.chartId;
+      const relationshipId = labelGroup.dataset.relationshipId;
 
       const url =
         `${SUPABASE_URL}/rest/v1/relationship_label_positions` +
         `?chart_character_id=eq.${encodeURIComponent(chartId)}` +
-        `&from_character_id=eq.${encodeURIComponent(fromId)}` +
-        `&to_character_id=eq.${encodeURIComponent(toId)}`;
+        `&relationship_id=eq.${encodeURIComponent(relationshipId)}`;
 
       const headers = {
         "apikey": SUPABASE_PUBLISHABLE_KEY,
