@@ -3507,8 +3507,8 @@ function drawRelationshipLine(
   labelGroup.dataset.direction = direction;
   labelGroup.dataset.baseX = String(defaultX);
   labelGroup.dataset.baseY = String(defaultY);
-  labelGroup.dataset.fromId = String(fixedA);
-  labelGroup.dataset.toId = String(fixedB);
+  labelGroup.dataset.fromId = String(relationship.character_a_id);
+labelGroup.dataset.toId = String(relationship.character_b_id);
   labelGroup.dataset.offset = String(offset);
   labelGroup.dataset.chartId = String(window.currentCharacterId);
   labelGroup.dataset.manualPosition = "false";
