@@ -3510,6 +3510,7 @@ function drawRelationshipLine(
   labelGroup.dataset.baseY = String(defaultY);
   labelGroup.dataset.fromId = String(relationship.character_a_id);
 labelGroup.dataset.toId = String(relationship.character_b_id);
+labelGroup.dataset.relationshipId = String(relationship.id);
   labelGroup.dataset.offset = String(offset);
   labelGroup.dataset.chartId = String(window.currentCharacterId);
   labelGroup.dataset.manualPosition = "false";
@@ -3572,8 +3573,14 @@ const applyLabelPosition = (x, y) => {
   
     // 保存済みの関係名の位置を読み込む
   (async () => {
-    const chartId = labelGroup.dataset.chartId;
-    const fromId = labelGroup.dataset.fromId;
+        const chartId = labelGroup.dataset.chartId;
+    const relationshipId = labelGroup.dataset.relationshipId;
+
+    const query =
+      `${SUPABASE_URL}/rest/v1/relationship_label_positions` +
+      `?chart_character_id=eq.${encodeURIComponent(chartId)}` +
+      `&relationship_id=eq.${encodeURIComponent(relationshipId)}` +
+      `&select=x,y`;
     const toId = labelGroup.dataset.toId;
 
     const query =
