@@ -3630,7 +3630,6 @@ if (labelText) {
 
 
 labelGroup.addEventListener("pointerdown", event => {
- alert("関係名ラベルにタッチが届いた");
    if (!window.relationshipEditMode) return;
 
   event.preventDefault();
@@ -3672,30 +3671,6 @@ labelGroup.addEventListener("pointerdown", event => {
     if (!moved) return;
 
     window.relationshipLabelWasDragged = true;
-
-    const response = await fetch(
-      `${SUPABASE_URL}/rest/v1/relationship_label_positions`,
-      {
-        method: "POST",
-        headers: {
-          apikey: SUPABASE_PUBLISHABLE_KEY,
-          Authorization: "Bearer " + SUPABASE_PUBLISHABLE_KEY,
-          "Content-Type": "application/json",
-          Prefer: "resolution=merge-duplicates"
-        },
-        body: JSON.stringify({
-          chart_character_id: Number(labelGroup.dataset.chartId),
-          from_character_id: Number(labelGroup.dataset.fromId),
-          to_character_id: Number(labelGroup.dataset.toId),
-          x: Number(labelGroup.dataset.baseX),
-          y: Number(labelGroup.dataset.baseY)
-        })
-      }
-    );
-
-    if (!response.ok) {
-      alert("関係名の位置保存に失敗しました。\n" + await response.text());
-    }
   };
 
   window.addEventListener("pointermove", onMove, { passive: false });
