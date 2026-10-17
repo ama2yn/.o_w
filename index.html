@@ -3418,15 +3418,18 @@ function drawRelationshipLine(
 
   if (!length) return;
 
-  const nx = -dy / length;
+    const nx = -dy / length;
   const ny = dx / length;
   const zoomScale = window.relationshipZoomScale || 1;
   const nodeRadius = 45 / zoomScale;
 
-  const startX = from.x + (dx / length) * nodeRadius + nx * offset;
-  const startY = from.y + (dy / length) * nodeRadius + ny * offset;
-  const endX = to.x - (dx / length) * nodeRadius + nx * offset;
-  const endY = to.y - (dy / length) * nodeRadius + ny * offset;
+  const offsetX = nx * offset;
+  const offsetY = ny * offset;
+
+  const startX = from.x + (dx / length) * nodeRadius + offsetX;
+  const startY = from.y + (dy / length) * nodeRadius + offsetY;
+  const endX = to.x - (dx / length) * nodeRadius + offsetX;
+  const endY = to.y - (dy / length) * nodeRadius + offsetY;
 
   const direction = String(relationship.direction || "").trim();
 
